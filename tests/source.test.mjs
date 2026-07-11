@@ -178,8 +178,8 @@ test("defines accurate public metadata, review robots, alternates, and icons", a
   ]);
 
   assert.match(metadata, /Oliver YEUNG \| A Little Learning Journey/);
-  assert.match(metadata, /gathered by Oliver's parents/);
-  assert.match(metadata, /由爸爸媽媽整理的一個個日常片段/);
+  assert.match(metadata, /gathered with care by Oliver's parents/);
+  assert.match(metadata, /由爸爸媽媽用心整理的一個個日常片段/);
   for (const directive of ["index: false", "follow: false", "noarchive: true", "nosnippet: true", "noimageindex: true"]) {
     assert.match(metadata, new RegExp(directive.replace(" ", "\\s*")));
   }
@@ -214,12 +214,16 @@ test("uses warm factual placeholders without summary, admissions, or institution
   assert.match(copy, /昊熹的日常小世界/);
   assert.match(copy, /Small steps in everyday life/);
   assert.match(copy, /日常裏的一小步/);
+  assert.match(copy, /Family & Care/);
+  assert.match(copy, /家庭與陪伴/);
   assert.match(copy, /Growing together at home/);
-  assert.match(copy, /在家中一起成長/);
-  assert.match(copy, /Content preview/);
-  assert.match(copy, /內容預覽/);
-  assert.equal((copy.match(/Story title to be added \d{2}/g) ?? []).length, 5);
-  assert.equal((copy.match(/故事標題稍後加入 \d{2}/g) ?? []).length, 5);
+  assert.match(copy, /在家中，一起慢慢成長/);
+  assert.match(copy, /A little preview/);
+  assert.match(copy, /故事預覽/);
+  assert.match(copy, /hope written in their own words/);
+  assert.match(copy, /親自寫下的心願/);
+  assert.equal((copy.match(/story to come · \d{2}/g) ?? []).length, 5);
+  assert.equal((copy.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).length, 5);
   assert.doesNotMatch(copy, /"\[[^"]+\]"/);
 
   for (const id of ["top", "about", "stories", "growth", "family", "privacy-notice"]) {
