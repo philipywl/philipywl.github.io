@@ -37,6 +37,56 @@ test("keeps Sites and GitHub Pages workflows separate", async () => {
   assert.equal(packageJson.scripts["verify:pages"], "node scripts/verify-pages.mjs");
 });
 
+test("keeps local Sites metadata optional and outside GitHub Pages", async () => {
+  const [viteConfig, gitignore, workflow, packageJsonSource] = await Promise.all([
+    read("vite.config.ts"),
+    read(".gitignore"),
+    read(".github/workflows/pages.yml"),
+    read("package.json"),
+  ]);
+  const packageJson = JSON.parse(packageJsonSource);
+
+  assert.doesNotMatch(
+    viteConfig,
+    /\bfrom\s+["']\.\/\.openai\/hosting\.json["']/,
+  );
+  assert.doesNotMatch(
+    viteConfig,
+    /\bimport\s*\(\s*["']\.\/\.openai\/hosting\.json["']/,
+  );
+  assert.match(
+    viteConfig,
+    /type\s+LocalHostingConfig\s*=\s*\{[\s\S]*?\bd1\?:\s*string\s*\|\s*null;[\s\S]*?\br2\?:\s*string\s*\|\s*null;/,
+  );
+  assert.match(viteConfig, /from\s+["']node:fs["']/);
+  assert.match(viteConfig, /readFileSync\(hostingConfigPath,\s*["']utf8["']\)/);
+  assert.match(viteConfig, /JSON\.parse\(source\)\s+as\s+LocalHostingConfig/);
+  assert.match(viteConfig, /code\s*===\s*["']ENOENT["'][\s\S]*?return\s+\{\};/);
+  assert.match(viteConfig, /throw\s+error;/);
+  assert.match(viteConfig, /d1_databases:\s*d1\s*\?/);
+  assert.match(viteConfig, /r2_buckets:\s*r2\s*\?/);
+
+  assert.equal(packageJson.scripts["build:pages"], "next build --webpack");
+  assert.doesNotMatch(workflow, /\.openai\/hosting\.json/);
+  assert.match(gitignore, /^\/\.openai\/hosting\.json$/m);
+
+  assert.equal(
+    execFileSync("git", ["ls-files", "--", ".openai/hosting.json"], {
+      cwd: projectRoot,
+      encoding: "utf8",
+    }).trim(),
+    "",
+  );
+
+  assert.doesNotThrow(() => {
+    execFileSync(
+      "git",
+      ["check-ignore", "--quiet", "--no-index", "--", ".openai/hosting.json"],
+      { cwd: projectRoot, stdio: "ignore" },
+    );
+  });
+});
+
 test("configures an official Next.js root static export", async () => {
   const config = await read("next.config.ts");
 
