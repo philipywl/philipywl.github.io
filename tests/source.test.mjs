@@ -229,7 +229,7 @@ test("defines public metadata, review robots, alternates, and icons centrally", 
   assert.doesNotMatch(chinesePage, /私人雙語|昊熹的成長故事/);
 });
 
-test("contains only approved public copy and conditionally omits unsupported content", async () => {
+test("contains only approved public copy and labels the richer preview without inventing content", async () => {
   const appFiles = (await collectSourceFiles("app")).filter((file) => /\.[jt]sx?$/.test(file));
   const appSource = (await Promise.all(appFiles.map(read))).join("\n");
   const portfolio = await read("app/OliverPortfolio.tsx");
@@ -255,7 +255,23 @@ test("contains only approved public copy and conditionally omits unsupported con
   assert.match(copy, /本作品集由昊熹的爸爸媽媽整理。請勿複製、下載或轉載網站內的相片及影片。/);
   assert.match(portfolio, /age &&/);
   assert.match(summary, /age &&/);
-  assert.doesNotMatch(portfolio, /PhotoPlaceholder|StoryCard|<img\b|<video\b|<picture\b/);
+  assert.match(copy, /Content preview/);
+  assert.match(copy, /內容預覽/);
+  assert.match(copy, /This preview shows the intended rhythm and layout/);
+  assert.match(copy, /這個預覽展示將來的版面和閱讀節奏/);
+  assert.equal((copy.match(/\[Story title \d{2}\]/g) ?? []).length, 4);
+  assert.equal((copy.match(/\[故事標題 \d{2}\]/g) ?? []).length, 4);
+  for (const id of ["top", "about", "stories", "growth", "family"]) {
+    assert.match(portfolio, new RegExp(`id=["']${id}["']`));
+  }
+  assert.match(portfolio, /<MobileMenu/);
+  assert.match(portfolio, /copy\.stories\.items\.map/);
+  assert.match(portfolio, /copy\.videos\.items\.map/);
+  assert.match(portfolio, /copy\.growth\.timelineItems\.map/);
+  assert.match(portfolio, /copy\.family\.media\.map/);
+  assert.match(summary, /copy\.summary\.observations\.map/);
+  assert.match(summary, /copy\.summary\.storyHighlights\.map/);
+  assert.doesNotMatch(portfolio, /<img\b|<video\b|<picture\b|<iframe\b/);
   assert.doesNotMatch(summary, /<img\b|<video\b|<picture\b/);
 });
 
@@ -304,6 +320,7 @@ test("keeps the greeting accessible, one-time, motion-safe, and layout-stable", 
   assert.match(greeting, /<span className="sr-only">\{greeting\}<\/span>/);
   assert.match(greeting, /greeting-visual" aria-hidden="true"/);
   assert.match(greeting, /greeting-reserve/);
+  assert.match(greeting, /locale === "en" \? " " : <wbr \/>/);
   assert.match(greeting, /sessionStorage\.getItem\(key\)/);
   assert.match(greeting, /sessionStorage\.setItem\(key, "seen"\)/);
   assert.match(greeting, /oliver-greeting-\$\{locale\}-v1/);
@@ -321,7 +338,7 @@ test("keeps the greeting accessible, one-time, motion-safe, and layout-stable", 
   assert.match(css, /\.greeting-heading \.greeting-cursor[\s\S]*?display:\s*none !important/);
 });
 
-test("uses one sans-serif typography system with keyboard, touch, and print safeguards", async () => {
+test("uses the Sunlit Meadow palette and one accessible typography system", async () => {
   const css = await read("app/globals.css");
 
   assert.match(
@@ -337,7 +354,16 @@ test("uses one sans-serif typography system with keyboard, touch, and print safe
   assert.match(css, /overflow-x:\s*clip/);
   assert.match(css, /width:\s*min\(calc\(100% - 40px\),\s*var\(--page-width\)\)/);
   assert.match(css, /@media print/);
-  assert.doesNotMatch(css, /photo-placeholder|placeholder-line|story-card|video-placeholder/);
+  for (const token of ["#FFF9E6", "#29404A", "#C4DDEA", "#5C8B7F", "#3F6D65", "#E0AD3F", "#EEA283"]) {
+    assert.match(css, new RegExp(token));
+  }
+  assert.match(css, /\.preview-media-surface/);
+  assert.match(css, /\.preview-media-video \.preview-media-surface[\s\S]*?aspect-ratio:\s*16 \/ 9/);
+  assert.match(css, /\.preview-media-portrait-video \.preview-media-surface[\s\S]*?aspect-ratio:\s*9 \/ 16/);
+  assert.match(css, /\.story-card/);
+  assert.match(css, /\.video-preview-grid/);
+  assert.match(css, /\.timeline-list/);
+  assert.match(css, /\.story-card \+ \.story-card[\s\S]*?break-before:\s*page/);
 });
 
 test("keeps the Pages verifier aligned with summaries, private-input scanning, and public-copy rules", async () => {

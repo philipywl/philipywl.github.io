@@ -152,6 +152,7 @@ function visibleText(html) {
       .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
       .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
       .replace(/<span\b[^>]*class="[^"]*sr-only[^"]*"[^>]*>[\s\S]*?<\/span>/gi, " ")
+      .replace(/<wbr\s*\/?>/gi, "")
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " "),
   ).trim();
@@ -328,25 +329,39 @@ for (const expected of [
   "Everyday moments",
   "At his own pace",
   "Shared with care",
+  "Content preview",
+  "A little about Oliver",
+  "Everyday moments, told with care",
+  "A calm home for future videos",
+  "Everyday growth and small steps",
+  "The people and rhythms around Oliver",
   "This portfolio is shared by Oliver's parents. Please do not copy, download or redistribute its photographs or videos.",
   "中文 | English",
 ]) {
-  if (!englishText.includes(expected)) fail(`English page lacks approved copy`);
+  if (!englishText.includes(expected)) fail(`English page lacks approved copy: ${expected}`);
 }
 for (const expected of [
   "昊熹的小小成長旅程",
-  "你好，我是昊熹。",
   "透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。",
   "日常片段",
   "按自己的步伐",
   "用心分享",
+  "內容預覽",
+  "關於昊熹的一點點",
+  "用心記下每個日常片段",
+  "讓將來的影片自然融入故事",
+  "日常成長與一小步一小步",
+  "陪伴昊熹成長的人與日常",
   "本作品集由昊熹的爸爸媽媽整理。請勿複製、下載或轉載網站內的相片及影片。",
   "中文 | English",
 ]) {
-  if (!chineseText.includes(expected)) fail(`Chinese page lacks approved copy`);
+  if (!chineseText.includes(expected)) fail(`Chinese page lacks approved copy: ${expected}`);
 }
 if ((routeHtml.english.match(/<h1\b/gi) ?? []).length !== 1) fail("English page must contain one H1");
 if ((routeHtml.chinese.match(/<h1\b/gi) ?? []).length !== 1) fail("Chinese page must contain one H1");
+if (!/<span class="sr-only">你好，我是昊熹。<\/span>/.test(routeHtml.chinese)) {
+  fail("Chinese page lacks the approved accessible greeting");
+}
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.english)) fail("English visual greeting is not aria-hidden");
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail("Chinese visual greeting is not aria-hidden");
 requireMetadata(
@@ -370,6 +385,9 @@ for (const [route, html, lang, title, canonical] of [
 ]) {
   if (!new RegExp(`<html[^>]+lang="${lang}"`, "i").test(html)) fail(`${route} has the wrong page language`);
   if (!visibleText(html).includes(title)) fail(`${route} lacks its approved title`);
+  if (!/(?:Content preview|內容預覽)/.test(visibleText(html))) {
+    fail(`${route} lacks its approved content-preview label`);
+  }
   if ((html.match(/<h1\b/gi) ?? []).length !== 1) fail(`${route} must contain one H1`);
   requireMetadata(html, route, canonical, "/en/summary/", "/zh-hant/summary/");
 }
@@ -390,6 +408,9 @@ if (!/^User-agent:\s*\*$/im.test(robotsText) || !/^Disallow:\s*\/$/im.test(robot
 const cssFiles = files.filter((file) => path.extname(file).toLowerCase() === ".css");
 const css = (await Promise.all(cssFiles.map((file) => readFile(path.join(outputRoot, file), "utf8")))).join("\n");
 if (!css.includes("Noto Sans TC")) fail("the single Noto Sans TC typography system is missing");
+for (const paletteToken of ["#FFF9E6", "#29404A", "#C4DDEA", "#5C8B7F", "#3F6D65", "#E0AD3F", "#EEA283"]) {
+  if (!css.includes(paletteToken)) fail(`Sunlit Meadow palette token is missing: ${paletteToken}`);
+}
 if (/Noto Serif|Georgia|--serif|@font-face|fonts\.(?:googleapis|gstatic)\.com/i.test(css)) {
   fail("an unapproved serif or external font remains in the artifact");
 }
