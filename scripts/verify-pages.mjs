@@ -325,36 +325,40 @@ const chineseText = visibleText(routeHtml.chinese);
 for (const expected of [
   "Oliver's little learning journey",
   "Hello, I'm Oliver.",
-  "A small collection of everyday moments showing how Oliver explores, connects and grows at his own pace.",
-  "Content preview",
+  "A small collection of everyday moments, gathered with care by Oliver's parents",
+  "A little preview",
   "Oliver's everyday world",
-  "What catches his attention",
-  "How he communicates and connects",
+  "What sparks his curiosity",
+  "How he shares and connects",
   "Everyday moments, told with care",
-  "Short videos will sit beside the stories they belong to",
+  "Short videos will appear only where they help a moment unfold",
   "Small steps in everyday life",
   "Small changes we have noticed",
+  "Family & Care",
   "Growing together at home",
-  "Care and belonging",
-  "This portfolio is shared by Oliver's parents. Please do not copy, download or redistribute its photographs or videos.",
+  "Care and being together",
+  "hope written in their own words",
+  "This portfolio is carefully gathered by Oliver's parents. To help protect his privacy",
   "中文 | English",
 ]) {
   if (!englishText.includes(expected)) fail(`English page lacks approved copy: ${expected}`);
 }
 for (const expected of [
   "昊熹的小小成長旅程",
-  "透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。",
-  "內容預覽",
+  "透過一個個日常片段，輕輕記下昊熹如何探索、與人互動",
+  "故事預覽",
   "昊熹的日常小世界",
-  "他會留意的事",
-  "他如何表達及與人連繫",
+  "吸引他的日常小事",
+  "他如何表達自己、與人連繫",
   "用心記下每個日常片段",
-  "短片會放在相關故事旁邊",
+  "短片只會在有助完整呈現故事時加入",
   "日常裏的一小步",
   "我們留意到的小轉變",
-  "在家中一起成長",
-  "關心與陪伴",
-  "本作品集由昊熹的爸爸媽媽整理。請勿複製、下載或轉載網站內的相片及影片。",
+  "家庭與陪伴",
+  "在家中，一起慢慢成長",
+  "關心與彼此陪伴",
+  "親自寫下的心願",
+  "本作品集由昊熹的爸爸媽媽用心整理。為保護孩子的私隱",
   "中文 | English",
 ]) {
   if (!chineseText.includes(expected)) fail(`Chinese page lacks approved copy: ${expected}`);
@@ -369,10 +373,10 @@ if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail(
 if (/href="\/(?:en|zh-hant)\/summary\//i.test(routeHtml.english + routeHtml.chinese)) {
   fail("a removed one-page summary link remains on a locale page");
 }
-if ((englishText.match(/Story title to be added \d{2}/g) ?? []).length !== 5) {
+if ((englishText.match(/story to come · \d{2}/g) ?? []).length !== 5) {
   fail("English page does not contain the five approved story previews");
 }
-if ((chineseText.match(/故事標題稍後加入 \d{2}/g) ?? []).length !== 5) {
+if ((chineseText.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).length !== 5) {
   fail("Chinese page does not contain the five approved story previews");
 }
 if (/\[[^\]]+\]/.test(englishText + chineseText)) {
@@ -393,7 +397,7 @@ requireMetadata(
   "/zh-hant/",
 );
 
-if (!routeHtml.notFound.includes("We couldn") || !routeHtml.notFound.includes("暫時找不到這個頁面")) {
+if (!routeHtml.notFound.includes("We couldn") || !routeHtml.notFound.includes("暫時找不到這一頁")) {
   fail("404 lacks the bilingual not-found message");
 }
 if (!/href="\/en\/"/i.test(routeHtml.notFound) || !/href="\/zh-hant\/"/i.test(routeHtml.notFound)) {

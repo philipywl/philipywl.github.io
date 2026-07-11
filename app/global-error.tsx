@@ -7,11 +7,11 @@ export default function GlobalError({ reset }: { reset: () => void }) {
         <main className="route-redirect not-found-page">
           <div className="not-found-card">
             <p className="eyebrow">Oliver YEUNG</p>
-            <h1>Something went wrong</h1>
-            <p lang="zh-Hant-HK">頁面暫時未能顯示</p>
+            <h1>This page needs a moment</h1>
+            <p lang="zh-Hant-HK">頁面暫時未能顯示。</p>
             <p className="not-found-copy">
-              Please try again, or choose a language to return home.<br />
-              <span lang="zh-Hant-HK">請再試一次，或選擇語言返回首頁。</span>
+              Please try again, or choose a language to return to Oliver&apos;s learning journey.<br />
+              <span lang="zh-Hant-HK">請再試一次，或選擇語言返回昊熹的小小成長旅程。</span>
             </p>
             <div className="button-row">
               <button className="button primary-button" type="button" onClick={reset}>

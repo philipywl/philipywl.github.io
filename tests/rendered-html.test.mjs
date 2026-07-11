@@ -140,19 +140,21 @@ test("renders the refined English public homepage", async () => {
 
   assert.match(html, /<html lang="en-HK">/i);
   assert.match(html, /<title>Oliver YEUNG \| A Little Learning Journey<\/title>/i);
-  assert.match(html, /name="description" content="A warm collection of everyday moments, gathered by Oliver(?:&#x27;|')s parents,/i);
+  assert.match(html, /name="description" content="A warm collection of everyday moments, gathered with care by Oliver(?:&#x27;|')s parents,/i);
   assert.match(text, /Oliver's little learning journey/);
   assert.match(text, /Hello, I'm Oliver\./);
   assert.match(text, /Oliver's everyday world/);
-  assert.match(text, /What catches his attention/);
-  assert.match(text, /How he communicates and connects/);
+  assert.match(text, /What sparks his curiosity/);
+  assert.match(text, /How he shares and connects/);
   assert.match(text, /Everyday moments, told with care/);
   assert.match(text, /Small steps in everyday life/);
   assert.match(text, /Small changes we have noticed/);
+  assert.match(text, /Family & Care/);
   assert.match(text, /Growing together at home/);
-  assert.match(text, /Care and belonging/);
+  assert.match(text, /Care and being together/);
+  assert.match(text, /hope written in their own words/);
   assert.match(text, /中文 \| English/);
-  assert.equal((text.match(/Story title to be added \d{2}/g) ?? []).length, 5);
+  assert.equal((text.match(/story to come · \d{2}/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/);
   assert.match(html, /class="greeting-visual" aria-hidden="true"/);
@@ -173,19 +175,21 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
 
   assert.match(html, /<html lang="zh-Hant-HK">/i);
   assert.match(html, /<title>昊熹｜小小成長旅程<\/title>/i);
-  assert.match(html, /name="description" content="由爸爸媽媽整理的一個個日常片段/);
+  assert.match(html, /name="description" content="由爸爸媽媽用心整理的一個個日常片段/);
   assert.match(text, /昊熹的小小成長旅程/);
   assert.match(text, /你好，\s*我是昊熹。/);
   assert.match(text, /昊熹的日常小世界/);
-  assert.match(text, /他會留意的事/);
-  assert.match(text, /他如何表達及與人連繫/);
+  assert.match(text, /吸引他的日常小事/);
+  assert.match(text, /他如何表達自己、與人連繫/);
   assert.match(text, /用心記下每個日常片段/);
   assert.match(text, /日常裏的一小步/);
   assert.match(text, /我們留意到的小轉變/);
-  assert.match(text, /在家中一起成長/);
-  assert.match(text, /關心與陪伴/);
+  assert.match(text, /家庭與陪伴/);
+  assert.match(text, /在家中，一起慢慢成長/);
+  assert.match(text, /關心與彼此陪伴/);
+  assert.match(text, /親自寫下的心願/);
   assert.match(text, /中文 \| English/);
-  assert.equal((text.match(/故事標題稍後加入 \d{2}/g) ?? []).length, 5);
+  assert.equal((text.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">你好，我是昊熹。<\/span>/);
   assert.doesNotMatch(html, /href="\/zh-hant\/summary\/"/);
@@ -227,8 +231,8 @@ test("keeps the bilingual custom 404 safe", async () => {
   if (html.trim() === "Not Found") return;
 
   const text = textContent(html);
-  assert.match(text, /We couldn't find this page\./);
-  assert.match(text, /暫時找不到這個頁面。/);
+  assert.match(text, /We couldn't find this little page\./);
+  assert.match(text, /暫時找不到這一頁。/);
   assert.match(html, /href="\/en\/"/);
   assert.match(html, /href="\/zh-hant\/"/);
   assert.match(html, /aria-label="中文 \| English"/);
