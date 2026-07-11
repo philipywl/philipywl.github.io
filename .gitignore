@@ -1,0 +1,77 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/.vinext/
+/out/
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+/logs/
+
+# local environment and secrets - never commit
+.env*
+
+# vercel
+.vercel
+
+# typescript
+next-env.d.ts
+/dist/
+/.wrangler/
+/outputs/
+/work/
+
+# local-only Sites metadata and original private media
+/.openai/hosting.json
+/private-media/
+/originals/
+
+# original media, local video, private documents, and generated archives
+*.3gp
+*.7z
+*.arw
+*.avi
+*.cr2
+*.dng
+*.docx
+*.gz
+*.heic
+*.heif
+*.m4v
+*.mkv
+*.mov
+*.mp4
+*.mpeg
+*.mpg
+*.nef
+*.ogv
+*.pdf
+*.raw
+*.tar
+*.tif
+*.tiff
+*.webm
+*.wmv
+*.zip
