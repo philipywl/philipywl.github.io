@@ -1,10 +1,10 @@
-# Oliver Yeung Portfolio
+# Oliver YEUNG Portfolio
 
-This repository contains Oliver Yeung's bilingual English and Traditional Chinese portfolio website.
+This repository contains Oliver YEUNG's bilingual English and Hong Kong Traditional Chinese portfolio website.
 
 ## Hosting and local preview
 
-- Production hosting: GitHub Pages at `https://philipywl.github.io/`
+- Production hosting: GitHub Pages at `https://oliveryeung.com/`
 - Local ChatGPT Sites/Vinext preview: `npm run dev`
 - GitHub Pages static build: `npm run build:pages`
 - Static output directory: `out/`

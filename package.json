@@ -10,7 +10,8 @@
     "build": "vinext build",
     "build:pages": "next build --webpack",
     "start": "vinext start",
-    "test": "node --test tests/source.test.mjs",
+    "test": "node --test tests/source.test.mjs tests/age.test.mjs",
+    "typecheck": "tsc --noEmit",
     "test:sites": "npm run build && node --test tests/rendered-html.test.mjs",
     "verify:pages": "node scripts/verify-pages.mjs",
     "preview:pages": "node scripts/serve-pages.mjs",
@@ -19,7 +20,8 @@
   "dependencies": {
     "next": "16.2.6",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
