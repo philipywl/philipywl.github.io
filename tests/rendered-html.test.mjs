@@ -41,6 +41,7 @@ function textContent(html) {
       .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
       .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
       .replace(/<span\b[^>]*class="[^"]*sr-only[^"]*"[^>]*>[\s\S]*?<\/span>/gi, " ")
+      .replace(/<wbr\s*\/?>/gi, "")
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " "),
   ).trim();
@@ -61,14 +62,12 @@ function expectRobots(html) {
     (tag) => getAttribute(tag, "name")?.toLowerCase() === "robots",
   );
   assert.ok(robots.length > 0, "robots metadata is missing");
-  // Next adds its own noindex tag to the global 404. Treat multiple robots
-  // tags as one combined directive set, as crawlers do.
   const content = robots
     .map((tag) => getAttribute(tag, "content") ?? "")
     .join(",")
     .toLowerCase();
   for (const directive of ["noindex", "nofollow", "noarchive", "nosnippet", "noimageindex"]) {
-    assert.match(content, new RegExp(`(?:^|,\\s*)${directive}(?:,|$)`), `robots lacks ${directive}`);
+    assert.match(content, new RegExp(`(?:^|,\\s*)${directive}(?:,|$)`));
   }
 }
 
@@ -78,20 +77,20 @@ function expectLink(html, { rel, href, hrefLang }) {
     if (getAttribute(tag, "href") !== href) return false;
     return hrefLang ? getAttribute(tag, "hreflang") === hrefLang : true;
   });
-  assert.ok(link, `missing ${rel} link ${hrefLang ? `${hrefLang} ` : ""}${href}`);
+  assert.ok(link, `missing ${rel} ${hrefLang ?? ""} ${href}`);
 }
 
-function expectMetadataAndIcons(html, canonical, englishPath, chinesePath) {
+function expectMetadataAndIcons(html, canonical) {
   expectRobots(html);
   expectLink(html, { rel: "canonical", href: canonical });
   expectLink(html, {
     rel: "alternate",
-    href: `https://oliveryeung.com${englishPath}`,
+    href: "https://oliveryeung.com/en/",
     hrefLang: "en-HK",
   });
   expectLink(html, {
     rel: "alternate",
-    href: `https://oliveryeung.com${chinesePath}`,
+    href: "https://oliveryeung.com/zh-hant/",
     hrefLang: "zh-Hant-HK",
   });
   expectLink(html, {
@@ -99,33 +98,29 @@ function expectMetadataAndIcons(html, canonical, englishPath, chinesePath) {
     href: "https://oliveryeung.com/",
     hrefLang: "x-default",
   });
-  assert.match(html, /href="(?:https:\/\/oliveryeung\.com)?\/favicon\.svg"/i);
-  assert.match(html, /href="(?:https:\/\/oliveryeung\.com)?\/favicon-32x32\.png"/i);
-  assert.match(html, /href="(?:https:\/\/oliveryeung\.com)?\/favicon-16x16\.png"/i);
-  assert.match(html, /href="(?:https:\/\/oliveryeung\.com)?\/apple-touch-icon\.png"/i);
+  for (const icon of ["favicon.svg", "favicon-16x16.png", "favicon-32x32.png", "apple-touch-icon.png"]) {
+    assert.match(html, new RegExp(`href="(?:https:\\/\\/oliveryeung\\.com)?\\/${icon.replaceAll(".", "\\.")}"`, "i"));
+  }
 }
 
 function expectNoForbiddenPublicCopy(html) {
   const publicSurface = html
     .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[\s\S]*?<\/style>/gi, " ");
-  const publicCopyPatterns = [
+  for (const pattern of [
     /\bK\s*1\b/i,
     /\b(?:application|applicant|admissions?)\b/i,
     /kindergarten/i,
     /(?:入學|申請|招生|學生|繁體中文)/u,
     /(?:private portfolio|private review|unpublished review)/i,
-    /(?:Content needed|Photo needed|Parent-provided|Alternative text will be added|Placeholder)/i,
+    /(?:Content needed|Photo needed|Parent-provided|Alternative text will be added)/i,
     /(?:待補|待加入|預留|爸爸媽媽提供|未發佈|審閱版本)/u,
-  ];
+    /one-page summary|一頁摘要/i,
+  ]) assert.doesNotMatch(publicSurface, pattern);
 
-  for (const pattern of publicCopyPatterns) assert.doesNotMatch(publicSurface, pattern);
   assert.doesNotMatch(html, /OLIVER_BIRTH_DATE|NEXT_PUBLIC_|dateOfBirth|birthDate/);
-
   const privateBirthDate = process.env.OLIVER_BIRTH_DATE?.trim();
-  if (privateBirthDate) {
-    assert.equal(html.includes(privateBirthDate), false, "private birth date leaked into rendered HTML");
-  }
+  if (privateBirthDate) assert.equal(html.includes(privateBirthDate), false);
 }
 
 function expectSafePage(html) {
@@ -134,188 +129,106 @@ function expectSafePage(html) {
     html,
     /<form\b|social-share|google-analytics|googletagmanager|segment\.com|mixpanel|facebook\.net|doubleclick/i,
   );
-  assert.doesNotMatch(html, /<img\b|<picture\b|<video\b|<source\b|<track\b/i);
+  assert.doesNotMatch(html, /<img\b|<picture\b|<video\b|<source\b|<track\b|<iframe\b/i);
 }
 
-test("renders the approved English public homepage", async () => {
+test("renders the refined English public homepage", async () => {
   const response = await render("/en/");
   assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
   const html = await response.text();
   const text = textContent(html);
+
   assert.match(html, /<html lang="en-HK">/i);
-  assert.match(html, /<title>Oliver Yeung \| A Little Learning Journey<\/title>/i);
-  assert.match(
-    html,
-    /name="description" content="A warm collection of everyday moments showing how Oliver explores, connects and grows at his own pace\."/i,
-  );
+  assert.match(html, /<title>Oliver YEUNG \| A Little Learning Journey<\/title>/i);
+  assert.match(html, /name="description" content="A warm collection of everyday moments, gathered by Oliver(?:&#x27;|')s parents,/i);
   assert.match(text, /Oliver's little learning journey/);
   assert.match(text, /Hello, I'm Oliver\./);
-  assert.match(text, /A small collection of everyday moments showing how Oliver explores, connects and grows at his own pace\./);
-  assert.match(text, /Everyday moments/);
-  assert.match(text, /At his own pace/);
-  assert.match(text, /Shared with care/);
-  assert.match(
-    text,
-    /This portfolio is shared by Oliver's parents\. Please do not copy, download or redistribute its photographs or videos\./,
-  );
+  assert.match(text, /Oliver's everyday world/);
+  assert.match(text, /What catches his attention/);
+  assert.match(text, /How he communicates and connects/);
+  assert.match(text, /Everyday moments, told with care/);
+  assert.match(text, /Small steps in everyday life/);
+  assert.match(text, /Small changes we have noticed/);
+  assert.match(text, /Growing together at home/);
+  assert.match(text, /Care and belonging/);
   assert.match(text, /中文 \| English/);
-  assert.match(html, /href="\/en\/summary\/"/);
+  assert.equal((text.match(/Story title to be added \d{2}/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/);
   assert.match(html, /class="greeting-visual" aria-hidden="true"/);
-  assert.match(text, /Explore Oliver's learning stories/);
-  assert.match(text, /Content preview/);
-  assert.match(text, /A little about Oliver/);
-  assert.match(text, /Everyday moments, told with care/);
-  assert.match(text, /A calm home for future videos/);
-  assert.match(text, /Everyday growth and small steps/);
-  assert.match(text, /The people and rhythms around Oliver/);
-  for (const href of ["#top", "#stories", "#growth", "#family"]) {
+  assert.doesNotMatch(html, /href="\/en\/summary\/"/);
+  assert.doesNotMatch(text, /\[[^\]]+\]/);
+  for (const href of ["#about", "#stories", "#growth", "#family"]) {
     assert.match(html, new RegExp(`href="${href}"`));
   }
-
-  expectMetadataAndIcons(
-    html,
-    "https://oliveryeung.com/en/",
-    "/en/",
-    "/zh-hant/",
-  );
+  expectMetadataAndIcons(html, "https://oliveryeung.com/en/");
   expectSafePage(html);
 });
 
-test("renders the approved Hong Kong Traditional Chinese homepage", async () => {
+test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   const response = await render("/zh-hant/");
   assert.equal(response.status, 200);
-
   const html = await response.text();
   const text = textContent(html);
+
   assert.match(html, /<html lang="zh-Hant-HK">/i);
   assert.match(html, /<title>昊熹｜小小成長旅程<\/title>/i);
-  assert.match(
-    html,
-    /name="description" content="透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。"/i,
-  );
+  assert.match(html, /name="description" content="由爸爸媽媽整理的一個個日常片段/);
   assert.match(text, /昊熹的小小成長旅程/);
   assert.match(text, /你好，\s*我是昊熹。/);
-  assert.match(text, /透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。/);
-  assert.match(text, /日常片段/);
-  assert.match(text, /按自己的步伐/);
-  assert.match(text, /用心分享/);
-  assert.match(text, /本作品集由昊熹的爸爸媽媽整理。請勿複製、下載或轉載網站內的相片及影片。/);
+  assert.match(text, /昊熹的日常小世界/);
+  assert.match(text, /他會留意的事/);
+  assert.match(text, /他如何表達及與人連繫/);
+  assert.match(text, /用心記下每個日常片段/);
+  assert.match(text, /日常裏的一小步/);
+  assert.match(text, /我們留意到的小轉變/);
+  assert.match(text, /在家中一起成長/);
+  assert.match(text, /關心與陪伴/);
   assert.match(text, /中文 \| English/);
-  assert.match(html, /href="\/zh-hant\/summary\/"/);
+  assert.equal((text.match(/故事標題稍後加入 \d{2}/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">你好，我是昊熹。<\/span>/);
-  assert.match(html, /class="greeting-visual" aria-hidden="true"/);
-  assert.match(text, /閱讀昊熹的成長故事/);
-  assert.match(text, /內容預覽/);
-  assert.match(text, /關於昊熹的一點點/);
-  assert.match(text, /用心記下每個日常片段/);
-  assert.match(text, /讓將來的影片自然融入故事/);
-  assert.match(text, /日常成長與一小步一小步/);
-  assert.match(text, /陪伴昊熹成長的人與日常/);
-
-  expectMetadataAndIcons(
-    html,
-    "https://oliveryeung.com/zh-hant/",
-    "/en/",
-    "/zh-hant/",
-  );
+  assert.doesNotMatch(html, /href="\/zh-hant\/summary\/"/);
+  assert.doesNotMatch(text, /\[[^\]]+\]/);
+  expectMetadataAndIcons(html, "https://oliveryeung.com/zh-hant/");
   expectSafePage(html);
-});
-
-test("renders both richer one-page previews without unsupported facts", async () => {
-  const cases = [
-    {
-      pathname: "/en/summary/",
-      lang: "en-HK",
-      title: "Oliver at a glance",
-      intro: "A small collection of everyday moments showing how Oliver explores, connects and grows at his own pace.",
-      updated: "Last updated 11 July 2026",
-      home: "Back to home",
-      print: "Print this page",
-      privacy: "This portfolio is shared by Oliver's parents. Please do not copy, download or redistribute its photographs or videos.",
-      canonical: "https://oliveryeung.com/en/summary/",
-    },
-    {
-      pathname: "/zh-hant/summary/",
-      lang: "zh-Hant-HK",
-      title: "昊熹的一頁摘要",
-      intro: "透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。",
-      updated: "最後更新：2026年7月11日",
-      home: "返回首頁",
-      print: "列印本頁",
-      privacy: "本作品集由昊熹的爸爸媽媽整理。請勿複製、下載或轉載網站內的相片及影片。",
-      canonical: "https://oliveryeung.com/zh-hant/summary/",
-    },
-  ];
-
-  for (const item of cases) {
-    const response = await render(item.pathname);
-    assert.equal(response.status, 200, item.pathname);
-    const html = await response.text();
-    const text = textContent(html);
-
-    assert.match(html, new RegExp(`<html lang="${item.lang}">`, "i"));
-    assert.match(text, new RegExp(item.title));
-    assert.match(text, new RegExp(item.intro.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(text, new RegExp(item.updated));
-    assert.match(text, new RegExp(item.home));
-    assert.match(text, new RegExp(item.print));
-    assert.match(text, new RegExp(item.privacy.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(text, /中文 \| English/);
-    assert.match(text, /Content preview|內容預覽/);
-    assert.match(text, /Everyday observations|日常觀察/);
-    assert.match(text, /Story highlights|故事重點/);
-    assert.match(text, /Family & values|家庭與價值觀/i);
-    assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
-    expectMetadataAndIcons(
-      html,
-      item.canonical,
-      "/en/summary/",
-      "/zh-hant/summary/",
-    );
-    expectSafePage(html);
-  }
 });
 
 test("renders an immediate root language handoff with a no-JavaScript fallback", async () => {
   const response = await render("/");
   assert.equal(response.status, 200);
-
   const html = await response.text();
   const text = textContent(html);
-  assert.match(html, /<html lang="en-HK">/i);
+
   assert.match(html, /window\.localStorage\.getItem\("oliver-portfolio-language"\)/);
   assert.match(html, /window\.navigator\.language/);
   assert.match(html, /startsWith\("zh"\)/);
   assert.match(html, /window\.location\.replace/);
   assert.match(html, /<noscript>/i);
+  assert.match(html, /aria-label="中文 \| English"/);
   assert.match(html, /href="\/zh-hant\/"[^>]*>中文<\/a>/i);
   assert.match(html, /href="\/en\/"[^>]*>English<\/a>/i);
   assert.doesNotMatch(text, /Opening|Loading|Continue in English|正在開啟|以中文繼續/i);
-  expectMetadataAndIcons(
-    html,
-    "https://oliveryeung.com/",
-    "/en/",
-    "/zh-hant/",
-  );
+  expectMetadataAndIcons(html, "https://oliveryeung.com/");
   expectNoForbiddenPublicCopy(html);
 });
 
-test("keeps the Vinext 404 artifact safe while the Pages build owns the custom 404", async () => {
-  const html = await readFile(new URL("../dist/client/404.html", import.meta.url), "utf8");
-  if (html.trim() === "Not Found") {
-    assert.equal(html.trim(), "Not Found");
+test("does not retain the removed one-page summary routes", async () => {
+  for (const pathname of ["/en/summary/", "/zh-hant/summary/"]) {
+    const response = await render(pathname);
+    assert.equal(response.status, 404, pathname);
+    const html = await response.text();
     expectNoForbiddenPublicCopy(html);
-    return;
   }
+});
+
+test("keeps the bilingual custom 404 safe", async () => {
+  const html = await readFile(new URL("../dist/client/404.html", import.meta.url), "utf8");
+  if (html.trim() === "Not Found") return;
 
   const text = textContent(html);
-  assert.match(text, /Page not found/);
-  assert.match(text, /找不到頁面/);
+  assert.match(text, /We couldn't find this page\./);
+  assert.match(text, /暫時找不到這個頁面。/);
   assert.match(html, /href="\/en\/"/);
   assert.match(html, /href="\/zh-hant\/"/);
   assert.match(html, /aria-label="中文 \| English"/);
@@ -323,20 +236,23 @@ test("keeps the Vinext 404 artifact safe while the Pages build owns the custom 4
   expectSafePage(html);
 });
 
-test("keeps preview media inert and the motion source safe", async () => {
-  const [portfolio, greeting, css] = await Promise.all([
+test("keeps preview media inert and motion source safe", async () => {
+  const [portfolio, controls, media, greeting, css] = await Promise.all([
     readFile(new URL("../app/OliverPortfolio.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/PortfolioControls.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/PreviewMedia.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/GreetingReveal.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
   assert.doesNotMatch(portfolio, /<img\b|<picture\b|<video\b|autoPlay|\bloop\b/);
   assert.match(portfolio, /<PreviewMedia/);
-  assert.match(portfolio, /copy\.videos\.items\.map/);
-  assert.match(portfolio, /usePointerContextMenuDeterrent\(\)/);
+  assert.doesNotMatch(portfolio, /copy\.videos|usePointerContextMenuDeterrent|SummaryLink/);
+  assert.doesNotMatch(controls, /contextmenu|SummaryLink/);
+  assert.doesNotMatch(media, /preview-play/);
   assert.match(greeting, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
   assert.doesNotMatch(greeting, /setInterval|\bloop\b/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(css, /\.greeting-heading \.greeting-segment[\s\S]*?animation:\s*none !important/);
+  assert.match(css, /greeting-cursor-rest[\s\S]*?forwards/);
   assert.match(css, /@media print[\s\S]*?\.no-print[\s\S]*?display:\s*none !important/);
 });

@@ -15,7 +15,7 @@ export default function GlobalError({ reset }: { reset: () => void }) {
             </p>
             <div className="button-row">
               <button className="button primary-button" type="button" onClick={reset}>
-                Try again&nbsp;／&nbsp;<span lang="zh-Hant-HK">再試一次</span>
+                Try again&nbsp;/&nbsp;<span lang="zh-Hant-HK">再試一次</span>
               </button>
               <nav className="language-switch" aria-label="中文 | English">
                 <a className="language-option" href="/zh-hant/" lang="zh-Hant-HK">

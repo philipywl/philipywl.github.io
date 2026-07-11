@@ -1,13 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import GreetingReveal from "./GreetingReveal";
 import PreviewMedia from "./PreviewMedia";
 import {
   LanguageSwitch,
   MobileMenu,
   PrintButton,
-  SummaryLink,
-  usePointerContextMenuDeterrent,
 } from "./PortfolioControls";
 import {
   localePaths,
@@ -27,13 +26,42 @@ export default function OliverPortfolio({
   const locale = initialLocale;
   const copy = portfolioCopy[locale];
   const navigationItems = [
-    { href: "#top", label: copy.nav.home },
+    { href: "#about", label: copy.nav.about },
     { href: "#stories", label: copy.nav.stories },
     { href: "#growth", label: copy.nav.growth },
     { href: "#family", label: copy.nav.family },
   ];
+  const [activeHref, setActiveHref] = useState("");
 
-  usePointerContextMenuDeterrent();
+  useEffect(() => {
+    const sections = ["about", "stories", "growth", "family"]
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+    const visibleSections = new Set<string>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visibleSections.add(entry.target.id);
+          else visibleSections.delete(entry.target.id);
+        });
+        const visible = sections
+          .filter((section) => visibleSections.has(section.id))
+          .sort(
+            (a, b) =>
+              Math.abs(a.getBoundingClientRect().top - 96) -
+              Math.abs(b.getBoundingClientRect().top - 96),
+          );
+
+        if (visible[0]) setActiveHref(`#${visible[0].id}`);
+        else if (window.scrollY < 120) setActiveHref("");
+      },
+      { rootMargin: "-96px 0px -60% 0px", threshold: [0, 0.1, 0.5] },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div id="top" className="site-shell" lang={copy.lang}>
@@ -54,28 +82,28 @@ export default function OliverPortfolio({
             aria-label={locale === "en" ? "Main navigation" : "主要導覽"}
           >
             {navigationItems.map((item) => (
-              <a href={item.href} key={item.href}>{item.label}</a>
+              <a
+                className={activeHref === item.href ? "is-active" : undefined}
+                href={item.href}
+                key={item.href}
+                aria-current={activeHref === item.href ? "location" : undefined}
+              >
+                {item.label}
+              </a>
             ))}
           </nav>
 
           <div className="header-actions">
             <LanguageSwitch
               locale={locale}
-              scope="home"
               label={copy.controls.languages}
               selectedLabel={copy.controls.selected}
             />
-            <SummaryLink
-              locale={locale}
-              label={copy.controls.summary}
-              className="summary-link header-summary-link"
-            />
             <MobileMenu
-              locale={locale}
               items={navigationItems}
               menuLabel={copy.controls.menu}
               closeLabel={copy.controls.closeMenu}
-              summaryLabel={copy.controls.summary}
+              activeHref={activeHref}
             />
           </div>
         </div>
@@ -109,11 +137,9 @@ export default function OliverPortfolio({
                 <a className="button primary-button" href="#stories">
                   {copy.hero.storiesAction}
                 </a>
-                <SummaryLink
-                  locale={locale}
-                  label={copy.controls.summary}
-                  className="button secondary-button summary-hero-link"
-                />
+                <a className="hero-text-link" href="#about">
+                  {copy.hero.aboutAction}
+                </a>
               </div>
             </div>
 
@@ -162,31 +188,17 @@ export default function OliverPortfolio({
           </div>
         </section>
 
-        <section
-          className="journal-principles section-pad"
-          aria-label={locale === "en" ? "About this learning journal" : "關於這份成長記錄"}
-        >
-          <div className="page-grid principles-grid">
-            {copy.principles.map((principle, index) => (
-              <article className="principle-card" key={principle.title}>
-                <span className="principle-number" aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h2>{principle.title}</h2>
-                <p>{principle.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
         <section id="stories" className="stories-section section-pad" aria-labelledby="stories-title">
           <div className="page-grid section-intro-grid">
             <div className="section-heading-copy">
               <p className="eyebrow">{copy.stories.eyebrow}</p>
               <h2 id="stories-title">{copy.stories.title}</h2>
               <p>{copy.stories.intro}</p>
+              <p className="story-media-note">{copy.stories.mediaNote}</p>
             </div>
-            <span className="section-count" aria-hidden="true">04</span>
+            <span className="section-count" aria-hidden="true">
+              {String(copy.stories.items.length).padStart(2, "0")}
+            </span>
           </div>
 
           <div className="page-grid stories-grid">
@@ -212,7 +224,6 @@ export default function OliverPortfolio({
                 <div className="story-content">
                   <header className="story-header">
                     <div>
-                      <span className="preview-badge">{copy.preview.badge}</span>
                       <h3>{story.title}</h3>
                     </div>
                     <p className="story-age">{story.age}</p>
@@ -234,10 +245,12 @@ export default function OliverPortfolio({
                     </div>
                   </div>
 
-                  <blockquote className="parent-reflection">
-                    <span>{copy.stories.reflection}</span>
-                    <p>{story.reflection}</p>
-                  </blockquote>
+                  {story.reflection && (
+                    <blockquote className="parent-reflection">
+                      <span>{copy.stories.reflection}</span>
+                      <p>{story.reflection}</p>
+                    </blockquote>
+                  )}
 
                   <div className="learning-clues" aria-label={copy.stories.learningClues}>
                     <span className="story-label">{copy.stories.learningClues}</span>
@@ -246,32 +259,6 @@ export default function OliverPortfolio({
                     ))}
                   </div>
                 </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="videos-section section-pad" aria-labelledby="videos-title">
-          <div className="page-grid section-intro-grid">
-            <div className="section-heading-copy">
-              <p className="eyebrow">{copy.videos.eyebrow}</p>
-              <h2 id="videos-title">{copy.videos.title}</h2>
-              <p>{copy.videos.intro}</p>
-            </div>
-          </div>
-
-          <div className="page-grid video-preview-grid">
-            {copy.videos.items.map((video, index) => (
-              <article className="video-preview-card" key={video.title}>
-                <PreviewMedia
-                  label={`${copy.preview.video} · ${String(index + 1).padStart(2, "0")}`}
-                  detail={video.detail}
-                  kind="video"
-                  ratio={video.ratio}
-                  tone={mediaTones[(index + 1) % mediaTones.length]}
-                  playLabel={copy.preview.playLabel}
-                />
-                <h3>{video.title}</h3>
               </article>
             ))}
           </div>
@@ -324,9 +311,19 @@ export default function OliverPortfolio({
               <h2 id="family-title">{copy.family.title}</h2>
               <p>{copy.family.intro}</p>
               <div className="family-values-card">
-                <span className="preview-badge">{copy.preview.badge}</span>
                 <h3>{copy.family.valuesTitle}</h3>
                 <p>{copy.family.valuesBody}</p>
+              </div>
+              <div className="family-vignette-grid">
+                {copy.family.vignettes.map((vignette, index) => (
+                  <article className="family-vignette" key={vignette.title}>
+                    <span className="field-index" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3>{vignette.title}</h3>
+                    <p>{vignette.body}</p>
+                  </article>
+                ))}
               </div>
             </div>
 
