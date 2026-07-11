@@ -5,9 +5,7 @@ const outputRoot = path.resolve(process.cwd(), "out");
 const requiredFiles = [
   "index.html",
   "en/index.html",
-  "en/summary/index.html",
   "zh-hant/index.html",
-  "zh-hant/summary/index.html",
   "404.html",
   "robots.txt",
   "favicon.svg",
@@ -98,8 +96,9 @@ const forbiddenPublicCopy = [
   ["Chinese institutional wording", /(?:入學|申請|招生|學生)/u],
   ["Traditional-Chinese display label", /繁體中文/u],
   ["private-review wording", /(?:private portfolio|private review|unpublished review)/i],
-  ["editorial placeholder", /(?:Content needed|Photo needed|Parent-provided|Alternative text will be added|Placeholder)/i],
+  ["old editorial placeholder", /(?:Content needed|Photo needed|Parent-provided|Alternative text will be added|Placeholder)/i],
   ["Chinese editorial placeholder", /(?:待補|待加入|預留|爸爸媽媽提供|未發佈|審閱版本)/u],
+  ["removed one-page summary", /(?:one-page summary|一頁摘要)/i],
 ];
 
 function fail(message) {
@@ -249,6 +248,9 @@ for (const relativePath of requiredFiles) {
 }
 
 const files = await walk(outputRoot);
+if (files.some((file) => /^(?:en|zh-hant)\/summary\//i.test(file))) {
+  fail("removed one-page summary output is still present");
+}
 if (files.some((file) => path.posix.basename(file).toLowerCase() === "cname")) {
   fail("CNAME must not be included before the domain workflow explicitly adds it");
 }
@@ -281,9 +283,7 @@ for (const relativePath of files) {
 const routeFiles = {
   root: "index.html",
   english: "en/index.html",
-  englishSummary: "en/summary/index.html",
   chinese: "zh-hant/index.html",
-  chineseSummary: "zh-hant/summary/index.html",
   notFound: "404.html",
 };
 const routeHtml = Object.fromEntries(
@@ -326,15 +326,16 @@ for (const expected of [
   "Oliver's little learning journey",
   "Hello, I'm Oliver.",
   "A small collection of everyday moments showing how Oliver explores, connects and grows at his own pace.",
-  "Everyday moments",
-  "At his own pace",
-  "Shared with care",
   "Content preview",
-  "A little about Oliver",
+  "Oliver's everyday world",
+  "What catches his attention",
+  "How he communicates and connects",
   "Everyday moments, told with care",
-  "A calm home for future videos",
-  "Everyday growth and small steps",
-  "The people and rhythms around Oliver",
+  "Short videos will sit beside the stories they belong to",
+  "Small steps in everyday life",
+  "Small changes we have noticed",
+  "Growing together at home",
+  "Care and belonging",
   "This portfolio is shared by Oliver's parents. Please do not copy, download or redistribute its photographs or videos.",
   "中文 | English",
 ]) {
@@ -343,15 +344,16 @@ for (const expected of [
 for (const expected of [
   "昊熹的小小成長旅程",
   "透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。",
-  "日常片段",
-  "按自己的步伐",
-  "用心分享",
   "內容預覽",
-  "關於昊熹的一點點",
+  "昊熹的日常小世界",
+  "他會留意的事",
+  "他如何表達及與人連繫",
   "用心記下每個日常片段",
-  "讓將來的影片自然融入故事",
-  "日常成長與一小步一小步",
-  "陪伴昊熹成長的人與日常",
+  "短片會放在相關故事旁邊",
+  "日常裏的一小步",
+  "我們留意到的小轉變",
+  "在家中一起成長",
+  "關心與陪伴",
   "本作品集由昊熹的爸爸媽媽整理。請勿複製、下載或轉載網站內的相片及影片。",
   "中文 | English",
 ]) {
@@ -364,6 +366,18 @@ if (!/<span class="sr-only">你好，我是昊熹。<\/span>/.test(routeHtml.chi
 }
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.english)) fail("English visual greeting is not aria-hidden");
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail("Chinese visual greeting is not aria-hidden");
+if (/href="\/(?:en|zh-hant)\/summary\//i.test(routeHtml.english + routeHtml.chinese)) {
+  fail("a removed one-page summary link remains on a locale page");
+}
+if ((englishText.match(/Story title to be added \d{2}/g) ?? []).length !== 5) {
+  fail("English page does not contain the five approved story previews");
+}
+if ((chineseText.match(/故事標題稍後加入 \d{2}/g) ?? []).length !== 5) {
+  fail("Chinese page does not contain the five approved story previews");
+}
+if (/\[[^\]]+\]/.test(englishText + chineseText)) {
+  fail("bracketed editorial tokens remain in visitor-visible text");
+}
 requireMetadata(
   routeHtml.english,
   "English page",
@@ -379,20 +393,7 @@ requireMetadata(
   "/zh-hant/",
 );
 
-for (const [route, html, lang, title, canonical] of [
-  ["English summary", routeHtml.englishSummary, "en-HK", "Oliver at a glance", "https://oliveryeung.com/en/summary/"],
-  ["Chinese summary", routeHtml.chineseSummary, "zh-Hant-HK", "昊熹的一頁摘要", "https://oliveryeung.com/zh-hant/summary/"],
-]) {
-  if (!new RegExp(`<html[^>]+lang="${lang}"`, "i").test(html)) fail(`${route} has the wrong page language`);
-  if (!visibleText(html).includes(title)) fail(`${route} lacks its approved title`);
-  if (!/(?:Content preview|內容預覽)/.test(visibleText(html))) {
-    fail(`${route} lacks its approved content-preview label`);
-  }
-  if ((html.match(/<h1\b/gi) ?? []).length !== 1) fail(`${route} must contain one H1`);
-  requireMetadata(html, route, canonical, "/en/summary/", "/zh-hant/summary/");
-}
-
-if (!routeHtml.notFound.includes("Page not found") || !routeHtml.notFound.includes("找不到頁面")) {
+if (!routeHtml.notFound.includes("We couldn") || !routeHtml.notFound.includes("暫時找不到這個頁面")) {
   fail("404 lacks the bilingual not-found message");
 }
 if (!/href="\/en\/"/i.test(routeHtml.notFound) || !/href="\/zh-hant\/"/i.test(routeHtml.notFound)) {
@@ -415,6 +416,12 @@ if (/Noto Serif|Georgia|--serif|@font-face|fonts\.(?:googleapis|gstatic)\.com/i.
   fail("an unapproved serif or external font remains in the artifact");
 }
 if (/(?<!sans-)\bserif\b/i.test(css)) fail("a separate serif font family remains in the artifact");
+if (/summary-(?:card|main|link|hero|footer)|video-preview-grid|preview-play/i.test(css)) {
+  fail("removed summary or fake-video-control styling remains in the artifact");
+}
+if (!/greeting-cursor-rest[^}]*animation:[^;]*forwards/i.test(css)) {
+  fail("the delayed greeting cursor is not hidden correctly before its reveal");
+}
 
 console.log(`GitHub Pages artifact verified: ${files.length} files in ${outputRoot}`);
 console.log(`Required static files: ${requiredFiles.join(", ")}`);

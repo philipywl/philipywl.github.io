@@ -23,7 +23,7 @@ export default function PreviewMedia({
 
   return (
     <figure
-      className={`preview-media preview-media-${ratio} preview-media-${tone} ${className}`.trim()}
+      className={`preview-media preview-media-${kind} preview-media-${ratio} preview-media-${tone} ${className}`.trim()}
     >
       <div
         className="preview-media-surface"
@@ -31,11 +31,6 @@ export default function PreviewMedia({
         aria-label={accessibleLabel}
       >
         <span className="preview-media-orbit" aria-hidden="true" />
-        {kind === "video" && (
-          <span className="preview-play" aria-hidden="true">
-            <span />
-          </span>
-        )}
         <span className="preview-media-label">{label}</span>
       </div>
       <figcaption>{detail}</figcaption>

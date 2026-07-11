@@ -19,7 +19,7 @@ export default function RootRedirect() {
     <main className="route-redirect route-redirect-immediate">
       <script dangerouslySetInnerHTML={{ __html: languageRedirect }} />
       <noscript>
-        <nav className="route-language-fallback" aria-label="Choose language｜選擇語言">
+        <nav className="route-language-fallback" aria-label="中文 | English">
           <a href="/zh-hant/" lang="zh-Hant-HK">中文</a>
           <span aria-hidden="true">|</span>
           <a href="/en/" lang="en-HK">English</a>

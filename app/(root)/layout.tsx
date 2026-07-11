@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     url: "/",
     title: ENGLISH_TITLE,
     description: ENGLISH_DESCRIPTION,
-    siteName: "Oliver Yeung",
+    siteName: "Oliver YEUNG",
     locale: "en_HK",
     alternateLocale: ["zh_HK"],
   },

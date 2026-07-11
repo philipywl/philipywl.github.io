@@ -11,8 +11,6 @@ import {
   type PortfolioLocale,
 } from "./portfolio-copy";
 
-type RouteScope = "home" | "summary";
-
 export type NavigationItem = {
   href: string;
   label: string;
@@ -21,32 +19,6 @@ export type NavigationItem = {
 type IconProps = {
   className?: string;
 };
-
-export function SummaryIcon({ className = "button-icon" }: IconProps) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      focusable="false"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M7 3.75h7.1L18 7.65v12.6H7V3.75Z"
-        stroke="currentColor"
-        strokeLinejoin="round"
-        strokeWidth="1.75"
-      />
-      <path
-        d="M14 3.9v3.9h3.9M9.6 12h5.8M9.6 15.5h4.4"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.75"
-      />
-    </svg>
-  );
-}
 
 export function PrintIcon({ className = "button-icon" }: IconProps) {
   return (
@@ -65,26 +37,6 @@ export function PrintIcon({ className = "button-icon" }: IconProps) {
         strokeWidth="1.75"
       />
       <path d="M16.5 12.25h.01" stroke="currentColor" strokeLinecap="round" strokeWidth="2.25" />
-    </svg>
-  );
-}
-
-export function HomeIcon({ className = "button-icon" }: IconProps) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      focusable="false"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="m4.25 11.2 7.75-6.45 7.75 6.45M6.75 9.65v9.6h10.5v-9.6M10 19.25v-5.5h4v5.5"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.75"
-      />
     </svg>
   );
 }
@@ -129,12 +81,10 @@ function CloseIcon({ className = "button-icon" }: IconProps) {
 
 export function LanguageSwitch({
   locale,
-  scope,
   label,
   selectedLabel,
 }: {
   locale: PortfolioLocale;
-  scope: RouteScope;
   label: string;
   selectedLabel: string;
 }) {
@@ -157,7 +107,7 @@ export function LanguageSwitch({
     }
 
     if (window.location.hash) {
-      event.currentTarget.href = `${localePaths[nextLocale][scope]}${window.location.hash}`;
+      event.currentTarget.href = `${localePaths[nextLocale].home}${window.location.hash}`;
     }
   };
 
@@ -165,7 +115,7 @@ export function LanguageSwitch({
     <nav className="language-switch" aria-label={label}>
       <a
         className={`language-option ${locale === "zh" ? "is-selected" : ""}`}
-        href={localePaths.zh[scope]}
+        href={localePaths.zh.home}
         aria-current={locale === "zh" ? "page" : undefined}
         hrefLang="zh-Hant-HK"
         lang="zh-Hant-HK"
@@ -177,7 +127,7 @@ export function LanguageSwitch({
       <span className="language-divider" aria-hidden="true">|</span>
       <a
         className={`language-option ${locale === "en" ? "is-selected" : ""}`}
-        href={localePaths.en[scope]}
+        href={localePaths.en.home}
         aria-current={locale === "en" ? "page" : undefined}
         hrefLang="en-HK"
         lang="en-HK"
@@ -187,23 +137,6 @@ export function LanguageSwitch({
         {locale === "en" && <span className="sr-only"> — {selectedLabel}</span>}
       </a>
     </nav>
-  );
-}
-
-export function SummaryLink({
-  locale,
-  label,
-  className = "summary-link",
-}: {
-  locale: PortfolioLocale;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <a className={className} href={localePaths[locale].summary}>
-      <SummaryIcon />
-      <span>{label}</span>
-    </a>
   );
 }
 
@@ -229,35 +162,16 @@ export function PrintButton({
   );
 }
 
-export function HomeLink({
-  locale,
-  label,
-  className = "button secondary-button",
-}: {
-  locale: PortfolioLocale;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <a className={className} href={localePaths[locale].home}>
-      <HomeIcon />
-      <span>{label}</span>
-    </a>
-  );
-}
-
 export function MobileMenu({
-  locale,
   items,
   menuLabel,
   closeLabel,
-  summaryLabel,
+  activeHref,
 }: {
-  locale: PortfolioLocale;
   items: NavigationItem[];
   menuLabel: string;
   closeLabel: string;
-  summaryLabel: string;
+  activeHref: string;
 }) {
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -314,6 +228,11 @@ export function MobileMenu({
           event.preventDefault();
           closeMenu();
         }}
+        onKeyDown={(event) => {
+          if (event.key !== "Escape") return;
+          event.preventDefault();
+          closeMenu();
+        }}
         onClose={restorePage}
       >
         <div className="mobile-menu-panel">
@@ -331,30 +250,19 @@ export function MobileMenu({
           </div>
           <nav className="mobile-menu-nav" aria-label={menuLabel}>
             {items.map((item) => (
-              <a href={item.href} key={item.href} onClick={closeMenu}>
+              <a
+                className={activeHref === item.href ? "is-active" : undefined}
+                href={item.href}
+                key={item.href}
+                aria-current={activeHref === item.href ? "location" : undefined}
+                onClick={closeMenu}
+              >
                 {item.label}
               </a>
             ))}
           </nav>
-          <SummaryLink
-            locale={locale}
-            label={summaryLabel}
-            className="button secondary-button mobile-summary-link"
-          />
         </div>
       </dialog>
     </div>
   );
-}
-
-export function usePointerContextMenuDeterrent() {
-  useEffect(() => {
-    const blockPointerContextMenu = (event: MouseEvent) => {
-      // This is a light deterrent only. Keyboard context menus remain available.
-      if (event.button === 2 || event.ctrlKey) event.preventDefault();
-    };
-
-    document.addEventListener("contextmenu", blockPointerContextMenu, true);
-    return () => document.removeEventListener("contextmenu", blockPointerContextMenu, true);
-  }, []);
 }
