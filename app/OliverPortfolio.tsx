@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import GreetingReveal from "./GreetingReveal";
 import PreviewMedia from "./PreviewMedia";
 import {
+  ArrowUpIcon,
   LanguageSwitch,
   MobileMenu,
   PrintButton,
@@ -32,6 +33,16 @@ export default function OliverPortfolio({
     { href: "#family", label: copy.nav.family },
   ];
   const [activeHref, setActiveHref] = useState("");
+  const focusMain = () => {
+    window.requestAnimationFrame(() => {
+      document.getElementById("main-content")?.focus({ preventScroll: true });
+    });
+  };
+  const focusHero = () => {
+    window.requestAnimationFrame(() => {
+      document.getElementById("hero-title")?.focus({ preventScroll: true });
+    });
+  };
 
   useEffect(() => {
     const sections = ["about", "stories", "growth", "family"]
@@ -65,16 +76,20 @@ export default function OliverPortfolio({
 
   return (
     <div id="top" className="site-shell" lang={copy.lang}>
-      <a className="skip-link" href="#main-content">{copy.skip}</a>
+      <a className="skip-link" href="#main-content" onClick={focusMain}>{copy.skip}</a>
 
       <header className="site-header no-print">
         <div className="header-inner">
           <a
             className="wordmark"
             href={localePaths[locale].home}
-            aria-label={copy.wordmarkLabel}
           >
-            <span>Oliver</span> YEUNG
+            <span className="wordmark-name" lang="en-HK">
+              <span>Oliver</span> YEUNG
+            </span>
+            <span className="sr-only" lang={copy.lang}>
+              {locale === "en" ? " — return to homepage" : "，返回首頁"}
+            </span>
           </a>
 
           <nav
@@ -109,7 +124,7 @@ export default function OliverPortfolio({
         </div>
       </header>
 
-      <main id="main-content">
+      <main id="main-content" tabIndex={-1}>
         <section className="hero section-pad" aria-labelledby="hero-title">
           <div className="page-grid hero-grid">
             <div className="hero-copy">
@@ -157,7 +172,7 @@ export default function OliverPortfolio({
           <div className="page-grid section-intro-grid">
             <div className="section-heading-copy">
               <p className="eyebrow">{copy.about.eyebrow}</p>
-              <h2 id="about-title">{copy.about.title}</h2>
+              <h2 id="about-title" tabIndex={-1}>{copy.about.title}</h2>
               <p>{copy.about.intro}</p>
             </div>
             <aside className="preview-note" aria-label={copy.preview.badge}>
@@ -192,13 +207,10 @@ export default function OliverPortfolio({
           <div className="page-grid section-intro-grid">
             <div className="section-heading-copy">
               <p className="eyebrow">{copy.stories.eyebrow}</p>
-              <h2 id="stories-title">{copy.stories.title}</h2>
+              <h2 id="stories-title" tabIndex={-1}>{copy.stories.title}</h2>
               <p>{copy.stories.intro}</p>
               <p className="story-media-note">{copy.stories.mediaNote}</p>
             </div>
-            <span className="section-count" aria-hidden="true">
-              {String(copy.stories.items.length).padStart(2, "0")}
-            </span>
           </div>
 
           <div className="page-grid stories-grid">
@@ -268,7 +280,7 @@ export default function OliverPortfolio({
           <div className="page-grid section-intro-grid">
             <div className="section-heading-copy">
               <p className="eyebrow">{copy.growth.eyebrow}</p>
-              <h2 id="growth-title">{copy.growth.title}</h2>
+              <h2 id="growth-title" tabIndex={-1}>{copy.growth.title}</h2>
               <p>{copy.growth.intro}</p>
             </div>
           </div>
@@ -308,7 +320,7 @@ export default function OliverPortfolio({
           <div className="page-grid family-grid">
             <div className="family-copy">
               <p className="eyebrow">{copy.family.eyebrow}</p>
-              <h2 id="family-title">{copy.family.title}</h2>
+              <h2 id="family-title" tabIndex={-1}>{copy.family.title}</h2>
               <p>{copy.family.intro}</p>
               <div className="family-values-card">
                 <h3>{copy.family.valuesTitle}</h3>
@@ -349,7 +361,14 @@ export default function OliverPortfolio({
             <p>{copy.closing.reflection}</p>
             <p>{copy.closing.hope}</p>
             <div className="button-row no-print">
-              <a className="button secondary-button" href="#top">{copy.footer.top}</a>
+              <a
+                className="button secondary-button"
+                href="#hero-title"
+                onClick={focusHero}
+              >
+                <ArrowUpIcon />
+                <span>{copy.footer.top}</span>
+              </a>
               <PrintButton
                 label={copy.controls.print}
                 accessibleLabel={copy.controls.printLabel}
@@ -389,7 +408,7 @@ export default function OliverPortfolio({
             aria-label={locale === "en" ? "Footer navigation" : "頁尾導覽"}
           >
             <a href="#privacy-notice">{copy.privacy.link}</a>
-            <a href="#top">{copy.footer.top}</a>
+            <a href="#hero-title" onClick={focusHero}>{copy.footer.top}</a>
           </nav>
         </div>
       </footer>

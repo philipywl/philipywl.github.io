@@ -41,6 +41,26 @@ export function PrintIcon({ className = "button-icon" }: IconProps) {
   );
 }
 
+export function ArrowUpIcon({ className = "button-icon" }: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      focusable="false"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="m6.75 10.25 5.25-5.25 5.25 5.25M12 5.25v13.5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.75"
+      />
+    </svg>
+  );
+}
+
 function MenuIcon({ className = "button-icon" }: IconProps) {
   return (
     <svg
@@ -177,11 +197,24 @@ export function MobileMenu({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const previousOverflowRef = useRef("");
+  const destinationRef = useRef<string | null>(null);
 
   const restorePage = () => {
     document.body.style.overflow = previousOverflowRef.current;
     setOpen(false);
-    window.requestAnimationFrame(() => triggerRef.current?.focus());
+    const destination = destinationRef.current;
+    destinationRef.current = null;
+
+    window.requestAnimationFrame(() => {
+      if (destination) {
+        const section = document.querySelector<HTMLElement>(destination);
+        const heading = section?.querySelector<HTMLElement>("h2, h3");
+        heading?.focus({ preventScroll: true });
+        return;
+      }
+
+      triggerRef.current?.focus();
+    });
   };
 
   const closeMenu = () => {
@@ -191,6 +224,7 @@ export function MobileMenu({
   const openMenu = () => {
     const dialog = dialogRef.current;
     if (!dialog || dialog.open) return;
+    destinationRef.current = null;
     previousOverflowRef.current = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     dialog.showModal();
@@ -233,6 +267,9 @@ export function MobileMenu({
           event.preventDefault();
           closeMenu();
         }}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) closeMenu();
+        }}
         onClose={restorePage}
       >
         <div className="mobile-menu-panel">
@@ -255,7 +292,10 @@ export function MobileMenu({
                 href={item.href}
                 key={item.href}
                 aria-current={activeHref === item.href ? "location" : undefined}
-                onClick={closeMenu}
+                onClick={() => {
+                  destinationRef.current = item.href;
+                  closeMenu();
+                }}
               >
                 {item.label}
               </a>
