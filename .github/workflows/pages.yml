@@ -8,6 +8,8 @@ on:
     branches:
       - main
   workflow_dispatch:
+  schedule:
+    - cron: "17 16 * * *"
 
 permissions:
   contents: read
@@ -38,10 +40,19 @@ jobs:
       - name: Run tests
         run: npm run test --if-present
 
+      - name: Check TypeScript
+        run: npm run typecheck --if-present
+
       - name: Build static Pages artifact
+        env:
+          OLIVER_BIRTH_DATE: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && secrets.OLIVER_BIRTH_DATE || '' }}
+          REQUIRE_OLIVER_AGE: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && 'true' || 'false' }}
         run: npm run build:pages
 
       - name: Verify static Pages artifact
+        env:
+          OLIVER_BIRTH_DATE: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && secrets.OLIVER_BIRTH_DATE || '' }}
+          REQUIRE_OLIVER_AGE: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && 'true' || 'false' }}
         run: npm run verify:pages
 
       - name: Configure GitHub Pages

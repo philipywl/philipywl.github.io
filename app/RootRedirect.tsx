@@ -1,29 +1,29 @@
-"use client";
+const languageRedirect = `(() => {
+  let language = "";
+  try {
+    language = window.localStorage.getItem("oliver-portfolio-language") || "";
+  } catch {}
 
-import { useEffect } from "react";
+  if (language !== "en" && language !== "zh") {
+    language = (window.navigator.language || "").toLowerCase().startsWith("zh")
+      ? "zh"
+      : "en";
+  }
+
+  const destination = language === "zh" ? "/zh-hant/" : "/en/";
+  window.location.replace(destination + (window.location.hash || ""));
+})();`;
 
 export default function RootRedirect() {
-  useEffect(() => {
-    let destination = "/en/";
-    try {
-      if (window.localStorage.getItem("oliver-portfolio-language") === "zh") {
-        destination = "/zh-hant/";
-      }
-    } catch {
-      // English is the safe fallback when local preferences are unavailable.
-    }
-    window.location.replace(destination);
-  }, []);
-
   return (
-    <main className="route-redirect" aria-live="polite">
-      <p>Opening Oliver&apos;s portfolio…</p>
+    <main className="route-redirect route-redirect-immediate">
+      <script dangerouslySetInnerHTML={{ __html: languageRedirect }} />
       <noscript>
-        <p>
-          <a href="/en/">Continue in English</a>
-          {" · "}
-          <a href="/zh-hant/">以中文繼續</a>
-        </p>
+        <nav className="route-language-fallback" aria-label="Choose language｜選擇語言">
+          <a href="/zh-hant/" lang="zh-Hant-HK">中文</a>
+          <span aria-hidden="true">|</span>
+          <a href="/en/" lang="en-HK">English</a>
+        </nav>
       </noscript>
     </main>
   );

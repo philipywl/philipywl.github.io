@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
-import OliverPortfolio from "../../OliverPortfolio";
-import { getCurrentPortfolioAge } from "../../../lib/current-age.server";
+import PortfolioSummary from "../../../PortfolioSummary";
+import { getCurrentPortfolioAge } from "../../../../lib/current-age.server";
 import {
   ENGLISH_DESCRIPTION,
-  ENGLISH_TITLE,
   localeAlternates,
   reviewRobots,
-} from "../../site-metadata";
+} from "../../../site-metadata";
+
+const title = "One-Page Summary | Oliver Yeung";
 
 export const metadata: Metadata = {
-  title: ENGLISH_TITLE,
+  title,
   description: ENGLISH_DESCRIPTION,
   robots: reviewRobots,
   alternates: {
-    canonical: "/en/",
-    languages: localeAlternates("/en/", "/zh-hant/"),
+    canonical: "/en/summary/",
+    languages: localeAlternates("/en/summary/", "/zh-hant/summary/"),
   },
   openGraph: {
     type: "website",
-    url: "/en/",
-    title: ENGLISH_TITLE,
+    url: "/en/summary/",
+    title,
     description: ENGLISH_DESCRIPTION,
     siteName: "Oliver YEUNG",
     locale: "en_HK",
@@ -27,16 +28,16 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: ENGLISH_TITLE,
+    title,
     description: ENGLISH_DESCRIPTION,
   },
 };
 
-export default function EnglishPortfolio() {
+export default function EnglishPortfolioSummary() {
   const age = getCurrentPortfolioAge();
 
   return (
-    <OliverPortfolio
+    <PortfolioSummary
       initialLocale="en"
       age={age?.english ?? null}
     />

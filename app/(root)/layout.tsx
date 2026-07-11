@@ -1,19 +1,38 @@
 import type { Metadata, Viewport } from "next";
 import "../globals.css";
+import {
+  ENGLISH_DESCRIPTION,
+  ENGLISH_TITLE,
+  localeAlternates,
+  sharedMetadata,
+  sharedViewport,
+} from "../site-metadata";
 
 export const metadata: Metadata = {
-  title: "Oliver YEUNG | A little learner's portfolio",
-  description:
-    "Choose the English or Traditional Chinese version of Oliver's private review portfolio.",
-  robots: { index: false, follow: false, nocache: true },
-  referrer: "no-referrer",
+  ...sharedMetadata,
+  title: ENGLISH_TITLE,
+  description: ENGLISH_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+    languages: localeAlternates("/en/", "/zh-hant/"),
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: ENGLISH_TITLE,
+    description: ENGLISH_DESCRIPTION,
+    siteName: "Oliver Yeung",
+    locale: "en_HK",
+    alternateLocale: ["zh_HK"],
+  },
+  twitter: {
+    card: "summary",
+    title: ENGLISH_TITLE,
+    description: ENGLISH_DESCRIPTION,
+  },
 };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  themeColor: "#FAF7F1",
-};
+export const viewport: Viewport = sharedViewport;
 
 export default function RootEntryLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
