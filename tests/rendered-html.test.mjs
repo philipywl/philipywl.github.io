@@ -165,7 +165,16 @@ test("renders the approved English public homepage", async () => {
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/);
   assert.match(html, /class="greeting-visual" aria-hidden="true"/);
-  assert.doesNotMatch(text, /Explore Oliver's learning stories/);
+  assert.match(text, /Explore Oliver's learning stories/);
+  assert.match(text, /Content preview/);
+  assert.match(text, /A little about Oliver/);
+  assert.match(text, /Everyday moments, told with care/);
+  assert.match(text, /A calm home for future videos/);
+  assert.match(text, /Everyday growth and small steps/);
+  assert.match(text, /The people and rhythms around Oliver/);
+  for (const href of ["#top", "#stories", "#growth", "#family"]) {
+    assert.match(html, new RegExp(`href="${href}"`));
+  }
 
   expectMetadataAndIcons(
     html,
@@ -189,7 +198,7 @@ test("renders the approved Hong Kong Traditional Chinese homepage", async () => 
     /name="description" content="透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。"/i,
   );
   assert.match(text, /昊熹的小小成長旅程/);
-  assert.match(text, /你好，我是昊熹。/);
+  assert.match(text, /你好，\s*我是昊熹。/);
   assert.match(text, /透過一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐成長。/);
   assert.match(text, /日常片段/);
   assert.match(text, /按自己的步伐/);
@@ -200,7 +209,13 @@ test("renders the approved Hong Kong Traditional Chinese homepage", async () => 
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">你好，我是昊熹。<\/span>/);
   assert.match(html, /class="greeting-visual" aria-hidden="true"/);
-  assert.doesNotMatch(text, /閱讀昊熹的成長故事/);
+  assert.match(text, /閱讀昊熹的成長故事/);
+  assert.match(text, /內容預覽/);
+  assert.match(text, /關於昊熹的一點點/);
+  assert.match(text, /用心記下每個日常片段/);
+  assert.match(text, /讓將來的影片自然融入故事/);
+  assert.match(text, /日常成長與一小步一小步/);
+  assert.match(text, /陪伴昊熹成長的人與日常/);
 
   expectMetadataAndIcons(
     html,
@@ -211,7 +226,7 @@ test("renders the approved Hong Kong Traditional Chinese homepage", async () => 
   expectSafePage(html);
 });
 
-test("renders both minimal one-page summaries without unsupported facts", async () => {
+test("renders both richer one-page previews without unsupported facts", async () => {
   const cases = [
     {
       pathname: "/en/summary/",
@@ -251,6 +266,10 @@ test("renders both minimal one-page summaries without unsupported facts", async 
     assert.match(text, new RegExp(item.print));
     assert.match(text, new RegExp(item.privacy.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     assert.match(text, /中文 \| English/);
+    assert.match(text, /Content preview|內容預覽/);
+    assert.match(text, /Everyday observations|日常觀察/);
+    assert.match(text, /Story highlights|故事重點/);
+    assert.match(text, /Family & values|家庭與價值觀/i);
     assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
     expectMetadataAndIcons(
       html,
@@ -304,7 +323,7 @@ test("keeps the Vinext 404 artifact safe while the Pages build owns the custom 4
   expectSafePage(html);
 });
 
-test("keeps the future media surface absent and motion source safe", async () => {
+test("keeps preview media inert and the motion source safe", async () => {
   const [portfolio, greeting, css] = await Promise.all([
     readFile(new URL("../app/OliverPortfolio.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/GreetingReveal.tsx", import.meta.url), "utf8"),
@@ -312,6 +331,8 @@ test("keeps the future media surface absent and motion source safe", async () =>
   ]);
 
   assert.doesNotMatch(portfolio, /<img\b|<picture\b|<video\b|autoPlay|\bloop\b/);
+  assert.match(portfolio, /<PreviewMedia/);
+  assert.match(portfolio, /copy\.videos\.items\.map/);
   assert.match(portfolio, /usePointerContextMenuDeterrent\(\)/);
   assert.match(greeting, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
   assert.doesNotMatch(greeting, /setInterval|\bloop\b/);

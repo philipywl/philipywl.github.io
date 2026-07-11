@@ -39,7 +39,7 @@ export const sharedIcons: Metadata["icons"] = {
 export const sharedViewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#FFF8EC",
+  themeColor: "#FFF9E6",
   colorScheme: "light",
 };
 

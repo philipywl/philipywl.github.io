@@ -69,12 +69,17 @@ export default function GreetingReveal({
         suppressHydrationWarning
       >
         <span className="sr-only">{greeting}</span>
-        <span className="greeting-reserve" aria-hidden="true">{greeting}</span>
+        <span className="greeting-reserve" aria-hidden="true">
+          <span className="greeting-part">{lead}</span>
+          {locale === "en" ? " " : <wbr />}
+          <span className="greeting-part">{rest}</span>
+        </span>
         <span className="greeting-visual" aria-hidden="true">
           <span className="greeting-part greeting-part-lead">
             <span className="greeting-segment">{lead}</span>
             <span className="greeting-cursor greeting-cursor-lead" />
-          </span>{" "}
+          </span>
+          {locale === "en" ? " " : <wbr />}
           <span className="greeting-part greeting-part-rest">
             <span className="greeting-segment">{rest}</span>
             <span className="greeting-cursor greeting-cursor-rest" />

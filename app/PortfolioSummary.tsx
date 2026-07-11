@@ -1,5 +1,6 @@
 "use client";
 
+import PreviewMedia from "./PreviewMedia";
 import {
   HomeLink,
   LanguageSwitch,
@@ -50,10 +51,13 @@ export default function PortfolioSummary({
 
       <main id="summary-content" className="summary-main">
         <article className="page-grid summary-card" aria-labelledby="summary-title">
-          <div className="summary-mark" aria-hidden="true">
-            <span className="summary-mark-o">O</span>
-            <span className="summary-mark-leaf" />
-          </div>
+          <PreviewMedia
+            label={copy.preview.portrait}
+            detail={copy.preview.portraitDetail}
+            ratio="portrait"
+            tone="sky"
+            className="summary-preview-portrait"
+          />
 
           <div className="summary-copy">
             <p className="eyebrow">{copy.summary.eyebrow}</p>
@@ -70,17 +74,40 @@ export default function PortfolioSummary({
               </p>
             )}
             <p className="summary-intro">{copy.summary.intro}</p>
+            <p className="summary-preview-note">
+              <span className="preview-badge">{copy.preview.badge}</span>
+              {copy.preview.note}
+            </p>
 
-            <div
-              className="summary-principles"
-              aria-label={locale === "en" ? "Journal principles" : "成長記錄原則"}
-            >
-              {copy.principles.map((principle) => (
-                <div key={principle.title}>
-                  <h2>{principle.title}</h2>
-                  <p>{principle.description}</p>
-                </div>
-              ))}
+            <section className="summary-section" aria-labelledby="summary-observations-title">
+              <h2 id="summary-observations-title">{copy.summary.observationsTitle}</h2>
+              <div className="summary-observation-grid">
+                {copy.summary.observations.map((observation, index) => (
+                  <article key={observation.title}>
+                    <span className="field-index" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3>{observation.title}</h3>
+                    <p>{observation.body}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <div className="summary-bottom-grid">
+              <section className="summary-section" aria-labelledby="summary-stories-title">
+                <h2 id="summary-stories-title">{copy.summary.storiesTitle}</h2>
+                <ol className="summary-story-list">
+                  {copy.summary.storyHighlights.map((story) => (
+                    <li key={story}>{story}</li>
+                  ))}
+                </ol>
+              </section>
+
+              <section className="summary-section summary-family" aria-labelledby="summary-family-title">
+                <h2 id="summary-family-title">{copy.summary.familyTitle}</h2>
+                <p>{copy.summary.familyBody}</p>
+              </section>
             </div>
 
             <p className="summary-updated">{copy.summary.updated}</p>
