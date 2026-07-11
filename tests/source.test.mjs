@@ -281,6 +281,8 @@ test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct",
   assert.match(greeting, /sessionStorage\.getItem\(key\)/);
   assert.match(greeting, /sessionStorage\.setItem\(key, "seen"\)/);
   assert.match(greeting, /prefers-reduced-motion: reduce/);
+  assert.match(greeting, /addEventListener\("animationend", completeGreeting/);
+  assert.match(greeting, /tabIndex=\{-1\}/);
   assert.doesNotMatch(greeting, /setInterval|autoPlay|\bloop\b/);
   assert.match(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*forwards/);
   assert.doesNotMatch(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*both/);
@@ -303,6 +305,34 @@ test("uses the Sunlit Meadow palette, one typography system, and accessible cont
     assert.match(css, new RegExp(token));
   }
   assert.doesNotMatch(css, /summary-(?:card|main|link|hero|footer)|video-preview-grid|preview-play/);
+});
+
+test("keeps responsive navigation, focus movement, and motion polished", async () => {
+  const [portfolio, controls, media, css] = await Promise.all([
+    read("app/OliverPortfolio.tsx"),
+    read("app/PortfolioControls.tsx"),
+    read("app/PreviewMedia.tsx"),
+    read("app/globals.css"),
+  ]);
+
+  assert.match(portfolio, /<main id="main-content" tabIndex=\{-1\}>/);
+  assert.match(portfolio, /className="skip-link" href="#main-content" onClick=\{focusMain\}/);
+  assert.match(portfolio, /className="wordmark-name" lang="en-HK"/);
+  assert.doesNotMatch(portfolio, /className="wordmark"[\s\S]{0,160}aria-label=/);
+  assert.match(portfolio, /id="(?:about|stories|growth|family)-title" tabIndex=\{-1\}/);
+  assert.match(portfolio, /href="#hero-title"[\s\S]*?onClick=\{focusHero\}/);
+  assert.doesNotMatch(portfolio, /className="section-count"/);
+  assert.match(controls, /destinationRef/);
+  assert.match(controls, /heading\?\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(controls, /event\.target === event\.currentTarget/);
+  assert.match(css, /\.mobile-menu-panel[\s\S]*?height:\s*100dvh[\s\S]*?overflow-y:\s*auto[\s\S]*?overscroll-behavior:\s*contain/);
+  assert.match(css, /\.mobile-menu-dialog\[open\] \.mobile-menu-panel[\s\S]*?animation:\s*menu-panel-in/);
+  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.desktop-nav[\s\S]*?display:\s*flex/);
+  assert.match(css, /\.story-media-count-2\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(css, /@media \(min-width: 30rem\)[\s\S]*?\.story-media-count-2[\s\S]*?repeat\(2/);
+  assert.match(css, /\.button:active|\.primary-button:active/);
+  assert.match(css, /@media \(hover: hover\)/);
+  assert.match(media, /className="preview-media-kind" aria-hidden="true"/);
 });
 
 test("keeps the Pages verifier aligned with the simplified public architecture", async () => {

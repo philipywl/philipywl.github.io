@@ -31,6 +31,9 @@ export default function PreviewMedia({
         aria-label={accessibleLabel}
       >
         <span className="preview-media-orbit" aria-hidden="true" />
+        {kind === "video" && (
+          <span className="preview-media-kind" aria-hidden="true" />
+        )}
         <span className="preview-media-label">{label}</span>
       </div>
       <figcaption>{detail}</figcaption>

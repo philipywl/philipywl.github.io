@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import type { PortfolioLocale } from "./portfolio-copy";
 
-const greetingDurations: Record<PortfolioLocale, number> = {
-  en: 1770,
-  zh: 1520,
+const greetingFallbackDurations: Record<PortfolioLocale, number> = {
+  en: 2200,
+  zh: 1950,
 };
 
 export default function GreetingReveal({
@@ -52,11 +52,23 @@ export default function GreetingReveal({
       // Session storage is optional; the heading remains fully readable.
     }
 
-    const completionTimer = window.setTimeout(() => {
+    const completeGreeting = () => {
       heading.dataset.greetingState = completeState;
-    }, greetingDurations[locale]);
+    };
+    const finalCursor = heading.querySelector<HTMLElement>(".greeting-cursor-rest");
+    finalCursor?.addEventListener("animationend", completeGreeting, { once: true });
 
-    return () => window.clearTimeout(completionTimer);
+    // The animation event is the source of truth. This fallback only protects
+    // the fully readable final state if a browser drops that event.
+    const completionTimer = window.setTimeout(
+      completeGreeting,
+      greetingFallbackDurations[locale],
+    );
+
+    return () => {
+      window.clearTimeout(completionTimer);
+      finalCursor?.removeEventListener("animationend", completeGreeting);
+    };
   }, [completeState, id, locale, playState, sessionKey]);
 
   return (
@@ -67,6 +79,7 @@ export default function GreetingReveal({
         data-greeting-locale={locale}
         data-greeting-state="static"
         suppressHydrationWarning
+        tabIndex={-1}
       >
         <span className="sr-only">{greeting}</span>
         <span className="greeting-reserve" aria-hidden="true">
