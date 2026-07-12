@@ -149,10 +149,12 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Everyday moments, told with care/);
   assert.match(text, /Small steps in everyday life/);
   assert.match(text, /Small changes we have noticed/);
-  assert.match(text, /Family & Care/);
+  assert.match(text, /Family & Home/);
   assert.match(text, /Growing together at home/);
-  assert.match(text, /Care and being together/);
-  assert.match(text, /hope written in their own words/);
+  assert.match(text, /Looking after one another/);
+  assert.match(text, /How we responded/);
+  assert.match(text, /Holding close the little moments/);
+  assert.match(text, /hope in their own words/);
   assert.match(text, /中文 \| English/);
   assert.equal((text.match(/story to come · \d{2}/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
@@ -187,7 +189,9 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /家庭與陪伴/);
   assert.match(text, /在家中，一起慢慢成長/);
   assert.match(text, /關心與彼此陪伴/);
-  assert.match(text, /親自寫下的心願/);
+  assert.match(text, /我們如何回應/);
+  assert.match(text, /珍惜日常裏的小片段/);
+  assert.match(text, /用自己的說話寫下一份心願/);
   assert.match(text, /中文 \| English/);
   assert.equal((text.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);

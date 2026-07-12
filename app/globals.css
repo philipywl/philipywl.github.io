@@ -1908,12 +1908,12 @@ h4 {
     background: #FFFFFF !important;
   }
 
-  .preview-note,
   .story-media-note {
     display: none;
   }
 
   .about-field,
+  .preview-note,
   .everyday-panel,
   .timeline-panel,
   .family-values-card,

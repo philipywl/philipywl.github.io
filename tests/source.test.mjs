@@ -214,14 +214,21 @@ test("uses warm factual placeholders without summary, admissions, or institution
   assert.match(copy, /昊熹的日常小世界/);
   assert.match(copy, /Small steps in everyday life/);
   assert.match(copy, /日常裏的一小步/);
-  assert.match(copy, /Family & Care/);
+  assert.match(copy, /Family & Home/);
   assert.match(copy, /家庭與陪伴/);
   assert.match(copy, /Growing together at home/);
   assert.match(copy, /在家中，一起慢慢成長/);
   assert.match(copy, /A little preview/);
   assert.match(copy, /故事預覽/);
-  assert.match(copy, /hope written in their own words/);
-  assert.match(copy, /親自寫下的心願/);
+  assert.match(copy, /How we responded/);
+  assert.match(copy, /我們如何回應/);
+  assert.match(copy, /Looking after one another/);
+  assert.match(copy, /關心與彼此陪伴/);
+  assert.match(copy, /Holding close the little moments/);
+  assert.match(copy, /珍惜日常裏的小片段/);
+  assert.match(copy, /hope in their own words/);
+  assert.match(copy, /用自己的說話寫下一份心願/);
+  assert.doesNotMatch(copy, /How we continue supporting him|我們如何繼續陪伴|Family & Care|成長軌跡自然帶到現在/);
   assert.equal((copy.match(/story to come · \d{2}/g) ?? []).length, 5);
   assert.equal((copy.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).length, 5);
   assert.doesNotMatch(copy, /"\[[^"]+\]"/);
@@ -301,6 +308,8 @@ test("uses the Sunlit Meadow palette, one typography system, and accessible cont
   assert.match(css, /\.footer-actions a[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
   assert.match(css, /aria-current="location"/);
   assert.match(css, /@media print/);
+  assert.match(css, /@media print[\s\S]*?\.story-media-note\s*\{[\s\S]*?display:\s*none/);
+  assert.doesNotMatch(css, /\.preview-note,\s*\.story-media-note\s*\{[\s\S]*?display:\s*none/);
   for (const token of ["#FFF9E6", "#29404A", "#C4DDEA", "#5C8B7F", "#3F6D65", "#E0AD3F", "#EEA283"]) {
     assert.match(css, new RegExp(token));
   }
