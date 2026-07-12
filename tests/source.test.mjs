@@ -242,7 +242,9 @@ test("uses warm factual placeholders without summary, admissions, or institution
   assert.match(portfolio, /IntersectionObserver/);
   assert.match(portfolio, /aria-current=\{activeHref === item\.href \? "location"/);
   assert.doesNotMatch(portfolio, /SummaryLink|copy\.videos|journal-principles|usePointerContextMenuDeterrent/);
-  assert.doesNotMatch(controls, /SummaryLink|SummaryIcon|HomeLink|HomeIcon|contextmenu/);
+  assert.doesNotMatch(portfolio, /PrintButton|controls\.print/);
+  assert.doesNotMatch(controls, /SummaryLink|SummaryIcon|HomeLink|HomeIcon|PrintButton|PrintIcon|window\.print|contextmenu/);
+  assert.doesNotMatch(copy, /Print this page|列印本頁|printLabel/);
   assert.doesNotMatch(media, /preview-play/);
   assert.doesNotMatch(portfolio, /<img\b|<video\b|<picture\b|<iframe\b/);
 });
@@ -269,7 +271,11 @@ test("implements immediate language routing and an accessible section-aware sele
   assert.match(controls, /window\.location\.hash/);
   assert.match(controls, /dialog\.showModal\(\)/);
   assert.match(controls, /onCancel=/);
-  assert.match(controls, /onKeyDown=[\s\S]*?event\.key !== "Escape"[\s\S]*?closeMenu\(\)/);
+  assert.match(controls, /onKeyDown=[\s\S]*?event\.key === "Escape"[\s\S]*?closeMenu\(\)/);
+  assert.match(controls, /event\.key !== "Tab"/);
+  assert.match(controls, /dialog\.querySelectorAll<HTMLElement>\("button:not\(\[disabled\]\), a\[href\]"\)/);
+  assert.match(controls, /event\.shiftKey && document\.activeElement === first/);
+  assert.match(controls, /!event\.shiftKey && document\.activeElement === last/);
   assert.match(controls, /document\.body\.style\.overflow = "hidden"/);
   assert.match(controls, /triggerRef\.current\?\.focus\(\)/);
   assert.match(controls, /aria-current=\{activeHref === item\.href \? "location"/);
@@ -294,6 +300,9 @@ test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct",
   assert.match(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*forwards/);
   assert.doesNotMatch(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*both/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.doesNotMatch(css, /animation:[^;}]*\bboth\b/);
+  assert.match(css, /html\s*\{[\s\S]*?scroll-padding-top:\s*calc\(var\(--header-height\) \+ 20px\)/);
+  assert.doesNotMatch(css, /\.section-pad\s*\{[^}]*scroll-margin-top/);
   assert.match(css, /\.greeting-heading \.greeting-cursor[\s\S]*?display:\s*none !important/);
 });
 
@@ -305,6 +314,7 @@ test("uses the Sunlit Meadow palette, one typography system, and accessible cont
   assert.doesNotMatch(css, /font-weight:\s*(?:[789]00|bold|bolder)\b/i);
   assert.match(css, /--focus-ring:\s*3px solid/);
   assert.match(css, /:focus-visible[\s\S]*?outline:\s*var\(--focus-ring\)/);
+  assert.match(css, /\.closing-section \.eyebrow\s*\{[\s\S]*?color:\s*var\(--ink\)/);
   assert.match(css, /\.footer-actions a[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
   assert.match(css, /aria-current="location"/);
   assert.match(css, /@media print/);
@@ -329,6 +339,12 @@ test("keeps responsive navigation, focus movement, and motion polished", async (
   assert.match(portfolio, /className="wordmark-name" lang="en-HK"/);
   assert.doesNotMatch(portfolio, /className="wordmark"[\s\S]{0,160}aria-label=/);
   assert.match(portfolio, /id="(?:about|stories|growth|family)-title" tabIndex=\{-1\}/);
+  assert.match(portfolio, /id="privacy-title" tabIndex=\{-1\}/);
+  assert.match(portfolio, /const focusSection = \(href: string\)/);
+  assert.match(portfolio, /onClick=\{\(\) => focusSection\(item\.href\)\}/);
+  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#stories"\)\}/);
+  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#about"\)\}/);
+  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#privacy-notice"\)\}/);
   assert.match(portfolio, /href="#hero-title"[\s\S]*?onClick=\{focusHero\}/);
   assert.doesNotMatch(portfolio, /className="section-count"/);
   assert.match(controls, /destinationRef/);
@@ -336,6 +352,8 @@ test("keeps responsive navigation, focus movement, and motion polished", async (
   assert.match(controls, /event\.target === event\.currentTarget/);
   assert.match(css, /\.mobile-menu-panel[\s\S]*?height:\s*100dvh[\s\S]*?overflow-y:\s*auto[\s\S]*?overscroll-behavior:\s*contain/);
   assert.match(css, /\.mobile-menu-dialog\[open\] \.mobile-menu-panel[\s\S]*?animation:\s*menu-panel-in/);
+  assert.doesNotMatch(css, /menu-(?:backdrop|panel)-in[^;}]*\bboth\b/);
+  assert.doesNotMatch(css, /hero-journal-enter[^;}]*\bboth\b/);
   assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.desktop-nav[\s\S]*?display:\s*flex/);
   assert.match(css, /\.story-media-count-2\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.match(css, /@media \(min-width: 30rem\)[\s\S]*?\.story-media-count-2[\s\S]*?repeat\(2/);

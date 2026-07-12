@@ -99,6 +99,7 @@ const forbiddenPublicCopy = [
   ["old editorial placeholder", /(?:Content needed|Photo needed|Parent-provided|Alternative text will be added|Placeholder)/i],
   ["Chinese editorial placeholder", /(?:待補|待加入|預留|爸爸媽媽提供|未發佈|審閱版本)/u],
   ["removed one-page summary", /(?:one-page summary|一頁摘要)/i],
+  ["removed print action", /(?:Print this page|列印本頁)/i],
 ];
 
 function fail(message) {
@@ -429,6 +430,9 @@ if (/summary-(?:card|main|link|hero|footer)|video-preview-grid|preview-play/i.te
 }
 if (!/greeting-cursor-rest[^}]*animation:[^;]*forwards/i.test(css)) {
   fail("the delayed greeting cursor is not hidden correctly before its reveal");
+}
+if (/animation:[^;}]*\bboth\b/i.test(css)) {
+  fail("completed entrance animations must not retain their compositor fill effects");
 }
 
 console.log(`GitHub Pages artifact verified: ${files.length} files in ${outputRoot}`);

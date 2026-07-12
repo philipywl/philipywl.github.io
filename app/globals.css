@@ -165,7 +165,6 @@ h4 {
 
 .section-pad {
   padding-block: 64px;
-  scroll-margin-top: calc(var(--header-height) + 20px);
 }
 
 .skip-link {
@@ -376,7 +375,7 @@ h4 {
 }
 
 .mobile-menu-dialog[open]::backdrop {
-  animation: menu-backdrop-in 170ms cubic-bezier(0.2, 0, 0, 1) both;
+  animation: menu-backdrop-in 170ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .mobile-menu-panel {
@@ -394,7 +393,7 @@ h4 {
 }
 
 .mobile-menu-dialog[open] .mobile-menu-panel {
-  animation: menu-panel-in var(--transition-gentle) both;
+  animation: menu-panel-in var(--transition-gentle);
 }
 
 .mobile-menu-head {
@@ -955,7 +954,7 @@ h4 {
 .hero-preview-media {
   width: min(100%, 390px);
   margin-inline: auto;
-  animation: hero-journal-enter 300ms cubic-bezier(0.2, 0, 0, 1) both;
+  animation: hero-journal-enter 300ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .hero-preview-media .preview-media-surface {
@@ -1322,6 +1321,10 @@ h4 {
 
 .closing-section {
   background: var(--blue);
+}
+
+.closing-section .eyebrow {
+  color: var(--ink);
 }
 
 .closing-inner {
