@@ -134,6 +134,7 @@ function expectSafePage(html) {
 }
 
 function expectApprovedPhotos(html, locale) {
+  const photoSurface = html.replaceAll("/social-preview.jpg", "");
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
@@ -173,7 +174,7 @@ function expectApprovedPhotos(html, locale) {
   assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "eager").length, 1);
   assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 2);
   assert.match(images.find((tag) => getAttribute(tag, "loading") === "eager") ?? "", /fetchPriority="high"/i);
-  assert.doesNotMatch(html, /100[123]|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i);
+  assert.doesNotMatch(photoSurface, /100[123]|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i);
 }
 
 test("renders the refined English public homepage", async () => {

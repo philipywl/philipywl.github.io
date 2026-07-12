@@ -7,6 +7,11 @@
   --teal-deep: #3F6D65;
   --honey: #E0AD3F;
   --peach: #EEA283;
+  --sky-bright: #A9D8EF;
+  --grass: #8FBA78;
+  --coral: #E78970;
+  --lilac: #A69BC2;
+  --sun: #F4C95D;
   --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, "Segoe UI", sans-serif;
   --page-width: 1180px;
   --header-height: 68px;
@@ -542,6 +547,8 @@ h4 {
 
 .hero {
   position: relative;
+  isolation: isolate;
+  overflow: clip;
   min-height: auto;
   display: grid;
   align-items: center;
@@ -1000,7 +1007,656 @@ h4 {
 }
 
 .about-section {
-  background: rgb(255 255 255 / 24%);
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: rgb(244 201 93 / 10%);
+}
+
+/* Sunlit Meadow decorative atmosphere. These elements are presentational,
+   stay behind content, and never participate in interaction or layout. */
+.hero,
+.growth-section,
+.closing-section {
+  isolation: isolate;
+  overflow: clip;
+}
+
+.hero-grid,
+.growth-section > .page-grid,
+.closing-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.meadow-decor {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  contain: layout paint;
+}
+
+/* A static, low-contrast arc keeps the hero's existing motion budget intact. */
+.meadow-decor-rainbow {
+  right: -34px;
+  bottom: 58px;
+  width: clamp(118px, 38vw, 156px);
+  height: clamp(59px, 19vw, 78px);
+  overflow: hidden;
+  opacity: 0.72;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    transparent 0 36%,
+    rgb(224 173 63 / 31%) 36% 41%,
+    rgb(238 162 131 / 27%) 41% 46%,
+    rgb(92 139 127 / 23%) 46% 51%,
+    rgb(196 221 234 / 45%) 51% 56%,
+    rgb(168 151 177 / 18%) 56% 61%,
+    transparent 61%
+  );
+}
+
+/* The tree is mostly clipped into the growth-section edge on compact screens,
+   leaving the content column visually untouched. */
+.meadow-decor-tree {
+  right: -48px;
+  bottom: 22px;
+  width: 76px;
+  height: 128px;
+  opacity: 0.48;
+  transform-origin: 50% 100%;
+}
+
+.meadow-tree-trunk {
+  position: absolute;
+  bottom: 0;
+  left: 45%;
+  width: 12%;
+  height: 51%;
+  border-radius: 999px 999px 4px 4px;
+  background: var(--teal-deep);
+}
+
+.meadow-tree-trunk::before,
+.meadow-tree-trunk::after {
+  position: absolute;
+  width: 170%;
+  height: 7%;
+  border-radius: 999px;
+  background: var(--teal-deep);
+  content: "";
+  transform-origin: 0 50%;
+}
+
+.meadow-tree-trunk::before {
+  top: 24%;
+  left: 40%;
+  transform: rotate(-36deg);
+}
+
+.meadow-tree-trunk::after {
+  top: 42%;
+  right: 35%;
+  transform: rotate(210deg);
+}
+
+.meadow-tree-crown {
+  position: absolute;
+  top: 4%;
+  left: 5%;
+  width: 88%;
+  height: 62%;
+  border-radius: 48% 52% 45% 55% / 54% 47% 53% 46%;
+  background: rgb(92 139 127 / 82%);
+  transform-origin: 50% 94%;
+}
+
+.meadow-tree-crown::before,
+.meadow-tree-crown::after {
+  position: absolute;
+  border-radius: 50%;
+  background: inherit;
+  content: "";
+}
+
+.meadow-tree-crown::before {
+  top: 15%;
+  left: -13%;
+  width: 56%;
+  height: 67%;
+}
+
+.meadow-tree-crown::after {
+  right: -11%;
+  bottom: 8%;
+  width: 53%;
+  height: 62%;
+}
+
+.meadow-tree-leaf {
+  position: absolute;
+  z-index: 1;
+  width: 18%;
+  aspect-ratio: 1.7 / 1;
+  border-radius: 100% 0 100% 0;
+  transform-origin: 80% 80%;
+}
+
+.meadow-tree-leaf-one {
+  top: 14%;
+  left: 12%;
+  background: rgb(224 173 63 / 82%);
+  transform: rotate(22deg);
+}
+
+.meadow-tree-leaf-two {
+  top: 25%;
+  right: 9%;
+  background: rgb(196 221 234 / 88%);
+  transform: rotate(108deg);
+}
+
+.meadow-tree-leaf-three {
+  top: 43%;
+  left: 42%;
+  background: rgb(238 162 131 / 78%);
+  transform: rotate(65deg);
+}
+
+.meadow-decor-tree[data-meadow-state="active"] .meadow-tree-crown {
+  animation: meadow-tree-sway 4.2s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+.meadow-decor-tree[data-meadow-state="active"] .meadow-tree-leaf-one {
+  animation: meadow-leaf-one 3.8s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+.meadow-decor-tree[data-meadow-state="active"] .meadow-tree-leaf-two {
+  animation: meadow-leaf-two 4.1s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+.meadow-decor-tree[data-meadow-state="active"] .meadow-tree-leaf-three {
+  animation: meadow-leaf-three 4.3s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+@keyframes meadow-tree-sway {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+
+  27% {
+    transform: rotate(1.35deg);
+  }
+
+  58% {
+    transform: rotate(-1.05deg);
+  }
+
+  81% {
+    transform: rotate(0.65deg);
+  }
+}
+
+@keyframes meadow-leaf-one {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(22deg);
+  }
+
+  38% {
+    transform: translate3d(2px, -2px, 0) rotate(25deg);
+  }
+
+  72% {
+    transform: translate3d(-1px, 1px, 0) rotate(20deg);
+  }
+}
+
+@keyframes meadow-leaf-two {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(108deg);
+  }
+
+  42% {
+    transform: translate3d(-2px, -1px, 0) rotate(104deg);
+  }
+
+  76% {
+    transform: translate3d(1px, 2px, 0) rotate(110deg);
+  }
+}
+
+@keyframes meadow-leaf-three {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(65deg);
+  }
+
+  35% {
+    transform: translate3d(2px, 1px, 0) rotate(68deg);
+  }
+
+  69% {
+    transform: translate3d(-2px, -1px, 0) rotate(62deg);
+  }
+}
+
+/* Balloons stay in the closing-section gutter. Each plays one short sway and
+   then returns to its neutral resting position. */
+.meadow-decor-balloons {
+  top: 18px;
+  right: -66px;
+  width: 96px;
+  height: 126px;
+  opacity: 0.5;
+}
+
+.meadow-balloon {
+  position: absolute;
+  width: 34%;
+  aspect-ratio: 0.78 / 1;
+  border: 1px solid rgb(var(--ink-rgb) / 20%);
+  border-radius: 52% 48% 50% 50% / 46% 46% 54% 54%;
+  transform-origin: 50% 160%;
+}
+
+.meadow-balloon::before {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: inherit;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.meadow-balloon::after {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  width: 1px;
+  height: 55px;
+  background: rgb(var(--ink-rgb) / 32%);
+  content: "";
+}
+
+.meadow-balloon-blue {
+  top: 4%;
+  left: 2%;
+  background: var(--blue);
+}
+
+.meadow-balloon-peach {
+  top: 23%;
+  left: 35%;
+  background: var(--peach);
+}
+
+.meadow-balloon-honey {
+  top: 0;
+  right: 0;
+  background: var(--honey);
+}
+
+.meadow-decor-balloons[data-meadow-state="active"] .meadow-balloon-blue {
+  animation: meadow-balloon-blue 4.4s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+.meadow-decor-balloons[data-meadow-state="active"] .meadow-balloon-peach {
+  animation: meadow-balloon-peach 4.1s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+.meadow-decor-balloons[data-meadow-state="active"] .meadow-balloon-honey {
+  animation: meadow-balloon-honey 3.9s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+}
+
+@keyframes meadow-balloon-blue {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0);
+  }
+
+  31% {
+    transform: translate3d(4px, -3px, 0) rotate(2.4deg);
+  }
+
+  66% {
+    transform: translate3d(-3px, 1px, 0) rotate(-1.9deg);
+  }
+}
+
+@keyframes meadow-balloon-peach {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0);
+  }
+
+  37% {
+    transform: translate3d(-4px, -2px, 0) rotate(-2.2deg);
+  }
+
+  72% {
+    transform: translate3d(3px, 2px, 0) rotate(1.7deg);
+  }
+}
+
+@keyframes meadow-balloon-honey {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0);
+  }
+
+  29% {
+    transform: translate3d(3px, 2px, 0) rotate(2deg);
+  }
+
+  63% {
+    transform: translate3d(-4px, -3px, 0) rotate(-2.3deg);
+  }
+}
+
+/* The dog crosses once, in no more than 4.4 seconds, then remains settled at
+   the right edge. Session storage prevents replay per language. */
+.meadow-decor-dog {
+  --meadow-dog-distance: calc(100vw - 86px);
+  bottom: 6px;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  overflow: hidden;
+}
+
+.meadow-dog-runner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 64px;
+  height: 40px;
+  transform: translate3d(18px, 0, 0);
+}
+
+.meadow-decor-dog[data-meadow-state="settled"] .meadow-dog-runner {
+  transform: translate3d(var(--meadow-dog-distance), 0, 0);
+}
+
+.meadow-decor-dog[data-meadow-state="active"] .meadow-dog-runner {
+  animation: meadow-dog-cross 4.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+.meadow-dog-body {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  width: 35px;
+  height: 17px;
+  border-radius: 52% 48% 46% 54%;
+  background: var(--ink);
+}
+
+.meadow-dog-body::after {
+  position: absolute;
+  top: 2px;
+  right: 1px;
+  width: 6px;
+  height: 13px;
+  border-radius: 999px;
+  background: var(--honey);
+  content: "";
+  opacity: 0.9;
+}
+
+.meadow-dog-head {
+  position: absolute;
+  top: 7px;
+  right: 1px;
+  width: 18px;
+  height: 18px;
+  border-radius: 48% 52% 45% 55%;
+  background: var(--ink);
+}
+
+.meadow-dog-head::before {
+  position: absolute;
+  right: -5px;
+  bottom: 2px;
+  width: 10px;
+  height: 8px;
+  border-radius: 55% 65% 55% 45%;
+  background: var(--ink);
+  content: "";
+}
+
+.meadow-dog-head::after {
+  position: absolute;
+  top: 5px;
+  right: 3px;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--paper);
+  content: "";
+}
+
+.meadow-dog-ear {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  width: 9px;
+  height: 14px;
+  border-radius: 80% 15% 80% 25%;
+  background: var(--teal-deep);
+  transform: rotate(24deg);
+  transform-origin: 50% 0;
+}
+
+.meadow-dog-tail {
+  position: absolute;
+  top: 12px;
+  left: 3px;
+  width: 16px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--ink);
+  transform: rotate(-27deg);
+  transform-origin: 100% 50%;
+}
+
+.meadow-dog-leg {
+  position: absolute;
+  top: 25px;
+  width: 5px;
+  height: 13px;
+  border-radius: 0 0 999px 999px;
+  background: var(--ink);
+  transform-origin: 50% 0;
+}
+
+.meadow-dog-leg-front {
+  left: 41px;
+}
+
+.meadow-dog-leg-back {
+  left: 18px;
+}
+
+.meadow-decor-dog[data-meadow-state="active"] .meadow-dog-body,
+.meadow-decor-dog[data-meadow-state="active"] .meadow-dog-head {
+  animation: meadow-dog-bob 0.32s ease-in-out 13 alternate forwards;
+}
+
+.meadow-decor-dog[data-meadow-state="active"] .meadow-dog-tail {
+  animation: meadow-dog-tail-wag 0.36s ease-in-out 12 alternate forwards;
+}
+
+.meadow-decor-dog[data-meadow-state="active"] .meadow-dog-leg-front {
+  animation: meadow-dog-step-front 0.28s steps(2, end) 15 alternate forwards;
+}
+
+.meadow-decor-dog[data-meadow-state="active"] .meadow-dog-leg-back {
+  animation: meadow-dog-step-back 0.28s steps(2, end) 15 alternate forwards;
+}
+
+@keyframes meadow-dog-cross {
+  from {
+    transform: translate3d(18px, 0, 0);
+  }
+
+  to {
+    transform: translate3d(var(--meadow-dog-distance), 0, 0);
+  }
+}
+
+@keyframes meadow-dog-bob {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -1.5px, 0);
+  }
+}
+
+@keyframes meadow-dog-tail-wag {
+  from {
+    transform: rotate(-30deg);
+  }
+
+  to {
+    transform: rotate(-12deg);
+  }
+}
+
+@keyframes meadow-dog-step-front {
+  from {
+    transform: rotate(16deg);
+  }
+
+  to {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes meadow-dog-step-back {
+  from {
+    transform: rotate(-18deg);
+  }
+
+  to {
+    transform: rotate(16deg);
+  }
+}
+
+@media (min-width: 48rem) {
+  .meadow-decor-rainbow {
+    right: -54px;
+    bottom: 104px;
+    width: 210px;
+    height: 105px;
+  }
+
+  .meadow-decor-tree {
+    right: -42px;
+    bottom: 28px;
+    width: 105px;
+    height: 176px;
+  }
+
+  .meadow-decor-balloons {
+    top: 30px;
+    right: -54px;
+    width: 118px;
+    height: 154px;
+  }
+
+  .meadow-decor-dog {
+    --meadow-dog-distance: calc(100vw - 96px);
+    height: 54px;
+  }
+}
+
+@media (min-width: 72rem) {
+  .meadow-decor-rainbow {
+    top: clamp(92px, 13vh, 140px);
+    right: clamp(20px, 4vw, 64px);
+    bottom: auto;
+    width: 300px;
+    height: 150px;
+  }
+
+  .meadow-decor-tree {
+    right: -36px;
+    bottom: 34px;
+    width: 112px;
+    height: 185px;
+  }
+
+  .meadow-decor-balloons {
+    top: 48px;
+    right: clamp(24px, 4vw, 64px);
+    width: 160px;
+    height: 188px;
+    opacity: 0.58;
+  }
+
+  .meadow-decor-dog {
+    --meadow-dog-distance: calc(100vw - 110px);
+    height: 58px;
+  }
+}
+
+@media (min-width: 88rem) {
+  .meadow-decor-tree {
+    right: max(12px, calc((100vw - var(--page-width)) / 2 - 112px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meadow-decor-tree *,
+  .meadow-decor-balloons * {
+    animation: none !important;
+  }
+
+  .meadow-tree-crown {
+    transform: rotate(0) !important;
+  }
+
+  .meadow-tree-leaf-one {
+    transform: rotate(22deg) !important;
+  }
+
+  .meadow-tree-leaf-two {
+    transform: rotate(108deg) !important;
+  }
+
+  .meadow-tree-leaf-three {
+    transform: rotate(65deg) !important;
+  }
+
+  .meadow-balloon {
+    transform: none !important;
+  }
+
+  .meadow-decor-dog {
+    display: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .meadow-decor {
+    display: none !important;
+  }
+}
+
+@media print {
+  .meadow-decor {
+    display: none !important;
+  }
 }
 
 .about-grid {
@@ -1032,10 +1688,26 @@ h4 {
   box-shadow: var(--shadow-soft);
 }
 
+.about-field:nth-child(1) {
+  background: rgb(169 216 239 / 34%);
+}
+
+.about-field:nth-child(2) {
+  background: rgb(244 201 93 / 28%);
+}
+
+.about-field:nth-child(3) {
+  background: rgb(143 186 120 / 28%);
+}
+
+.about-field:nth-child(4) {
+  background: rgb(231 137 112 / 20%);
+}
+
 .field-index {
   display: inline-flex;
   margin-bottom: 14px;
-  color: var(--teal-deep);
+  color: var(--ink);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -1053,7 +1725,7 @@ h4 {
 }
 
 .stories-section {
-  background: var(--paper);
+  background: rgb(169 216 239 / 12%);
 }
 
 .stories-grid {
@@ -1099,13 +1771,29 @@ h4 {
   background: rgb(255 249 230 / 88%);
 }
 
+.planned-story:nth-child(1) {
+  background: rgb(244 201 93 / 23%);
+}
+
+.planned-story:nth-child(2) {
+  background: rgb(169 216 239 / 30%);
+}
+
+.planned-story:nth-child(3) {
+  background: rgb(143 186 120 / 25%);
+}
+
+.planned-story:nth-child(4) {
+  background: rgb(231 137 112 / 18%);
+}
+
 .planned-story-meta {
   display: flex;
   margin-bottom: 12px;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: var(--teal-deep);
+  color: var(--ink);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.055em;
@@ -1256,6 +1944,17 @@ h4 {
   gap: 24px;
 }
 
+.growth-moments-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  max-width: 820px;
+}
+
+.growth-moments-layout .timeline-panel {
+  background: rgb(255 249 230 / 84%);
+}
+
 .everyday-panel,
 .timeline-panel {
   min-width: 0;
@@ -1367,11 +2066,17 @@ h4 {
 }
 
 .growth-section {
-  background: rgb(92 139 127 / 10%);
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: rgb(143 186 120 / 16%);
 }
 
 .family-section {
-  background: rgb(238 162 131 / 23%);
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: rgb(238 162 131 / 24%);
 }
 
 .family-grid {
@@ -1454,7 +2159,85 @@ h4 {
   box-shadow: var(--shadow-soft);
 }
 
+.future-growth-section {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: rgb(166 155 194 / 14%);
+}
+
+.future-growth-panel {
+  display: grid;
+  padding: clamp(24px, 5vw, 42px);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  gap: 28px;
+  background: rgb(255 249 230 / 78%);
+  box-shadow: var(--shadow-soft);
+}
+
+.future-growth-heading {
+  max-width: 700px;
+}
+
+.future-growth-heading h2 {
+  margin-bottom: 14px;
+}
+
+.future-growth-heading > p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.future-growth-list {
+  display: grid;
+  padding: 0;
+  margin: 0;
+  gap: 12px;
+  list-style: none;
+}
+
+.future-growth-list li {
+  display: grid;
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+}
+
+.future-growth-list li:nth-child(1) {
+  background: rgb(169 216 239 / 27%);
+}
+
+.future-growth-list li:nth-child(2) {
+  background: rgb(244 201 93 / 24%);
+}
+
+.future-growth-list li:nth-child(3) {
+  background: rgb(143 186 120 / 25%);
+}
+
+.future-growth-list .field-index {
+  margin: 3px 0 0;
+}
+
+.future-growth-list h3 {
+  margin-bottom: 5px;
+  font-size: 1.0625rem;
+}
+
+.future-growth-list p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
 .closing-section {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
   background: var(--blue);
 }
 
@@ -1796,6 +2579,12 @@ h4 {
   .privacy-inner {
     grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
     gap: 48px;
+  }
+
+  .future-growth-panel {
+    grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
+    align-items: start;
+    gap: 42px;
   }
 
   .footer-grid {

@@ -140,23 +140,23 @@ export const localePaths: Record<PortfolioLocale, { home: string }> = {
 const englishStoryText = {
   age: "Age will be added with the story",
   observation:
-    "This space will hold the small details Oliver's parents saw and heard in the moment.",
+    "A real moment will be described here, using the small details Oliver's parents saw and heard.",
   noticed:
-    "Their reflection will share what caught Oliver's attention and how he responded, staying close to what really happened.",
+    "His parents will note what caught his attention and how he responded.",
   support:
-    "The story will also show how Oliver's parents responded and stayed alongside him.",
+    "The story will show how they responded and stayed alongside him.",
   reflection:
-    "A short note from home will share why this everyday moment felt worth keeping.",
-  tags: ["Learning clue 01 · to be added", "Learning clue 02 · to be added"],
+    "A short note from home will share why the moment felt worth keeping.",
+  tags: [],
 };
 
 const chineseStoryText = {
   age: "故事加入時，會一併記下當時年齡",
-  observation: "這裏會如實記下爸爸媽媽當時親眼看見、親耳聽見的小細節。",
-  noticed: "爸爸媽媽會從真實細節出發，分享甚麼引起昊熹注意，以及他如何回應。",
+  observation: "這裏會從爸爸媽媽親眼看見、親耳聽見的小細節，如實記下一個片段。",
+  noticed: "爸爸媽媽會記下甚麼引起昊熹注意，以及他如何回應。",
   support: "故事亦會記下爸爸媽媽當時如何回應和陪伴。",
-  reflection: "爸爸媽媽會用一句心裏話，記下這個日常片段為何值得珍藏。",
-  tags: ["學習線索 01 · 稍後加入", "學習線索 02 · 稍後加入"],
+  reflection: "一句心裏話，記下這個片段為何值得珍藏。",
+  tags: [],
 };
 
 export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
@@ -183,7 +183,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingRest: "I'm Oliver.",
       intro:
         "This little collection gathers everyday moments around the things Oliver enjoys—books, cars, dogs and problem-solving—and the loving care of the many people around him.",
-      storiesAction: "Explore Oliver's learning stories",
+      storiesAction: "See Oliver's moments over time",
       aboutAction: "Meet Oliver",
       ageLabel: "Oliver's current age",
     },
@@ -397,7 +397,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingRest: "我是昊熹。",
       intro:
         "這裏收集了一個個日常片段：昊熹喜歡看書、車、狗仔和解難，也在身邊許多人的疼愛與陪伴中慢慢成長。",
-      storiesAction: "閱讀昊熹的成長故事",
+      storiesAction: "看看昊熹的成長片段",
       aboutAction: "認識昊熹",
       ageLabel: "昊熹現在的年齡",
     },
