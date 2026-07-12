@@ -24,11 +24,25 @@ export const metadata: Metadata = {
     siteName: "Oliver YEUNG",
     locale: "zh_HK",
     alternateLocale: ["en_HK"],
+    images: [
+      {
+        url: "/social-preview.jpg",
+        width: 1200,
+        height: 630,
+        alt: "一幅柔和的陽光草地插畫，畫面有彩虹、小樹、氣球和小狗仔。",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: CHINESE_TITLE,
     description: CHINESE_DESCRIPTION,
+    images: [
+      {
+        url: "/social-preview.jpg",
+        alt: "一幅柔和的陽光草地插畫，畫面有彩虹、小樹、氣球和小狗仔。",
+      },
+    ],
   },
 };
 

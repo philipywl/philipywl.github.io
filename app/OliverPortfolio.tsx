@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import GreetingReveal from "./GreetingReveal";
+import MeadowDecor from "./MeadowDecor";
 import PreviewMedia from "./PreviewMedia";
 import ResponsivePhoto from "./ResponsivePhoto";
 import {
@@ -28,9 +29,9 @@ export default function OliverPortfolio({
   const copy = portfolioCopy[locale];
   const navigationItems = [
     { href: "#about", label: copy.nav.about },
-    { href: "#stories", label: copy.nav.stories },
     { href: "#growth", label: copy.nav.growth },
     { href: "#family", label: copy.nav.family },
+    { href: "#stories", label: copy.nav.stories },
   ];
   const [activeHref, setActiveHref] = useState("");
   const focusMain = () => {
@@ -51,7 +52,7 @@ export default function OliverPortfolio({
   };
 
   useEffect(() => {
-    const sections = ["about", "stories", "growth", "family"]
+    const sections = ["about", "growth", "family", "stories"]
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
     const visibleSections = new Set<string>();
@@ -133,6 +134,7 @@ export default function OliverPortfolio({
 
       <main id="main-content" tabIndex={-1}>
         <section className="hero section-pad" aria-labelledby="hero-title">
+          <MeadowDecor variant="rainbow" locale={locale} />
           <div className="page-grid hero-grid">
             <div className="hero-copy">
               <p className="eyebrow">{copy.hero.eyebrow}</p>
@@ -158,8 +160,8 @@ export default function OliverPortfolio({
               <div className="button-row no-print">
                 <a
                   className="button primary-button"
-                  href="#stories"
-                  onClick={() => focusSection("#stories")}
+                  href="#growth"
+                  onClick={() => focusSection("#growth")}
                 >
                   {copy.hero.storiesAction}
                 </a>
@@ -217,98 +219,7 @@ export default function OliverPortfolio({
               ))}
             </div>
           </div>
-        </section>
-
-        <section id="stories" className="stories-section section-pad preview-only" aria-labelledby="stories-title">
-          <div className="page-grid section-intro-grid">
-            <div className="section-heading-copy">
-              <p className="eyebrow">{copy.stories.eyebrow}</p>
-              <h2 id="stories-title" tabIndex={-1}>{copy.stories.title}</h2>
-              <p>{copy.stories.intro}</p>
-              <p className="story-media-note">{copy.stories.mediaNote}</p>
-            </div>
-          </div>
-
-          <div className="page-grid stories-grid">
-            {copy.stories.items.map((story, storyIndex) => (
-              <article
-                className={`story-card ${storyIndex === 0 ? "story-card-featured" : ""}`.trim()}
-                key={story.title}
-              >
-                <div className={`story-media-grid story-media-count-${story.media.length}`}>
-                  {story.media.map((media, mediaIndex) => (
-                    <PreviewMedia
-                      key={`${story.title}-${media.label}`}
-                      label={media.label}
-                      detail={media.detail}
-                      kind={media.kind}
-                      ratio={media.ratio}
-                      tone={mediaTones[(storyIndex + mediaIndex) % mediaTones.length]}
-                      playLabel={copy.preview.playLabel}
-                    />
-                  ))}
-                </div>
-
-                <div className="story-content">
-                  <header className="story-header">
-                    <div>
-                      <h3>{story.title}</h3>
-                    </div>
-                    <p className="story-age">{story.age}</p>
-                  </header>
-
-                  <div className="story-observation">
-                    <p className="story-label">{copy.stories.whatHappened}</p>
-                    <p>{story.observation}</p>
-                  </div>
-
-                  <div className="story-detail-grid">
-                    <div>
-                      <p className="story-label">{copy.stories.noticed}</p>
-                      <p>{story.noticed}</p>
-                    </div>
-                    <div>
-                      <p className="story-label">{copy.stories.support}</p>
-                      <p>{story.support}</p>
-                    </div>
-                  </div>
-
-                  {story.reflection && (
-                    <blockquote className="parent-reflection">
-                      <span>{copy.stories.reflection}</span>
-                      <p>{story.reflection}</p>
-                    </blockquote>
-                  )}
-
-                  <div className="learning-clues" aria-label={copy.stories.learningClues}>
-                    <span className="story-label">{copy.stories.learningClues}</span>
-                    {story.tags.map((tag, tagIndex) => (
-                      <span className="learning-tag" key={`${story.title}-${tagIndex}`}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </article>
-            ))}
-
-            <section className="planned-stories" aria-labelledby="planned-stories-title">
-              <div className="planned-stories-heading">
-                <h3 id="planned-stories-title">{copy.stories.plannedTitle}</h3>
-                <p>{copy.stories.plannedIntro}</p>
-              </div>
-              <div className="planned-story-grid">
-                {copy.stories.plannedItems.map((story, index) => (
-                  <article className="planned-story" key={story.title}>
-                    <div className="planned-story-meta">
-                      <span aria-hidden="true">{String(index + 2).padStart(2, "0")}</span>
-                      <span>{story.format}</span>
-                    </div>
-                    <h4>{story.title}</h4>
-                    <p>{story.note}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </div>
+          <MeadowDecor variant="dog" locale={locale} />
         </section>
 
         <section id="growth" className="growth-section section-pad" aria-labelledby="growth-title">
@@ -320,25 +231,7 @@ export default function OliverPortfolio({
             </div>
           </div>
 
-          <div className="page-grid growth-layout">
-            <section className="everyday-panel preview-only" aria-labelledby="everyday-title">
-              <h3 id="everyday-title">{copy.growth.everydayTitle}</h3>
-              <p className="everyday-intro">{copy.growth.everydayIntro}</p>
-              <ul className="everyday-list">
-                {copy.growth.everydayItems.map((item, index) => (
-                  <li key={item.title}>
-                    <span className="field-index" aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.body}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
+          <div className="page-grid growth-moments-layout">
             <section className="timeline-panel" aria-labelledby="timeline-title">
               <h3 id="timeline-title">{copy.growth.timelineTitle}</h3>
               <ol className="timeline-list">
@@ -352,6 +245,7 @@ export default function OliverPortfolio({
               </ol>
             </section>
           </div>
+          <MeadowDecor variant="tree" locale={locale} />
         </section>
 
         <section id="family" className="family-section section-pad" aria-labelledby="family-title">
@@ -389,7 +283,123 @@ export default function OliverPortfolio({
           </div>
         </section>
 
+        <section id="stories" className="stories-section section-pad preview-only" aria-labelledby="stories-title">
+          <div className="page-grid section-intro-grid">
+            <div className="section-heading-copy">
+              <p className="eyebrow">{copy.stories.eyebrow}</p>
+              <h2 id="stories-title" tabIndex={-1}>{copy.stories.title}</h2>
+              <p>{copy.stories.intro}</p>
+              <p className="story-media-note">{copy.stories.mediaNote}</p>
+            </div>
+          </div>
+
+          <div className="page-grid stories-grid">
+            {copy.stories.items.map((story, storyIndex) => (
+              <article
+                className={`story-card ${storyIndex === 0 ? "story-card-featured" : ""}`.trim()}
+                key={story.title}
+              >
+                <div className={`story-media-grid story-media-count-${story.media.length}`}>
+                  {story.media.map((media, mediaIndex) => (
+                    <PreviewMedia
+                      key={`${story.title}-${media.label}`}
+                      label={media.label}
+                      detail={media.detail}
+                      kind={media.kind}
+                      ratio={media.ratio}
+                      tone={mediaTones[(storyIndex + mediaIndex) % mediaTones.length]}
+                      playLabel={copy.preview.playLabel}
+                    />
+                  ))}
+                </div>
+
+                <div className="story-content">
+                  <header className="story-header">
+                    <h3>{story.title}</h3>
+                    <p className="story-age">{story.age}</p>
+                  </header>
+
+                  <div className="story-observation">
+                    <p className="story-label">{copy.stories.whatHappened}</p>
+                    <p>{story.observation}</p>
+                  </div>
+
+                  <div className="story-detail-grid">
+                    <div>
+                      <p className="story-label">{copy.stories.noticed}</p>
+                      <p>{story.noticed}</p>
+                    </div>
+                    <div>
+                      <p className="story-label">{copy.stories.support}</p>
+                      <p>{story.support}</p>
+                    </div>
+                  </div>
+
+                  {story.reflection && (
+                    <blockquote className="parent-reflection">
+                      <span>{copy.stories.reflection}</span>
+                      <p>{story.reflection}</p>
+                    </blockquote>
+                  )}
+
+                  {story.tags.length > 0 && (
+                    <div className="learning-clues" aria-label={copy.stories.learningClues}>
+                      <span className="story-label">{copy.stories.learningClues}</span>
+                      {story.tags.map((tag, tagIndex) => (
+                        <span className="learning-tag" key={`${story.title}-${tagIndex}`}>{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+
+            <section className="planned-stories" aria-labelledby="planned-stories-title">
+              <div className="planned-stories-heading">
+                <h3 id="planned-stories-title">{copy.stories.plannedTitle}</h3>
+                <p>{copy.stories.plannedIntro}</p>
+              </div>
+              <div className="planned-story-grid">
+                {copy.stories.plannedItems.map((story, index) => (
+                  <article className="planned-story" key={story.title}>
+                    <div className="planned-story-meta">
+                      <span aria-hidden="true">{String(index + 2).padStart(2, "0")}</span>
+                      <span>{story.format}</span>
+                    </div>
+                    <h4>{story.title}</h4>
+                    <p>{story.note}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section className="future-growth-section section-pad preview-only" aria-labelledby="everyday-title">
+          <div className="page-grid future-growth-panel">
+            <div className="future-growth-heading">
+              <p className="eyebrow">{copy.growth.eyebrow}</p>
+              <h2 id="everyday-title">{copy.growth.everydayTitle}</h2>
+              <p>{copy.growth.everydayIntro}</p>
+            </div>
+            <ul className="future-growth-list">
+              {copy.growth.everydayItems.map((item, index) => (
+                <li key={item.title}>
+                  <span className="field-index" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         <section className="closing-section section-pad" aria-labelledby="closing-title">
+          <MeadowDecor variant="balloons" locale={locale} />
           <div className="page-grid closing-inner">
             <p className="eyebrow">{copy.closing.eyebrow}</p>
             <h2 id="closing-title">{copy.closing.title}</h2>

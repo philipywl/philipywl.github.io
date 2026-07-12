@@ -2,6 +2,7 @@ import { lstat, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
 const outputRoot = path.resolve(process.cwd(), "out");
+const approvedSocialPreview = "social-preview.jpg";
 const approvedPhotoNames = ["portrait", "everyday-smile", "family-care"];
 const approvedPhotoWidths = [480, 800, 1200];
 const requiredPhotoFiles = approvedPhotoNames.flatMap((name) =>
@@ -20,6 +21,7 @@ const requiredFiles = [
   "favicon-16x16.png",
   "favicon-32x32.png",
   "apple-touch-icon.png",
+  approvedSocialPreview,
   ...requiredPhotoFiles,
 ];
 const textExtensions = new Set([
@@ -130,7 +132,10 @@ async function walk(directory, relativeDirectory = "") {
     const forbiddenSegment = segments.find((segment) => forbiddenPathSegments.has(segment));
     if (forbiddenSegment) fail(`forbidden artifact path segment '${forbiddenSegment}': ${relativePath}`);
     if (/^_?worker(?:\.[^.]+)?$/i.test(entry.name)) fail(`worker runtime file is not allowed: ${relativePath}`);
-    if (forbiddenMediaExtensions.has(path.extname(entry.name).toLowerCase())) {
+    if (
+      forbiddenMediaExtensions.has(path.extname(entry.name).toLowerCase()) &&
+      relativePath !== approvedSocialPreview
+    ) {
       fail(`original photograph, video, or private document is not allowed: ${relativePath}`);
     }
     if (/(?:^|\/)(?:dsc|img|pxl|mvimg)[_-]?\d+\.(?:avif|png|webp)$/i.test(relativePath)) {
@@ -253,6 +258,7 @@ function scanPublicCopy(html, route) {
 }
 
 function requireApprovedPhotos(html, route, expectedAlts) {
+  const photoSurface = html.replaceAll(`/${approvedSocialPreview}`, "");
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
@@ -262,7 +268,7 @@ function requireApprovedPhotos(html, route, expectedAlts) {
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
   }
-  if (/100[123]|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i.test(html)) {
+  if (/100[123]|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i.test(photoSurface)) {
     fail(`${route} exposes an original filename, capture date, or JPEG photograph`);
   }
 
@@ -333,6 +339,17 @@ for (const relativePath of files) {
     for (const marker of ["Exif", "GPS", "1001", "1002", "1003"]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`photo derivative contains private metadata or an original filename: out/${relativePath}`);
+      }
+    }
+  }
+  if (relativePath === approvedSocialPreview) {
+    const bytes = await readFile(absolutePath);
+    if (bytes.length < 20_000 || bytes.length > 250_000) {
+      fail(`social preview has an unexpected size: out/${relativePath}`);
+    }
+    for (const marker of ["Exif", "GPS", "1001", "1002", "1003"]) {
+      if (bytes.includes(Buffer.from(marker))) {
+        fail(`social preview contains private metadata or an original filename: out/${relativePath}`);
       }
     }
   }

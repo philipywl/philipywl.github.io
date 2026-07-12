@@ -269,7 +269,12 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(portfolio, /copy\.family\.vignettes\.map/);
   assert.doesNotMatch(portfolio, /copy\.family\.media\.map/);
   assert.match(portfolio, /stories-section section-pad preview-only/);
-  assert.match(portfolio, /everyday-panel preview-only/);
+  assert.match(portfolio, /future-growth-section section-pad preview-only/);
+  assert.match(portfolio, /future-growth-list/);
+  assert.doesNotMatch(copy, /Learning clue 0\d · to be added|學習線索 0\d · 稍後加入/);
+  assert.ok(portfolio.indexOf('id="about"') < portfolio.indexOf('id="growth"'));
+  assert.ok(portfolio.indexOf('id="growth"') < portfolio.indexOf('id="family"'));
+  assert.ok(portfolio.indexOf('id="family"') < portfolio.indexOf('id="stories"'));
   assert.equal((portfolio.match(/<ResponsivePhoto/g) ?? []).length, 3);
   for (const name of ["portrait", "everyday-smile", "family-care"]) {
     assert.match(portfolio, new RegExp(`name=["']${name}["']`));
@@ -320,6 +325,7 @@ test("serves the approved responsive photo formats with correct MIME types", asy
   const server = await read("scripts/serve-pages.mjs");
 
   assert.match(server, /\["\.avif",\s*"image\/avif"\]/);
+  assert.match(server, /\["\.jpg",\s*"image\/jpeg"\]/);
   assert.match(server, /\["\.webp",\s*"image\/webp"\]/);
 });
 
@@ -380,6 +386,49 @@ test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct",
   assert.match(css, /\.greeting-heading \.greeting-cursor[\s\S]*?display:\s*none !important/);
 });
 
+test("adds restrained Sunlit Meadow decoration without accessibility or motion debt", async () => {
+  const [portfolio, decor, css] = await Promise.all([
+    read("app/OliverPortfolio.tsx"),
+    read("app/MeadowDecor.tsx"),
+    read("app/globals.css"),
+  ]);
+
+  for (const variant of ["rainbow", "tree", "balloons", "dog"]) {
+    assert.match(portfolio, new RegExp(`MeadowDecor variant=["']${variant}["']`));
+  }
+  assert.match(decor, /aria-hidden="true"/);
+  assert.match(decor, /IntersectionObserver/);
+  assert.match(decor, /prefers-reduced-motion: reduce/);
+  assert.match(decor, /sessionStorage\.getItem\(dogSessionKey\(locale\)\)/);
+  assert.match(decor, /sessionStorage\.setItem\(dogSessionKey\(locale\), "seen"\)/);
+  assert.doesNotMatch(decor, /<svg|<img|<canvas|role="img"|aria-label=/i);
+  assert.doesNotMatch(css, /meadow-[^;{}]*animation:[^;{}]*\binfinite\b/i);
+  assert.match(css, /meadow-dog-cross 4\.4s[^;]*forwards/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.meadow-decor-dog[\s\S]*?display:\s*none !important/);
+  assert.match(css, /@media \(forced-colors: active\)[\s\S]*?\.meadow-decor[\s\S]*?display:\s*none !important/);
+  assert.match(css, /@media print[\s\S]*?\.meadow-decor[\s\S]*?display:\s*none !important/);
+  assert.match(css, /\.meadow-decor\s*\{[\s\S]*?pointer-events:\s*none[\s\S]*?user-select:\s*none/);
+});
+
+test("uses a child-free Sunlit Meadow social-preview image", async () => {
+  const [rootLayout, englishPage, chinesePage, preview] = await Promise.all([
+    read("app/(root)/layout.tsx"),
+    read("app/(english)/en/page.tsx"),
+    read("app/(chinese)/zh-hant/page.tsx"),
+    readFile(path.join(projectRoot, "public", "social-preview.jpg")),
+  ]);
+
+  for (const metadata of [rootLayout, englishPage, chinesePage]) {
+    assert.match(metadata, /\/social-preview\.jpg/);
+    assert.match(metadata, /width:\s*1200/);
+    assert.match(metadata, /height:\s*630/);
+    assert.match(metadata, /card:\s*["']summary_large_image["']/);
+  }
+  assert.ok(preview.length > 20_000 && preview.length < 250_000);
+  assert.equal(preview.includes(Buffer.from("Exif")), false);
+  assert.equal(preview.includes(Buffer.from("GPS")), false);
+});
+
 test("uses the Sunlit Meadow palette, one typography system, and accessible controls", async () => {
   const css = await read("app/globals.css");
 
@@ -418,7 +467,7 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(portfolio, /id="privacy-title" tabIndex=\{-1\}/);
   assert.match(portfolio, /const focusSection = \(href: string\)/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\(item\.href\)\}/);
-  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#stories"\)\}/);
+  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#growth"\)\}/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\("#about"\)\}/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\("#privacy-notice"\)\}/);
   assert.match(portfolio, /href="#hero-title"[\s\S]*?onClick=\{focusHero\}/);
@@ -452,6 +501,9 @@ test("keeps the Pages verifier aligned with the simplified public architecture",
   assert.match(verifier, /nosnippet/);
   assert.match(verifier, /noimageindex/);
   assert.match(verifier, /favicon\.svg/);
+  assert.match(verifier, /approvedSocialPreview\s*=\s*["']social-preview\.jpg["']/);
+  assert.match(verifier, /html\.replaceAll\(`\/\$\{approvedSocialPreview\}`/);
+  assert.match(verifier, /social preview contains private metadata or an original filename/);
   assert.match(verifier, /Vinext image endpoint/);
   assert.match(verifier, /openaiusercontent/);
   assert.match(verifier, /(?:Student|學生)/);
