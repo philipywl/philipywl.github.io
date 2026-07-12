@@ -7,7 +7,6 @@ import {
   ArrowUpIcon,
   LanguageSwitch,
   MobileMenu,
-  PrintButton,
 } from "./PortfolioControls";
 import {
   localePaths,
@@ -41,6 +40,12 @@ export default function OliverPortfolio({
   const focusHero = () => {
     window.requestAnimationFrame(() => {
       document.getElementById("hero-title")?.focus({ preventScroll: true });
+    });
+  };
+  const focusSection = (href: string) => {
+    window.requestAnimationFrame(() => {
+      const section = document.querySelector<HTMLElement>(href);
+      section?.querySelector<HTMLElement>("h2, h3")?.focus({ preventScroll: true });
     });
   };
 
@@ -102,6 +107,7 @@ export default function OliverPortfolio({
                 href={item.href}
                 key={item.href}
                 aria-current={activeHref === item.href ? "location" : undefined}
+                onClick={() => focusSection(item.href)}
               >
                 {item.label}
               </a>
@@ -149,10 +155,18 @@ export default function OliverPortfolio({
                 </p>
               )}
               <div className="button-row no-print">
-                <a className="button primary-button" href="#stories">
+                <a
+                  className="button primary-button"
+                  href="#stories"
+                  onClick={() => focusSection("#stories")}
+                >
                   {copy.hero.storiesAction}
                 </a>
-                <a className="hero-text-link" href="#about">
+                <a
+                  className="hero-text-link"
+                  href="#about"
+                  onClick={() => focusSection("#about")}
+                >
                   {copy.hero.aboutAction}
                 </a>
               </div>
@@ -369,11 +383,6 @@ export default function OliverPortfolio({
                 <ArrowUpIcon />
                 <span>{copy.footer.top}</span>
               </a>
-              <PrintButton
-                label={copy.controls.print}
-                accessibleLabel={copy.controls.printLabel}
-                className="button primary-button"
-              />
             </div>
           </div>
         </section>
@@ -386,7 +395,7 @@ export default function OliverPortfolio({
           <div className="page-grid privacy-inner">
             <div>
               <p className="eyebrow">{copy.privacy.eyebrow}</p>
-              <h2 id="privacy-title">{copy.privacy.title}</h2>
+              <h2 id="privacy-title" tabIndex={-1}>{copy.privacy.title}</h2>
             </div>
             <p>{copy.privacy.body}</p>
           </div>
@@ -407,7 +416,12 @@ export default function OliverPortfolio({
             className="footer-actions no-print"
             aria-label={locale === "en" ? "Footer navigation" : "頁尾導覽"}
           >
-            <a href="#privacy-notice">{copy.privacy.link}</a>
+            <a
+              href="#privacy-notice"
+              onClick={() => focusSection("#privacy-notice")}
+            >
+              {copy.privacy.link}
+            </a>
             <a href="#hero-title" onClick={focusHero}>{copy.footer.top}</a>
           </nav>
         </div>

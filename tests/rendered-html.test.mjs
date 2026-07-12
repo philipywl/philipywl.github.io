@@ -161,6 +161,7 @@ test("renders the refined English public homepage", async () => {
   assert.match(html, /<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/);
   assert.match(html, /class="greeting-visual" aria-hidden="true"/);
   assert.doesNotMatch(html, /href="\/en\/summary\/"/);
+  assert.doesNotMatch(text, /Print this page/);
   assert.doesNotMatch(text, /\[[^\]]+\]/);
   for (const href of ["#about", "#stories", "#growth", "#family"]) {
     assert.match(html, new RegExp(`href="${href}"`));
@@ -197,6 +198,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">你好，我是昊熹。<\/span>/);
   assert.doesNotMatch(html, /href="\/zh-hant\/summary\/"/);
+  assert.doesNotMatch(text, /列印本頁/);
   assert.doesNotMatch(text, /\[[^\]]+\]/);
   expectMetadataAndIcons(html, "https://oliveryeung.com/zh-hant/");
   expectSafePage(html);
@@ -261,6 +263,7 @@ test("keeps preview media inert and motion source safe", async () => {
   assert.match(greeting, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
   assert.doesNotMatch(greeting, /setInterval|\bloop\b/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.doesNotMatch(css, /animation:[^;}]*\bboth\b/);
   assert.match(css, /greeting-cursor-rest[\s\S]*?forwards/);
   assert.match(css, /@media print[\s\S]*?\.no-print[\s\S]*?display:\s*none !important/);
 });

@@ -20,27 +20,6 @@ type IconProps = {
   className?: string;
 };
 
-export function PrintIcon({ className = "button-icon" }: IconProps) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      focusable="false"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M7.5 8V3.75h9V8M7.5 16.25v4h9v-4M6.25 17.25H4.5v-7.5h15v7.5h-1.75"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.75"
-      />
-      <path d="M16.5 12.25h.01" stroke="currentColor" strokeLinecap="round" strokeWidth="2.25" />
-    </svg>
-  );
-}
-
 export function ArrowUpIcon({ className = "button-icon" }: IconProps) {
   return (
     <svg
@@ -160,28 +139,6 @@ export function LanguageSwitch({
   );
 }
 
-export function PrintButton({
-  label,
-  accessibleLabel,
-  className = "button secondary-button",
-}: {
-  label: string;
-  accessibleLabel: string;
-  className?: string;
-}) {
-  return (
-    <button
-      type="button"
-      className={className}
-      aria-label={accessibleLabel}
-      onClick={() => window.print()}
-    >
-      <PrintIcon />
-      <span>{label}</span>
-    </button>
-  );
-}
-
 export function MobileMenu({
   items,
   menuLabel,
@@ -263,9 +220,29 @@ export function MobileMenu({
           closeMenu();
         }}
         onKeyDown={(event) => {
-          if (event.key !== "Escape") return;
-          event.preventDefault();
-          closeMenu();
+          if (event.key === "Escape") {
+            event.preventDefault();
+            closeMenu();
+            return;
+          }
+
+          if (event.key !== "Tab") return;
+          const dialog = dialogRef.current;
+          if (!dialog) return;
+          const focusable = Array.from(
+            dialog.querySelectorAll<HTMLElement>("button:not([disabled]), a[href]"),
+          ).filter((element) => element.getClientRects().length > 0);
+          const first = focusable[0];
+          const last = focusable.at(-1);
+          if (!first || !last) return;
+
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
         }}
         onClick={(event) => {
           if (event.target === event.currentTarget) closeMenu();

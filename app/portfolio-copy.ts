@@ -38,8 +38,6 @@ type PortfolioCopy = {
     selected: string;
     menu: string;
     closeMenu: string;
-    print: string;
-    printLabel: string;
   };
   hero: {
     eyebrow: string;
@@ -161,8 +159,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       selected: "Current language",
       menu: "Menu",
       closeMenu: "Close menu",
-      print: "Print this page",
-      printLabel: "Open the browser's print options for this page",
     },
     hero: {
       eyebrow: "Oliver's little learning journey",
@@ -432,8 +428,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       selected: "目前選用",
       menu: "選單",
       closeMenu: "關閉選單",
-      print: "列印本頁",
-      printLabel: "開啟瀏覽器列印選項，以列印本頁",
     },
     hero: {
       eyebrow: "昊熹的小小成長旅程",
