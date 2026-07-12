@@ -129,7 +129,51 @@ function expectSafePage(html) {
     html,
     /<form\b|social-share|google-analytics|googletagmanager|segment\.com|mixpanel|facebook\.net|doubleclick/i,
   );
-  assert.doesNotMatch(html, /<img\b|<picture\b|<video\b|<source\b|<track\b|<iframe\b/i);
+  assert.doesNotMatch(html, /<video\b|<track\b|<iframe\b/i);
+  assert.doesNotMatch(html, /<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i);
+}
+
+function expectApprovedPhotos(html, locale) {
+  const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
+  const sources = html.match(/<source\b[^>]*>/gi) ?? [];
+  const images = html.match(/<img\b[^>]*>/gi) ?? [];
+  assert.equal(pictures.length, 3);
+  assert.equal(sources.length, 3);
+  assert.equal(images.length, 3);
+
+  const expected = locale === "en"
+    ? [
+        "A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.",
+        "Eighteen-month-old Oliver smiling towards the camera in a bright indoor setting.",
+        "Four-month-old Oliver sitting in a cushioned baby seat while several people gently support him with their hands.",
+      ]
+    : [
+        "13個月大的昊熹穿着藍色有領上衣，在白色背景前拍攝正面近照。",
+        "18個月大的昊熹在明亮的室內望向鏡頭微笑。",
+        "4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正輕輕扶着他。",
+      ];
+
+  for (const alt of expected) {
+    const image = images.find((tag) => getAttribute(tag, "alt") === alt);
+    assert.ok(image, `missing photograph alt text: ${alt}`);
+    assert.equal(getAttribute(image, "width"), "1200");
+    assert.equal(getAttribute(image, "height"), "1500");
+    assert.match(getAttribute(image, "sizes") ?? "", /vw|px/);
+    assert.match(getAttribute(image, "src") ?? "", /^\/media\/oliver\/(?:portrait|everyday-smile|family-care)-800\.webp$/);
+    const srcset = getAttribute(image, "srcset") ?? "";
+    for (const width of [480, 800, 1200]) assert.match(srcset, new RegExp(`-${width}\\.webp ${width}w`));
+  }
+
+  for (const source of sources) {
+    assert.equal(getAttribute(source, "type"), "image/avif");
+    const srcset = getAttribute(source, "srcset") ?? "";
+    for (const width of [480, 800, 1200]) assert.match(srcset, new RegExp(`-${width}\\.avif ${width}w`));
+  }
+
+  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "eager").length, 1);
+  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 2);
+  assert.match(images.find((tag) => getAttribute(tag, "loading") === "eager") ?? "", /fetchPriority="high"/i);
+  assert.doesNotMatch(html, /100[123]|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i);
 }
 
 test("renders the refined English public homepage", async () => {
@@ -144,14 +188,19 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Oliver's little learning journey/);
   assert.match(text, /Hello, I'm Oliver\./);
   assert.match(text, /Oliver's everyday world/);
-  assert.match(text, /What sparks his curiosity/);
-  assert.match(text, /How he shares and connects/);
+  assert.match(text, /Books, every day/);
+  assert.match(text, /Oliver likes cars/);
+  assert.match(text, /Oliver likes dogs/);
+  assert.match(text, /Oliver likes problem-solving/);
   assert.match(text, /Everyday moments, told with care/);
   assert.match(text, /Small steps in everyday life/);
-  assert.match(text, /Small changes we have noticed/);
+  assert.match(text, /Three moments over time/);
   assert.match(text, /Family & Home/);
   assert.match(text, /Growing together at home/);
-  assert.match(text, /Looking after one another/);
+  assert.match(text, /Oliver is loved by many people/);
+  assert.match(text, /Many caring hands/);
+  assert.match(text, /Oliver at 13 months/);
+  assert.match(text, /An everyday smile at 18 months/);
   assert.match(text, /How we responded/);
   assert.match(text, /Holding close the little moments/);
   assert.match(text, /hope in their own words/);
@@ -167,6 +216,7 @@ test("renders the refined English public homepage", async () => {
     assert.match(html, new RegExp(`href="${href}"`));
   }
   expectMetadataAndIcons(html, "https://oliveryeung.com/en/");
+  expectApprovedPhotos(html, "en");
   expectSafePage(html);
 });
 
@@ -182,14 +232,19 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /昊熹的小小成長旅程/);
   assert.match(text, /你好，\s*我是昊熹。/);
   assert.match(text, /昊熹的日常小世界/);
-  assert.match(text, /吸引他的日常小事/);
-  assert.match(text, /他如何表達自己、與人連繫/);
+  assert.match(text, /每天一起看書/);
+  assert.match(text, /昊熹喜歡車/);
+  assert.match(text, /昊熹也喜歡狗仔/);
+  assert.match(text, /昊熹喜歡解難/);
   assert.match(text, /用心記下每個日常片段/);
   assert.match(text, /日常裏的一小步/);
-  assert.match(text, /我們留意到的小轉變/);
+  assert.match(text, /三個成長片段/);
   assert.match(text, /家庭與陪伴/);
   assert.match(text, /在家中，一起慢慢成長/);
-  assert.match(text, /關心與彼此陪伴/);
+  assert.match(text, /昊熹身邊有很多疼愛他的人/);
+  assert.match(text, /許多溫柔的手/);
+  assert.match(text, /13個月大的昊熹/);
+  assert.match(text, /18個月大的日常笑臉/);
   assert.match(text, /我們如何回應/);
   assert.match(text, /珍惜日常裏的小片段/);
   assert.match(text, /用自己的說話寫下一份心願/);
@@ -201,6 +256,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.doesNotMatch(text, /列印本頁/);
   assert.doesNotMatch(text, /\[[^\]]+\]/);
   expectMetadataAndIcons(html, "https://oliveryeung.com/zh-hant/");
+  expectApprovedPhotos(html, "zh");
   expectSafePage(html);
 });
 
@@ -220,6 +276,7 @@ test("renders an immediate root language handoff with a no-JavaScript fallback",
   assert.match(html, /href="\/en\/"[^>]*>English<\/a>/i);
   assert.doesNotMatch(text, /Opening|Loading|Continue in English|正在開啟|以中文繼續/i);
   expectMetadataAndIcons(html, "https://oliveryeung.com/");
+  assert.doesNotMatch(html, /<img\b|<picture\b|<source\b/i);
   expectNoForbiddenPublicCopy(html);
 });
 
@@ -242,25 +299,33 @@ test("keeps the bilingual custom 404 safe", async () => {
   assert.match(html, /href="\/en\/"/);
   assert.match(html, /href="\/zh-hant\/"/);
   assert.match(html, /aria-label="中文 \| English"/);
+  assert.doesNotMatch(html, /<img\b|<picture\b|<source\b/i);
   expectRobots(html);
   expectSafePage(html);
 });
 
-test("keeps preview media inert and motion source safe", async () => {
-  const [portfolio, controls, media, greeting, css] = await Promise.all([
+test("keeps preview media inert, real photographs responsive, and motion source safe", async () => {
+  const [portfolio, controls, media, responsivePhoto, greeting, css] = await Promise.all([
     readFile(new URL("../app/OliverPortfolio.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/PortfolioControls.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/PreviewMedia.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/ResponsivePhoto.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/GreetingReveal.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
   assert.doesNotMatch(portfolio, /<img\b|<picture\b|<video\b|autoPlay|\bloop\b/);
   assert.match(portfolio, /<PreviewMedia/);
+  assert.equal((portfolio.match(/<ResponsivePhoto/g) ?? []).length, 3);
   assert.doesNotMatch(portfolio, /copy\.videos|usePointerContextMenuDeterrent|SummaryLink/);
   assert.doesNotMatch(controls, /contextmenu|SummaryLink/);
   assert.doesNotMatch(media, /preview-play/);
   assert.match(greeting, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
+  assert.match(responsivePhoto, /<picture>/);
+  assert.match(responsivePhoto, /image\/avif/);
+  assert.match(responsivePhoto, /\.webp/);
+  assert.match(responsivePhoto, /loading=\{priority \? "eager" : "lazy"\}/);
+  assert.doesNotMatch(responsivePhoto, /\.jpe?g|100[123]/i);
   assert.doesNotMatch(greeting, /setInterval|\bloop\b/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.doesNotMatch(css, /animation:[^;}]*\bboth\b/);

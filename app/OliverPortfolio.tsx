@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import GreetingReveal from "./GreetingReveal";
 import PreviewMedia from "./PreviewMedia";
+import ResponsivePhoto from "./ResponsivePhoto";
 import {
   ArrowUpIcon,
   LanguageSwitch,
@@ -172,11 +173,12 @@ export default function OliverPortfolio({
               </div>
             </div>
 
-            <PreviewMedia
-              label={copy.preview.portrait}
-              detail={copy.preview.portraitDetail}
-              ratio="portrait"
-              tone="sky"
+            <ResponsivePhoto
+              name="portrait"
+              alt={copy.photos.hero.alt}
+              caption={copy.photos.hero.caption}
+              sizes="(min-width: 60rem) 294px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
+              priority
               className="hero-preview-media"
             />
           </div>
@@ -196,11 +198,11 @@ export default function OliverPortfolio({
           </div>
 
           <div className="page-grid about-grid">
-            <PreviewMedia
-              label={copy.preview.photo}
-              detail={copy.preview.portraitDetail}
-              ratio="portrait"
-              tone="honey"
+            <ResponsivePhoto
+              name="everyday-smile"
+              alt={copy.photos.everyday.alt}
+              caption={copy.photos.everyday.caption}
+              sizes="(min-width: 60rem) 360px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
               className="about-preview-media"
             />
             <div className="about-fields">
@@ -354,6 +356,13 @@ export default function OliverPortfolio({
             </div>
 
             <div className="family-media-grid">
+              <ResponsivePhoto
+                name="family-care"
+                alt={copy.photos.family.alt}
+                caption={copy.photos.family.caption}
+                sizes="(min-width: 60rem) 430px, (min-width: 48rem) 40vw, calc(100vw - 40px)"
+                className="family-photo"
+              />
               {copy.family.media.map((media, index) => (
                 <PreviewMedia
                   key={`${media.label}-${index}`}

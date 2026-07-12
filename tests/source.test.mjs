@@ -191,14 +191,15 @@ test("defines accurate public metadata, review robots, alternates, and icons", a
   assert.match(chineseLayout, /<html lang="zh-Hant-HK">/);
 });
 
-test("uses warm factual placeholders without summary, admissions, or institutional copy", async () => {
+test("uses supplied factual content and warm placeholders without admissions or institutional copy", async () => {
   const appFiles = (await collectSourceFiles("app")).filter((file) => /\.[jt]sx?$/.test(file));
   const appSource = (await Promise.all(appFiles.map(read))).join("\n");
-  const [portfolio, controls, copy, media] = await Promise.all([
+  const [portfolio, controls, copy, media, responsivePhoto] = await Promise.all([
     read("app/OliverPortfolio.tsx"),
     read("app/PortfolioControls.tsx"),
     read("app/portfolio-copy.ts"),
     read("app/PreviewMedia.tsx"),
+    read("app/ResponsivePhoto.tsx"),
   ]);
 
   for (const pattern of [
@@ -220,10 +221,30 @@ test("uses warm factual placeholders without summary, admissions, or institution
   assert.match(copy, /在家中，一起慢慢成長/);
   assert.match(copy, /A little preview/);
   assert.match(copy, /故事預覽/);
+  assert.match(copy, /Books, every day/);
+  assert.match(copy, /每天一起看書/);
+  assert.match(copy, /Oliver likes cars/);
+  assert.match(copy, /昊熹喜歡車/);
+  assert.match(copy, /Oliver likes dogs/);
+  assert.match(copy, /昊熹也喜歡狗仔/);
+  assert.match(copy, /Oliver likes problem-solving/);
+  assert.match(copy, /昊熹喜歡解難/);
+  assert.match(copy, /Oliver is loved by many people/);
+  assert.match(copy, /昊熹身邊有很多疼愛他的人/);
+  assert.match(copy, /Reading together, every day/);
+  assert.match(copy, /每天一起閱讀/);
+  assert.match(copy, /Many caring hands/);
+  assert.match(copy, /許多溫柔的手/);
+  assert.match(copy, /caption: "Oliver at 13 months"/);
+  assert.match(copy, /caption: "An everyday smile at 18 months"/);
+  assert.match(copy, /time: "4 months"/);
+  assert.match(copy, /time: "13 months"/);
+  assert.match(copy, /time: "18 months"/);
+  assert.match(copy, /time: "4個月大"/);
+  assert.match(copy, /time: "13個月大"/);
+  assert.match(copy, /time: "18個月大"/);
   assert.match(copy, /How we responded/);
   assert.match(copy, /我們如何回應/);
-  assert.match(copy, /Looking after one another/);
-  assert.match(copy, /關心與彼此陪伴/);
   assert.match(copy, /Holding close the little moments/);
   assert.match(copy, /珍惜日常裏的小片段/);
   assert.match(copy, /hope in their own words/);
@@ -239,6 +260,10 @@ test("uses warm factual placeholders without summary, admissions, or institution
   assert.match(portfolio, /copy\.stories\.items\.map/);
   assert.match(portfolio, /copy\.growth\.timelineItems\.map/);
   assert.match(portfolio, /copy\.family\.vignettes\.map/);
+  assert.equal((portfolio.match(/<ResponsivePhoto/g) ?? []).length, 3);
+  for (const name of ["portrait", "everyday-smile", "family-care"]) {
+    assert.match(portfolio, new RegExp(`name=["']${name}["']`));
+  }
   assert.match(portfolio, /IntersectionObserver/);
   assert.match(portfolio, /aria-current=\{activeHref === item\.href \? "location"/);
   assert.doesNotMatch(portfolio, /SummaryLink|copy\.videos|journal-principles|usePointerContextMenuDeterrent/);
@@ -247,6 +272,45 @@ test("uses warm factual placeholders without summary, admissions, or institution
   assert.doesNotMatch(copy, /Print this page|列印本頁|printLabel/);
   assert.doesNotMatch(media, /preview-play/);
   assert.doesNotMatch(portfolio, /<img\b|<video\b|<picture\b|<iframe\b/);
+  assert.match(responsivePhoto, /<picture>/);
+  assert.match(responsivePhoto, /type="image\/avif"/);
+  assert.match(responsivePhoto, /<img/);
+  assert.match(responsivePhoto, /srcSet=\{srcSet\(name, "webp"\)\}/);
+  assert.match(responsivePhoto, /width="1200"/);
+  assert.match(responsivePhoto, /height="1500"/);
+  assert.match(responsivePhoto, /loading=\{priority \? "eager" : "lazy"\}/);
+  assert.match(responsivePhoto, /fetchPriority=\{priority \? "high" : "auto"\}/);
+  assert.match(responsivePhoto, /decoding="async"/);
+  assert.doesNotMatch(responsivePhoto, /\.jpe?g|100[123]|\b20\d{2}-\d{2}-\d{2}\b/i);
+});
+
+test("ships only the approved reduced metadata-free photo derivatives", async () => {
+  const photoDirectory = path.join(projectRoot, "public", "media", "oliver");
+  const files = (await readdir(photoDirectory)).sort();
+  const expected = [];
+  for (const name of ["everyday-smile", "family-care", "portrait"]) {
+    for (const width of [480, 800, 1200]) {
+      for (const extension of ["avif", "webp"]) expected.push(`${name}-${width}.${extension}`);
+    }
+  }
+  assert.deepEqual(files, expected.sort());
+
+  for (const file of files) {
+    const bytes = await readFile(path.join(photoDirectory, file));
+    assert.ok(bytes.length > 1_000 && bytes.length < 250_000, file);
+    assert.equal(bytes.includes(Buffer.from("Exif")), false, file);
+    assert.equal(bytes.includes(Buffer.from("1001")), false, file);
+    assert.equal(bytes.includes(Buffer.from("1002")), false, file);
+    assert.equal(bytes.includes(Buffer.from("1003")), false, file);
+    assert.equal(bytes.includes(Buffer.from("GPS")), false, file);
+  }
+});
+
+test("serves the approved responsive photo formats with correct MIME types", async () => {
+  const server = await read("scripts/serve-pages.mjs");
+
+  assert.match(server, /\["\.avif",\s*"image\/avif"\]/);
+  assert.match(server, /\["\.webp",\s*"image\/webp"\]/);
 });
 
 test("implements immediate language routing and an accessible section-aware selector", async () => {
@@ -326,11 +390,12 @@ test("uses the Sunlit Meadow palette, one typography system, and accessible cont
   assert.doesNotMatch(css, /summary-(?:card|main|link|hero|footer)|video-preview-grid|preview-play/);
 });
 
-test("keeps responsive navigation, focus movement, and motion polished", async () => {
-  const [portfolio, controls, media, css] = await Promise.all([
+test("keeps responsive navigation, photographs, focus movement, and motion polished", async () => {
+  const [portfolio, controls, media, responsivePhoto, css] = await Promise.all([
     read("app/OliverPortfolio.tsx"),
     read("app/PortfolioControls.tsx"),
     read("app/PreviewMedia.tsx"),
+    read("app/ResponsivePhoto.tsx"),
     read("app/globals.css"),
   ]);
 
@@ -360,6 +425,10 @@ test("keeps responsive navigation, focus movement, and motion polished", async (
   assert.match(css, /\.button:active|\.primary-button:active/);
   assert.match(css, /@media \(hover: hover\)/);
   assert.match(media, /className="preview-media-kind" aria-hidden="true"/);
+  assert.match(responsivePhoto, /const widths = \[480, 800, 1200\] as const/);
+  assert.match(css, /\.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*4 \/ 5/);
+  assert.match(css, /\.portfolio-photo img\s*\{[\s\S]*?object-fit:\s*cover/);
+  assert.match(css, /\.family-media-grid > \*\s*\{[\s\S]*?grid-column:\s*1 \/ -1/);
 });
 
 test("keeps the Pages verifier aligned with the simplified public architecture", async () => {
