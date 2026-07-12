@@ -2,6 +2,14 @@ import { lstat, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
 const outputRoot = path.resolve(process.cwd(), "out");
+const approvedPhotoNames = ["portrait", "everyday-smile", "family-care"];
+const approvedPhotoWidths = [480, 800, 1200];
+const requiredPhotoFiles = approvedPhotoNames.flatMap((name) =>
+  approvedPhotoWidths.flatMap((width) => [
+    `media/oliver/${name}-${width}.avif`,
+    `media/oliver/${name}-${width}.webp`,
+  ]),
+);
 const requiredFiles = [
   "index.html",
   "en/index.html",
@@ -12,6 +20,7 @@ const requiredFiles = [
   "favicon-16x16.png",
   "favicon-32x32.png",
   "apple-touch-icon.png",
+  ...requiredPhotoFiles,
 ];
 const textExtensions = new Set([
   ".html",
@@ -235,11 +244,57 @@ function scanPublicCopy(html, route) {
   for (const [label, pattern] of forbiddenPublicCopy) {
     if (pattern.test(publicSurface)) fail(`${label} found in ${route}`);
   }
-  if (/<(?:img|picture|video|source|track|iframe)\b/i.test(html)) {
-    fail(`unapproved photograph or video markup found in ${route}`);
+  if (/<(?:video|track|iframe)\b/i.test(html)) {
+    fail(`unapproved video or embedded media markup found in ${route}`);
   }
   if (/<form\b|social-share|google-analytics|googletagmanager|segment\.com|mixpanel|facebook\.net|doubleclick/i.test(html)) {
     fail(`form, social-sharing control, analytics, or tracker found in ${route}`);
+  }
+}
+
+function requireApprovedPhotos(html, route, expectedAlts) {
+  const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
+  const sources = html.match(/<source\b[^>]*>/gi) ?? [];
+  const images = html.match(/<img\b[^>]*>/gi) ?? [];
+  if (pictures.length !== 3 || sources.length !== 3 || images.length !== 3) {
+    fail(`${route} must contain exactly three approved responsive photographs`);
+  }
+  if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
+    fail(`${route} exposes a photograph download link`);
+  }
+  if (/100[123]|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i.test(html)) {
+    fail(`${route} exposes an original filename, capture date, or JPEG photograph`);
+  }
+
+  for (const alt of expectedAlts) {
+    const image = images.find((tag) => getAttribute(tag, "alt") === alt);
+    if (!image) fail(`${route} lacks approved photograph alt text: ${alt}`);
+    if (getAttribute(image, "width") !== "1200" || getAttribute(image, "height") !== "1500") {
+      fail(`${route} photograph lacks stable intrinsic dimensions: ${alt}`);
+    }
+    if (!getAttribute(image, "sizes") || !getAttribute(image, "srcset")) {
+      fail(`${route} photograph lacks responsive sizes or srcset: ${alt}`);
+    }
+    if (!/^\/media\/oliver\/(?:portrait|everyday-smile|family-care)-800\.webp$/.test(getAttribute(image, "src") ?? "")) {
+      fail(`${route} photograph uses an unapproved fallback path: ${alt}`);
+    }
+  }
+
+  for (const source of sources) {
+    if (getAttribute(source, "type") !== "image/avif") fail(`${route} lacks an AVIF source`);
+    const srcset = getAttribute(source, "srcset") ?? "";
+    for (const width of approvedPhotoWidths) {
+      if (!new RegExp(`-${width}\\.avif ${width}w`).test(srcset)) {
+        fail(`${route} AVIF source lacks ${width}px derivative`);
+      }
+    }
+  }
+
+  if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 1) {
+    fail(`${route} must eagerly load only the hero photograph`);
+  }
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 2) {
+    fail(`${route} must lazy-load both below-fold photographs`);
   }
 }
 
@@ -258,6 +313,10 @@ if (files.some((file) => path.posix.basename(file).toLowerCase() === "cname")) {
 if (files.some((file) => /(?:^|\/)\.env(?:\.|$)/i.test(file))) {
   fail("environment files must not be included in the Pages artifact");
 }
+const artifactPhotos = files.filter((file) => file.startsWith("media/oliver/")).sort();
+if (JSON.stringify(artifactPhotos) !== JSON.stringify(requiredPhotoFiles.sort())) {
+  fail("the Pages artifact does not contain exactly the approved reduced photo derivatives");
+}
 
 const privateBirthDate = process.env.OLIVER_BIRTH_DATE?.trim();
 for (const relativePath of files) {
@@ -266,6 +325,17 @@ for (const relativePath of files) {
   }
 
   const absolutePath = path.join(outputRoot, relativePath);
+  if (relativePath.startsWith("media/oliver/")) {
+    const bytes = await readFile(absolutePath);
+    if (bytes.length < 1_000 || bytes.length > 250_000) {
+      fail(`photo derivative has an unexpected size: out/${relativePath}`);
+    }
+    for (const marker of ["Exif", "GPS", "1001", "1002", "1003"]) {
+      if (bytes.includes(Buffer.from(marker))) {
+        fail(`photo derivative contains private metadata or an original filename: out/${relativePath}`);
+      }
+    }
+  }
   if (privateBirthDate) {
     const bytes = await readFile(absolutePath);
     if (bytes.includes(Buffer.from(privateBirthDate))) {
@@ -326,18 +396,23 @@ const chineseText = visibleText(routeHtml.chinese);
 for (const expected of [
   "Oliver's little learning journey",
   "Hello, I'm Oliver.",
-  "A small collection of everyday moments, gathered with care by Oliver's parents",
+  "A small collection of everyday moments showing Oliver's love of books, cars, dogs and problem-solving",
   "A little preview",
   "Oliver's everyday world",
-  "What sparks his curiosity",
-  "How he shares and connects",
+  "Books, every day",
+  "Oliver likes cars",
+  "Oliver likes dogs",
+  "Oliver likes problem-solving",
   "Everyday moments, told with care",
   "Short videos will appear only where they help a moment unfold",
   "Small steps in everyday life",
-  "Small changes we have noticed",
+  "Three moments over time",
   "Family & Home",
   "Growing together at home",
-  "Looking after one another",
+  "Oliver is loved by many people",
+  "Many caring hands",
+  "Oliver at 13 months",
+  "An everyday smile at 18 months",
   "How we responded",
   "Holding close the little moments",
   "hope in their own words",
@@ -348,18 +423,23 @@ for (const expected of [
 }
 for (const expected of [
   "昊熹的小小成長旅程",
-  "透過爸爸媽媽用心整理的一個個日常片段，輕輕記下昊熹如何探索、與人互動",
+  "透過一個個日常片段，記下昊熹喜歡看書、車、狗仔和解難的日常",
   "故事預覽",
   "昊熹的日常小世界",
-  "吸引他的日常小事",
-  "他如何表達自己、與人連繫",
+  "每天一起看書",
+  "昊熹喜歡車",
+  "昊熹也喜歡狗仔",
+  "昊熹喜歡解難",
   "用心記下每個日常片段",
   "短片只會在有助完整呈現故事時加入",
   "日常裏的一小步",
-  "我們留意到的小轉變",
+  "三個成長片段",
   "家庭與陪伴",
   "在家中，一起慢慢成長",
-  "關心與彼此陪伴",
+  "昊熹身邊有很多疼愛他的人",
+  "許多溫柔的手",
+  "13個月大的昊熹",
+  "18個月大的日常笑臉",
   "我們如何回應",
   "珍惜日常裏的小片段",
   "用自己的說話寫下一份心願",
@@ -387,6 +467,16 @@ if ((chineseText.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).lengt
 if (/\[[^\]]+\]/.test(englishText + chineseText)) {
   fail("bracketed editorial tokens remain in visitor-visible text");
 }
+requireApprovedPhotos(routeHtml.english, "English page", [
+  "A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.",
+  "Eighteen-month-old Oliver smiling towards the camera in a bright indoor setting.",
+  "Four-month-old Oliver sitting in a cushioned baby seat while several people gently support him with their hands.",
+]);
+requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
+  "13個月大的昊熹穿着藍色有領上衣，在白色背景前拍攝正面近照。",
+  "18個月大的昊熹在明亮的室內望向鏡頭微笑。",
+  "4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正輕輕扶着他。",
+]);
 requireMetadata(
   routeHtml.english,
   "English page",
@@ -404,6 +494,9 @@ requireMetadata(
 
 if (!routeHtml.notFound.includes("We couldn") || !routeHtml.notFound.includes("暫時找不到這一頁")) {
   fail("404 lacks the bilingual not-found message");
+}
+if (/<(?:img|picture|source)\b/i.test(routeHtml.root + routeHtml.notFound)) {
+  fail("root or 404 page contains an unapproved photograph");
 }
 if (!/href="\/en\/"/i.test(routeHtml.notFound) || !/href="\/zh-hant\/"/i.test(routeHtml.notFound)) {
   fail("404 lacks both locale return links");

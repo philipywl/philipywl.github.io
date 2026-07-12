@@ -6,6 +6,7 @@ import path from "node:path";
 const outputRoot = path.resolve(process.cwd(), "out");
 const port = Number.parseInt(process.argv[2] ?? "4173", 10);
 const contentTypes = new Map([
+  [".avif", "image/avif"],
   [".css", "text/css; charset=utf-8"],
   [".html", "text/html; charset=utf-8"],
   [".ico", "image/x-icon"],
@@ -13,6 +14,7 @@ const contentTypes = new Map([
   [".json", "application/json; charset=utf-8"],
   [".svg", "image/svg+xml"],
   [".txt", "text/plain; charset=utf-8"],
+  [".webp", "image/webp"],
   [".webmanifest", "application/manifest+json"],
   [".xml", "application/xml; charset=utf-8"],
 ]);
