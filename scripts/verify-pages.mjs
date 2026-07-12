@@ -334,10 +334,12 @@ for (const expected of [
   "Short videos will appear only where they help a moment unfold",
   "Small steps in everyday life",
   "Small changes we have noticed",
-  "Family & Care",
+  "Family & Home",
   "Growing together at home",
-  "Care and being together",
-  "hope written in their own words",
+  "Looking after one another",
+  "How we responded",
+  "Holding close the little moments",
+  "hope in their own words",
   "This portfolio is carefully gathered by Oliver's parents. To help protect his privacy",
   "中文 | English",
 ]) {
@@ -345,7 +347,7 @@ for (const expected of [
 }
 for (const expected of [
   "昊熹的小小成長旅程",
-  "透過一個個日常片段，輕輕記下昊熹如何探索、與人互動",
+  "透過爸爸媽媽用心整理的一個個日常片段，輕輕記下昊熹如何探索、與人互動",
   "故事預覽",
   "昊熹的日常小世界",
   "吸引他的日常小事",
@@ -357,7 +359,9 @@ for (const expected of [
   "家庭與陪伴",
   "在家中，一起慢慢成長",
   "關心與彼此陪伴",
-  "親自寫下的心願",
+  "我們如何回應",
+  "珍惜日常裏的小片段",
+  "用自己的說話寫下一份心願",
   "本作品集由昊熹的爸爸媽媽用心整理。為保護孩子的私隱",
   "中文 | English",
 ]) {
