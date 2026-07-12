@@ -191,7 +191,7 @@ export default function OliverPortfolio({
               <h2 id="about-title" tabIndex={-1}>{copy.about.title}</h2>
               <p>{copy.about.intro}</p>
             </div>
-            <aside className="preview-note" aria-label={copy.preview.badge}>
+            <aside className="preview-note preview-only" aria-label={copy.preview.badge}>
               <span className="preview-badge">{copy.preview.badge}</span>
               <p>{copy.preview.note}</p>
             </aside>
@@ -219,7 +219,7 @@ export default function OliverPortfolio({
           </div>
         </section>
 
-        <section id="stories" className="stories-section section-pad" aria-labelledby="stories-title">
+        <section id="stories" className="stories-section section-pad preview-only" aria-labelledby="stories-title">
           <div className="page-grid section-intro-grid">
             <div className="section-heading-copy">
               <p className="eyebrow">{copy.stories.eyebrow}</p>
@@ -289,6 +289,25 @@ export default function OliverPortfolio({
                 </div>
               </article>
             ))}
+
+            <section className="planned-stories" aria-labelledby="planned-stories-title">
+              <div className="planned-stories-heading">
+                <h3 id="planned-stories-title">{copy.stories.plannedTitle}</h3>
+                <p>{copy.stories.plannedIntro}</p>
+              </div>
+              <div className="planned-story-grid">
+                {copy.stories.plannedItems.map((story, index) => (
+                  <article className="planned-story" key={story.title}>
+                    <div className="planned-story-meta">
+                      <span aria-hidden="true">{String(index + 2).padStart(2, "0")}</span>
+                      <span>{story.format}</span>
+                    </div>
+                    <h4>{story.title}</h4>
+                    <p>{story.note}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
           </div>
         </section>
 
@@ -302,19 +321,22 @@ export default function OliverPortfolio({
           </div>
 
           <div className="page-grid growth-layout">
-            <section className="everyday-panel" aria-labelledby="everyday-title">
+            <section className="everyday-panel preview-only" aria-labelledby="everyday-title">
               <h3 id="everyday-title">{copy.growth.everydayTitle}</h3>
-              <div className="everyday-grid">
+              <p className="everyday-intro">{copy.growth.everydayIntro}</p>
+              <ul className="everyday-list">
                 {copy.growth.everydayItems.map((item, index) => (
-                  <article className="everyday-card" key={item.title}>
+                  <li key={item.title}>
                     <span className="field-index" aria-hidden="true">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <h4>{item.title}</h4>
-                    <p>{item.body}</p>
-                  </article>
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.body}</p>
+                    </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </section>
 
             <section className="timeline-panel" aria-labelledby="timeline-title">
@@ -363,16 +385,6 @@ export default function OliverPortfolio({
                 sizes="(min-width: 60rem) 430px, (min-width: 48rem) 40vw, calc(100vw - 40px)"
                 className="family-photo"
               />
-              {copy.family.media.map((media, index) => (
-                <PreviewMedia
-                  key={`${media.label}-${index}`}
-                  label={media.label}
-                  detail={media.detail}
-                  kind={media.kind}
-                  ratio={media.ratio}
-                  tone={index === 0 ? "peach" : "teal"}
-                />
-              ))}
             </div>
           </div>
         </section>

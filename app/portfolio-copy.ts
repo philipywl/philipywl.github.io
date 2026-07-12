@@ -28,6 +28,12 @@ type StoryPreview = {
   media: PreviewMedia[];
 };
 
+type PlannedStory = {
+  title: string;
+  format: string;
+  note: string;
+};
+
 type PortfolioCopy = {
   lang: "en-HK" | "zh-Hant-HK";
   skip: string;
@@ -83,12 +89,16 @@ type PortfolioCopy = {
     reflection: string;
     learningClues: string;
     items: StoryPreview[];
+    plannedTitle: string;
+    plannedIntro: string;
+    plannedItems: PlannedStory[];
   };
   growth: {
     eyebrow: string;
     title: string;
     intro: string;
     everydayTitle: string;
+    everydayIntro: string;
     everydayItems: PreviewField[];
     timelineTitle: string;
     timelineItems: Array<{
@@ -103,7 +113,6 @@ type PortfolioCopy = {
     valuesTitle: string;
     valuesBody: string;
     vignettes: PreviewField[];
-    media: PreviewMedia[];
   };
   closing: {
     eyebrow: string;
@@ -129,24 +138,24 @@ export const localePaths: Record<PortfolioLocale, { home: string }> = {
 };
 
 const englishStoryText = {
-  age: "Age at the time · to be added",
+  age: "Age will be added with the story",
   observation:
-    "Oliver's parents will describe the moment through the small details they saw and heard.",
+    "This space will hold the small details Oliver's parents saw and heard in the moment.",
   noticed:
-    "Their reflection will stay close to those details, sharing what caught Oliver's attention and how he responded.",
+    "Their reflection will share what caught Oliver's attention and how he responded, staying close to what really happened.",
   support:
-    "Oliver's parents will describe how they responded at the time and what happened next.",
+    "The story will also show how Oliver's parents responded and stayed alongside him.",
   reflection:
-    "A brief note from home will share why this ordinary little moment felt worth keeping.",
+    "A short note from home will share why this everyday moment felt worth keeping.",
   tags: ["Learning clue 01 · to be added", "Learning clue 02 · to be added"],
 };
 
 const chineseStoryText = {
-  age: "當時幾個月大 · 稍後加入",
-  observation: "爸爸媽媽會如實記下當時發生的事，以及親眼看見、親耳聽見的細節。",
-  noticed: "爸爸媽媽會從當時親眼看見、親耳聽見的細節出發，分享甚麼引起昊熹注意，以及他如何回應。",
-  support: "爸爸媽媽會根據真實片段，記下他們當時如何回應，以及之後發生的事。",
-  reflection: "爸爸媽媽會用一句話，記下這個日常小片段為何值得珍藏。",
+  age: "故事加入時，會一併記下當時年齡",
+  observation: "這裏會如實記下爸爸媽媽當時親眼看見、親耳聽見的小細節。",
+  noticed: "爸爸媽媽會從真實細節出發，分享甚麼引起昊熹注意，以及他如何回應。",
+  support: "故事亦會記下爸爸媽媽當時如何回應和陪伴。",
+  reflection: "爸爸媽媽會用一句心裏話，記下這個日常片段為何值得珍藏。",
   tags: ["學習線索 01 · 稍後加入", "學習線索 02 · 稍後加入"],
 };
 
@@ -159,11 +168,11 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       about: "Meet Oliver",
       stories: "Learning Stories",
       growth: "Everyday Growth",
-      family: "Family & Home",
+      family: "Family & Care",
     },
     controls: {
       languages: "Choose language",
-      selected: "Current language",
+      selected: "currently selected",
       menu: "Menu",
       closeMenu: "Close menu",
     },
@@ -173,7 +182,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingLead: "Hello,",
       greetingRest: "I'm Oliver.",
       intro:
-        "A small collection of everyday moments showing Oliver's love of books, cars, dogs and problem-solving, together with the care of the many people around him.",
+        "This little collection gathers everyday moments around the things Oliver enjoys—books, cars, dogs and problem-solving—and the loving care of the many people around him.",
       storiesAction: "Explore Oliver's learning stories",
       aboutAction: "Meet Oliver",
       ageLabel: "Oliver's current age",
@@ -181,7 +190,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
     preview: {
       badge: "A little preview",
       note:
-        "This first collection begins with three family-chosen photographs and a few everyday interests. More stories and videos will be added only when Oliver's parents feel they are right to share.",
+        "This first collection brings together three photographs chosen by Oliver's parents and a few everyday interests. More stories and videos will be added gradually, whenever they feel a moment is right to share.",
       supportingPhoto: "Second story photo",
       video: "Video moment",
       playLabel:
@@ -199,34 +208,34 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       family: {
         alt: "Four-month-old Oliver sitting in a cushioned baby seat while several people gently support him with their hands.",
         caption:
-          "At four months, Oliver was gently held and supported by several people who love him—a quiet glimpse of the warmth around him.",
+          "At four months, Oliver was gently supported by several loving hands—a quiet moment of care and closeness.",
       },
     },
     about: {
       eyebrow: "Meet Oliver",
       title: "Oliver's everyday world",
       intro:
-        "Oliver's everyday world is shaped by a few simple things he genuinely enjoys: books, cars, dogs and problem-solving. His parents also share reading time with him every day, making books a familiar part of their time together.",
+        "Books, cars, dogs and problem-solving are simple, genuine parts of Oliver's everyday world. Every day, he and his parents also share time with a book—a familiar rhythm of being together.",
       fields: [
         {
           title: "Books, every day",
           body:
-            "Oliver likes books, and his parents share reading time with him every day. It is a familiar part of their everyday time together.",
+            "Every day, Oliver and his parents spend time reading together. Books have become a familiar part of their time at home.",
         },
         {
           title: "Cars",
           body:
-            "Oliver likes cars. They are one of the simple, familiar interests in his everyday world.",
+            "Oliver likes cars—one of the familiar interests in his everyday world.",
         },
         {
           title: "Dogs",
           body:
-            "Oliver likes dogs, too. This simple interest is another part of his everyday world.",
+            "Oliver also likes dogs, another simple interest in his everyday world.",
         },
         {
           title: "Problem-solving",
           body:
-            "Oliver likes problem-solving. It is another genuine interest that forms part of his everyday world.",
+            "Oliver also enjoys problem-solving as part of his everyday interests.",
         },
       ],
     },
@@ -234,21 +243,21 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "Learning Stories",
       title: "Everyday moments, told with care",
       intro:
-        "Each story will stay close to what really happened: what Oliver did, how he responded, what his parents noticed and what happened next.",
+        "Each story will stay close to a real moment: what Oliver did, how he responded, what his parents noticed, and how they continued alongside him.",
       mediaNote:
-        "Short videos will appear only where they help a moment unfold, each with a clear duration and bilingual caption. Nothing will play automatically.",
+        "When a short video helps tell the story, it will include a clear duration and bilingual caption. Videos will never play automatically.",
       whatHappened: "What happened",
       noticed: "What we noticed",
-      support: "How we responded",
+      support: "How we continued alongside him",
       reflection: "Parent observation",
       learningClues: "Learning clues",
       items: [
         {
-          title: "A learning story to come · 01",
+          title: "A new learning story · 01",
           ...englishStoryText,
           media: [
             {
-              label: "Story photo · 4:3",
+              label: "Story photo",
               detail:
                 "A photograph chosen with care by Oliver's parents will open this story.",
               kind: "photo",
@@ -256,74 +265,30 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             },
           ],
         },
+      ],
+      plannedTitle: "Story spaces for moments still to come",
+      plannedIntro:
+        "These little spaces offer a glimpse of how the journal can grow, one real family-chosen moment at a time.",
+      plannedItems: [
         {
-          title: "A learning story to come · 02",
-          ...englishStoryText,
-          media: [
-            {
-              label: "Story photo · 4:3",
-              detail: "The first photograph will introduce the moment.",
-              kind: "photo",
-              ratio: "landscape",
-            },
-            {
-              label: "Second story photo · 4:3",
-              detail: "A second photograph may show how the moment unfolded.",
-              kind: "photo",
-              ratio: "landscape",
-            },
-          ],
+          title: "Reading together",
+          format: "Photo story",
+          note: "A future photo story will hold one of Oliver's everyday reading moments with his parents.",
         },
         {
-          title: "A learning story to come · 03",
-          ...englishStoryText,
-          media: [
-            {
-              label: "Story photo · 4:3",
-              detail: "A photograph may set the scene before the story begins.",
-              kind: "photo",
-              ratio: "landscape",
-            },
-            {
-              label: "Story video · 16:9",
-              detail:
-                "A short, family-chosen video may preserve the movement or exchange as it happened.",
-              kind: "video",
-              ratio: "video",
-            },
-          ],
+          title: "Cars & problem-solving",
+          format: "Photo sequence",
+          note: "Reserved for a real moment involving cars or problem-solving, chosen by Oliver's parents.",
         },
         {
-          title: "A learning story to come · 04",
-          ...englishStoryText,
-          media: [
-            {
-              label: "Portrait story photo · 4:5",
-              detail: "A portrait photograph may open this story.",
-              kind: "photo",
-              ratio: "portrait",
-            },
-            {
-              label: "Portrait story video · 9:16",
-              detail:
-                "A short vertical video may sit beside the written observation.",
-              kind: "video",
-              ratio: "portrait-video",
-            },
-          ],
+          title: "Dogs",
+          format: "Photo + short video",
+          note: "Reserved for a real moment involving dogs, told with a photograph or short video.",
         },
         {
-          title: "A learning story to come · 05",
-          ...englishStoryText,
-          media: [
-            {
-              label: "Story video · 16:9",
-              detail:
-                "A short, family-chosen video may hold one complete, meaningful moment.",
-              kind: "video",
-              ratio: "video",
-            },
-          ],
+          title: "An everyday moment",
+          format: "Short video",
+          note: "Reserved for a future everyday moment chosen by Oliver's parents.",
         },
       ],
     },
@@ -331,26 +296,28 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "Everyday Growth",
       title: "Small steps in everyday life",
       intro:
-        "Three photographs now begin this gentle thread through time. Future observations will add familiar routines, moments of trying in his own way and the small changes Oliver's parents notice.",
+        "These three photographs begin a gentle thread through time. As real observations are added, they will gather familiar routines, small attempts and the changes Oliver's parents notice along the way.",
       everydayTitle: "Everyday rhythms and small steps",
+      everydayIntro:
+        "These three gentle prompts show where future everyday stories can grow, always beginning with a real moment.",
       everydayItems: [
         {
           title: "Sharing in familiar routines",
           body:
-            "Oliver's parents will add a real example of how he takes part in a routine he knows well.",
+            "A future story will hold one familiar routine, just as it happens.",
         },
         {
           title: "Space to try in his own way",
           body:
-            "Once a real moment is added, the observation will show how Oliver tried and how his parents responded.",
+            "A future story will notice what Oliver tries and how his parents respond in the moment.",
         },
         {
           title: "Connecting in everyday moments",
           body:
-            "A parent observation will share how Oliver notices and responds to the people around him, or joins in during a familiar family moment.",
+            "A future story will stay close to an everyday moment Oliver shares with someone around him.",
         },
       ],
-      timelineTitle: "Three moments over time",
+      timelineTitle: "Three moments to treasure",
       timelineItems: [
         {
           time: "4 months",
@@ -367,13 +334,13 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       ],
     },
     family: {
-      eyebrow: "Family & Home",
-      title: "Growing together at home",
+      eyebrow: "Family & Care",
+      title: "Growing together, surrounded by care",
       intro:
-        "Oliver is loved by many people. Around him are many caring hands, each adding warmth and companionship to the everyday moments his family holds close.",
+        "Oliver is loved by many people. Their time, attention and gentle care bring warmth to the everyday moments his family treasures.",
       valuesTitle: "The everyday things we value",
       valuesBody:
-        "Shared reading is part of every day at home. The time, attention and care of the people around Oliver give these familiar moments their warmth.",
+        "Shared reading is part of every day at home. The time and care offered by the people around Oliver make these familiar moments feel warm and close.",
       vignettes: [
         {
           title: "Reading together, every day",
@@ -383,16 +350,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           title: "Many caring hands",
           body:
-            "From his early months, Oliver has been surrounded by people who hold him gently and care for him with warmth.",
-        },
-      ],
-      media: [
-        {
-          label: "Another family moment · 3:2",
-          detail:
-            "A second photograph may hold another small piece of everyday family life.",
-          kind: "photo",
-          ratio: "wide",
+            "Since his early months, Oliver has been gently held and cared for by many loving people around him.",
         },
       ],
     },
@@ -400,9 +358,9 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "From Oliver's parents",
       title: "Holding close the little moments",
       reflection:
-        "Oliver's parents will close the journal with a few words about the everyday moments they most want to hold close.",
+        "This little journal begins with shared reading, familiar interests and three moments chosen with care.",
       hope:
-        "They will also add a hope in their own words, bringing the journal to a warm and personal close.",
+        "Around Oliver are many people who love him, bringing warmth and companionship to the everyday world in which he explores and grows.",
     },
     privacy: {
       eyebrow: "Privacy",
@@ -428,7 +386,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
     },
     controls: {
       languages: "選擇語言",
-      selected: "目前選用",
+      selected: "現正使用",
       menu: "選單",
       closeMenu: "關閉選單",
     },
@@ -438,7 +396,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingLead: "你好，",
       greetingRest: "我是昊熹。",
       intro:
-        "透過一個個日常片段，記下昊熹喜歡看書、車、狗仔和解難的日常，也記下身邊許多人給他的疼愛與陪伴。",
+        "這裏收集了一個個日常片段：昊熹喜歡看書、車、狗仔和解難，也在身邊許多人的疼愛與陪伴中慢慢成長。",
       storiesAction: "閱讀昊熹的成長故事",
       aboutAction: "認識昊熹",
       ageLabel: "昊熹現在的年齡",
@@ -446,7 +404,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
     preview: {
       badge: "故事預覽",
       note:
-        "這份成長記錄先由三張爸爸媽媽挑選的相片和幾項日常喜好開始；更多故事和影片，只會在爸爸媽媽認為適合分享時慢慢加入。",
+        "這份成長記錄先收錄三張爸爸媽媽挑選的相片和幾項日常喜好；更多故事和影片，會在爸爸媽媽認為適合分享時慢慢加入。",
       supportingPhoto: "第二張故事相片",
       video: "故事影片",
       playLabel:
@@ -463,30 +421,30 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       },
       family: {
         alt: "4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正輕輕扶着他。",
-        caption: "四個月大的昊熹，被幾雙溫柔的手輕輕扶着。這張相片留下了他被許多人疼愛和陪伴的溫暖一刻。",
+        caption: "4個月大的昊熹，被幾雙溫柔的手輕輕扶着，留下充滿照顧與親近感的一刻。",
       },
     },
     about: {
       eyebrow: "認識昊熹",
       title: "昊熹的日常小世界",
       intro:
-        "昊熹的日常，有幾份簡單而真實的喜好：看書、車、狗仔和解難。爸爸媽媽每天也會陪他一起閱讀，親子閱讀成為一家人日常相處的一部分。",
+        "看書、車、狗仔和解難，都是昊熹日常裏簡單而真實的喜好。每天，他也會和爸爸媽媽一起閱讀；這段親子閱讀時間，成為一家人熟悉而溫暖的日常。",
       fields: [
         {
           title: "每天一起看書",
-          body: "昊熹喜歡看書，爸爸媽媽每天都會陪他一起閱讀。這段親子閱讀時間，是一家人日常相處的一部分。",
+          body: "爸爸媽媽每天都會陪昊熹一起閱讀。看書，已成為一家人熟悉的日常。",
         },
         {
-          title: "喜歡的車",
-          body: "昊熹喜歡車。車是他日常小世界裏一個熟悉的興趣。",
+          title: "喜歡車",
+          body: "昊熹喜歡車；車是他日常小世界裏熟悉的興趣之一。",
         },
         {
           title: "喜歡狗仔",
-          body: "昊熹也喜歡狗仔。這份簡單的喜愛，是他日常興趣的一部分。",
+          body: "昊熹也喜歡狗仔；這份簡單的喜愛，也是他日常小世界的一部分。",
         },
         {
           title: "喜歡解難",
-          body: "昊熹喜歡解難。這也是他日常興趣中很自然的一部分。",
+          body: "昊熹也喜歡解難；這是他日常興趣的一部分。",
         },
       ],
     },
@@ -494,92 +452,51 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "成長故事",
       title: "用心記下每個日常片段",
       intro:
-        "每個故事都會忠於當時真正發生的事：昊熹做了甚麼、如何回應、爸爸媽媽留意到甚麼，以及之後發生的事。",
+        "每個故事都會從一個真實片段出發：昊熹做了甚麼、如何回應、爸爸媽媽留意到甚麼，以及他們如何繼續陪伴。",
       mediaNote:
-        "短片只會在有助完整呈現故事時加入，並附上片長和中英文說明；所有影片都只會在訪客主動按下播放鍵後開始播放。",
+        "短片只會在有助完整呈現故事時加入，並附上片長和中英文說明；影片不會自動播放。",
       whatHappened: "當時的小故事",
       noticed: "這一刻，我們看見……",
-      support: "我們如何回應",
+      support: "我們如何繼續陪伴",
       reflection: "爸爸媽媽的觀察",
       learningClues: "學習線索",
       items: [
         {
-          title: "成長故事 01 · 標題稍後加入",
+          title: "新的成長故事 · 01",
           ...chineseStoryText,
           media: [
             {
-              label: "故事相片 · 4:3",
+              label: "故事相片",
               detail: "日後會由爸爸媽媽用心挑選一張相片，帶出這個小故事。",
               kind: "photo",
               ratio: "landscape",
             },
           ],
         },
+      ],
+      plannedTitle: "日後故事的幾個方向",
+      plannedIntro:
+        "這些小小位置，讓大家預視成長記錄日後可以怎樣延伸；每個故事，都會從爸爸媽媽挑選的真實片段開始。",
+      plannedItems: [
         {
-          title: "成長故事 02 · 標題稍後加入",
-          ...chineseStoryText,
-          media: [
-            {
-              label: "故事相片 · 4:3",
-              detail: "第一張相片會帶出當時的情境。",
-              kind: "photo",
-              ratio: "landscape",
-            },
-            {
-              label: "第二張故事相片 · 4:3",
-              detail: "第二張相片可補充這個小故事如何繼續發展。",
-              kind: "photo",
-              ratio: "landscape",
-            },
-          ],
+          title: "每天一起閱讀",
+          format: "相片故事",
+          note: "日後可用相片記下昊熹與爸爸媽媽每天一起閱讀的其中一個片段。",
         },
         {
-          title: "成長故事 03 · 標題稍後加入",
-          ...chineseStoryText,
-          media: [
-            {
-              label: "故事相片 · 4:3",
-              detail: "日後可先用一張相片，帶大家走進當時的情境。",
-              kind: "photo",
-              ratio: "landscape",
-            },
-            {
-              label: "故事影片 · 16:9",
-              detail: "爸爸媽媽可挑選一段短片，保留當時的動作或互動。",
-              kind: "video",
-              ratio: "video",
-            },
-          ],
+          title: "車與解難",
+          format: "連續相片",
+          note: "留待爸爸媽媽日後挑選一個與車或解難有關的真實片段。",
         },
         {
-          title: "成長故事 04 · 標題稍後加入",
-          ...chineseStoryText,
-          media: [
-            {
-              label: "直向故事相片 · 4:5",
-              detail: "日後可用一張直向相片帶出這個小故事。",
-              kind: "photo",
-              ratio: "portrait",
-            },
-            {
-              label: "直向故事影片 · 9:16",
-              detail: "一段直向短片可與文字觀察放在一起。",
-              kind: "video",
-              ratio: "portrait-video",
-            },
-          ],
+          title: "狗仔",
+          format: "相片＋短片",
+          note: "留待日後用相片或短片，記下一個與狗仔有關的真實片段。",
         },
         {
-          title: "成長故事 05 · 標題稍後加入",
-          ...chineseStoryText,
-          media: [
-            {
-              label: "故事影片 · 16:9",
-              detail: "爸爸媽媽可挑選一段短片，完整保留一個值得珍藏的小片段。",
-              kind: "video",
-              ratio: "video",
-            },
-          ],
+          title: "日常片段",
+          format: "短片",
+          note: "留待爸爸媽媽日後挑選一個適合分享的真實日常片段。",
         },
       ],
     },
@@ -587,23 +504,25 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "日常成長",
       title: "日常裏的一小步",
       intro:
-        "三張相片先為這段成長軌跡揭開序幕；日後加入的真實觀察，會再串起熟悉日常、昊熹自己嘗試的小片段，以及爸爸媽媽留意到的細微轉變。",
+        "三張相片先串起幾個不同時期的片段。日後加入的真實觀察，會再記下熟悉的生活節奏、昊熹的小小嘗試，以及爸爸媽媽沿途留意到的轉變。",
       everydayTitle: "日常節奏與小小嘗試",
+      everydayIntro:
+        "這三個小小方向，讓大家預視日後的日常故事可以怎樣延伸；每一個故事，都會從真實片段開始。",
       everydayItems: [
         {
           title: "參與熟悉的日常",
-          body: "爸爸媽媽會記下昊熹在熟悉的生活節奏中，自然參與的一個小片段。",
+          body: "日後會如實記下一個熟悉的日常片段。",
         },
         {
           title: "用自己的方式試一試",
-          body: "加入真實片段後，爸爸媽媽會記下昊熹當時如何嘗試，以及他們如何回應。",
+          body: "日後會記下昊熹如何嘗試，以及爸爸媽媽當時如何回應。",
         },
         {
           title: "與人相處的日常片段",
-          body: "爸爸媽媽會記下一個熟悉的日常片段，分享昊熹如何留意和回應身邊的人，或如何參與其中。",
+          body: "日後會記下一個昊熹與身邊人相處的真實日常片段。",
         },
       ],
-      timelineTitle: "三個成長片段",
+      timelineTitle: "三個珍藏片段",
       timelineItems: [
         {
           time: "4個月大",
@@ -621,28 +540,20 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
     },
     family: {
       eyebrow: "家庭與陪伴",
-      title: "在家中，一起慢慢成長",
+      title: "在陪伴中，一起慢慢成長",
       intro:
-        "昊熹身邊有很多疼愛他的人。一雙雙溫柔的手，為他的日常添上陪伴和暖意，也成為爸爸媽媽想好好珍藏的成長片段。",
+        "昊熹身邊有很多疼愛他的人。他們付出的時間、專注和溫柔陪伴，為一家人珍惜的日常添上暖意。",
       valuesTitle: "一家人珍惜的日常",
       valuesBody:
-        "親子閱讀是家中每天都有的日常。身邊每一份時間、專注和照顧，都為這些熟悉片段添上暖意。",
+        "親子閱讀是家中每天都有的日常。身邊每一份時間和照顧，都讓這些熟悉片段多一份親近與暖意。",
       vignettes: [
         {
           title: "每天一起閱讀",
-          body: "昊熹喜歡看書，爸爸媽媽每天都會留出時間陪他一起閱讀。",
+          body: "爸爸媽媽每天都會陪昊熹一起閱讀，讓看書成為一家人熟悉的日常。",
         },
         {
           title: "許多溫柔的手",
-          body: "從還是小寶寶的時候開始，昊熹身邊已有很多人溫柔地抱着他、陪伴他，給他滿滿的疼愛。",
-        },
-      ],
-      media: [
-        {
-          label: "另一段家庭時光 · 3:2",
-          detail: "第二張相片可記下另一段真實的家庭日常。",
-          kind: "photo",
-          ratio: "wide",
+          body: "從還是小寶寶的時候開始，昊熹身邊已有很多疼愛他的人，溫柔地抱着他、照顧他、陪伴他。",
         },
       ],
     },
@@ -650,9 +561,9 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "爸爸媽媽的話",
       title: "珍惜日常裏的小片段",
       reflection:
-        "爸爸媽媽會在最後寫下幾句心裏話，分享一路以來最想好好珍藏的日常片段。",
+        "這份成長記錄，從每天一起閱讀、幾項熟悉的喜好，以及三個爸爸媽媽用心挑選的片段開始。",
       hope:
-        "最後，爸爸媽媽會用自己的說話寫下一份心願，為這份成長記錄添上一個溫暖的結尾。",
+        "昊熹身邊有很多疼愛他的人，讓他在溫暖的陪伴中探索日常、慢慢成長。",
     },
     privacy: {
       eyebrow: "私隱",

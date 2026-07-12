@@ -215,20 +215,20 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(copy, /昊熹的日常小世界/);
   assert.match(copy, /Small steps in everyday life/);
   assert.match(copy, /日常裏的一小步/);
-  assert.match(copy, /Family & Home/);
+  assert.match(copy, /Family & Care/);
   assert.match(copy, /家庭與陪伴/);
-  assert.match(copy, /Growing together at home/);
-  assert.match(copy, /在家中，一起慢慢成長/);
+  assert.match(copy, /Growing together, surrounded by care/);
+  assert.match(copy, /在陪伴中，一起慢慢成長/);
   assert.match(copy, /A little preview/);
   assert.match(copy, /故事預覽/);
   assert.match(copy, /Books, every day/);
   assert.match(copy, /每天一起看書/);
-  assert.match(copy, /Oliver likes cars/);
-  assert.match(copy, /昊熹喜歡車/);
-  assert.match(copy, /Oliver likes dogs/);
-  assert.match(copy, /昊熹也喜歡狗仔/);
-  assert.match(copy, /Oliver likes problem-solving/);
-  assert.match(copy, /昊熹喜歡解難/);
+  assert.match(copy, /Oliver likes cars—one of the familiar interests/);
+  assert.match(copy, /昊熹喜歡車；車是他日常小世界裏熟悉的興趣之一/);
+  assert.match(copy, /Oliver also likes dogs/);
+  assert.match(copy, /昊熹也喜歡狗仔；這份簡單的喜愛/);
+  assert.match(copy, /Oliver also enjoys problem-solving/);
+  assert.match(copy, /昊熹也喜歡解難；這是他日常興趣的一部分/);
   assert.match(copy, /Oliver is loved by many people/);
   assert.match(copy, /昊熹身邊有很多疼愛他的人/);
   assert.match(copy, /Reading together, every day/);
@@ -243,23 +243,33 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(copy, /time: "4個月大"/);
   assert.match(copy, /time: "13個月大"/);
   assert.match(copy, /time: "18個月大"/);
-  assert.match(copy, /How we responded/);
-  assert.match(copy, /我們如何回應/);
+  assert.match(copy, /How we continued alongside him/);
+  assert.match(copy, /我們如何繼續陪伴/);
   assert.match(copy, /Holding close the little moments/);
   assert.match(copy, /珍惜日常裏的小片段/);
-  assert.match(copy, /hope in their own words/);
-  assert.match(copy, /用自己的說話寫下一份心願/);
-  assert.doesNotMatch(copy, /How we continue supporting him|我們如何繼續陪伴|Family & Care|成長軌跡自然帶到現在/);
-  assert.equal((copy.match(/story to come · \d{2}/g) ?? []).length, 5);
-  assert.equal((copy.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).length, 5);
+  assert.match(copy, /This little journal begins with shared reading/);
+  assert.match(copy, /這份成長記錄，從每天一起閱讀/);
+  assert.equal((copy.match(/A new learning story · 01/g) ?? []).length, 1);
+  assert.equal((copy.match(/新的成長故事 · 01/g) ?? []).length, 1);
+  assert.match(copy, /Story spaces for moments still to come/);
+  assert.match(copy, /日後故事的幾個方向/);
+  assert.match(copy, /one real family-chosen moment at a time/);
+  assert.match(copy, /每個故事，都會從爸爸媽媽挑選的真實片段開始/);
+  assert.match(copy, /Reserved for a future everyday moment chosen by Oliver's parents/);
+  assert.match(copy, /留待爸爸媽媽日後挑選一個適合分享的真實日常片段/);
+  assert.doesNotMatch(copy, /A learning story to come|成長故事 \d{2} · 標題稍後加入|Family & Home/);
   assert.doesNotMatch(copy, /"\[[^"]+\]"/);
 
   for (const id of ["top", "about", "stories", "growth", "family", "privacy-notice"]) {
     assert.match(portfolio, new RegExp(`id=["']${id}["']`));
   }
   assert.match(portfolio, /copy\.stories\.items\.map/);
+  assert.match(portfolio, /copy\.stories\.plannedItems\.map/);
   assert.match(portfolio, /copy\.growth\.timelineItems\.map/);
   assert.match(portfolio, /copy\.family\.vignettes\.map/);
+  assert.doesNotMatch(portfolio, /copy\.family\.media\.map/);
+  assert.match(portfolio, /stories-section section-pad preview-only/);
+  assert.match(portfolio, /everyday-panel preview-only/);
   assert.equal((portfolio.match(/<ResponsivePhoto/g) ?? []).length, 3);
   for (const name of ["portrait", "everyday-smile", "family-care"]) {
     assert.match(portfolio, new RegExp(`name=["']${name}["']`));
@@ -383,6 +393,7 @@ test("uses the Sunlit Meadow palette, one typography system, and accessible cont
   assert.match(css, /aria-current="location"/);
   assert.match(css, /@media print/);
   assert.match(css, /@media print[\s\S]*?\.story-media-note\s*\{[\s\S]*?display:\s*none/);
+  assert.match(css, /@media print[\s\S]*?\.preview-only\s*\{[\s\S]*?display:\s*none !important/);
   assert.doesNotMatch(css, /\.preview-note,\s*\.story-media-note\s*\{[\s\S]*?display:\s*none/);
   for (const token of ["#FFF9E6", "#29404A", "#C4DDEA", "#5C8B7F", "#3F6D65", "#E0AD3F", "#EEA283"]) {
     assert.match(css, new RegExp(token));
