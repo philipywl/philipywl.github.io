@@ -396,26 +396,27 @@ const chineseText = visibleText(routeHtml.chinese);
 for (const expected of [
   "Oliver's little learning journey",
   "Hello, I'm Oliver.",
-  "A small collection of everyday moments showing Oliver's love of books, cars, dogs and problem-solving",
+  "This little collection gathers everyday moments around the things Oliver enjoys—books, cars, dogs and problem-solving",
   "A little preview",
   "Oliver's everyday world",
   "Books, every day",
-  "Oliver likes cars",
-  "Oliver likes dogs",
-  "Oliver likes problem-solving",
+  "Oliver likes cars—one of the familiar interests",
+  "Oliver also likes dogs",
+  "Oliver also enjoys problem-solving",
   "Everyday moments, told with care",
-  "Short videos will appear only where they help a moment unfold",
+  "When a short video helps tell the story",
   "Small steps in everyday life",
-  "Three moments over time",
-  "Family & Home",
-  "Growing together at home",
+  "Three moments to treasure",
+  "Family & Care",
+  "Growing together, surrounded by care",
   "Oliver is loved by many people",
   "Many caring hands",
   "Oliver at 13 months",
   "An everyday smile at 18 months",
-  "How we responded",
+  "How we continued alongside him",
   "Holding close the little moments",
-  "hope in their own words",
+  "This little journal begins with shared reading",
+  "Story spaces for moments still to come",
   "This portfolio is carefully gathered by Oliver's parents. To help protect his privacy",
   "中文 | English",
 ]) {
@@ -423,26 +424,27 @@ for (const expected of [
 }
 for (const expected of [
   "昊熹的小小成長旅程",
-  "透過一個個日常片段，記下昊熹喜歡看書、車、狗仔和解難的日常",
+  "這裏收集了一個個日常片段：昊熹喜歡看書、車、狗仔和解難",
   "故事預覽",
   "昊熹的日常小世界",
   "每天一起看書",
-  "昊熹喜歡車",
-  "昊熹也喜歡狗仔",
-  "昊熹喜歡解難",
+  "昊熹喜歡車；車是他日常小世界裏熟悉的興趣之一",
+  "昊熹也喜歡狗仔；這份簡單的喜愛",
+  "昊熹也喜歡解難；這是他日常興趣的一部分",
   "用心記下每個日常片段",
   "短片只會在有助完整呈現故事時加入",
   "日常裏的一小步",
-  "三個成長片段",
+  "三個珍藏片段",
   "家庭與陪伴",
-  "在家中，一起慢慢成長",
+  "在陪伴中，一起慢慢成長",
   "昊熹身邊有很多疼愛他的人",
   "許多溫柔的手",
   "13個月大的昊熹",
   "18個月大的日常笑臉",
-  "我們如何回應",
+  "我們如何繼續陪伴",
   "珍惜日常裏的小片段",
-  "用自己的說話寫下一份心願",
+  "這份成長記錄，從每天一起閱讀",
+  "日後故事的幾個方向",
   "本作品集由昊熹的爸爸媽媽用心整理。為保護孩子的私隱",
   "中文 | English",
 ]) {
@@ -458,11 +460,16 @@ if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail(
 if (/href="\/(?:en|zh-hant)\/summary\//i.test(routeHtml.english + routeHtml.chinese)) {
   fail("a removed one-page summary link remains on a locale page");
 }
-if ((englishText.match(/story to come · \d{2}/g) ?? []).length !== 5) {
-  fail("English page does not contain the five approved story previews");
+if ((englishText.match(/A new learning story · 01/g) ?? []).length !== 1) {
+  fail("English page does not contain the approved full story preview");
 }
-if ((chineseText.match(/成長故事 \d{2} · 標題稍後加入/g) ?? []).length !== 5) {
-  fail("Chinese page does not contain the five approved story previews");
+if ((chineseText.match(/新的成長故事 · 01/g) ?? []).length !== 1) {
+  fail("Chinese page does not contain the approved full story preview");
+}
+for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
+  if ((html.match(/class="planned-story"/g) ?? []).length !== 4) {
+    fail(`${route} page does not contain the four approved compact story spaces`);
+  }
 }
 if (/\[[^\]]+\]/.test(englishText + chineseText)) {
   fail("bracketed editorial tokens remain in visitor-visible text");
