@@ -162,20 +162,34 @@ export function MobileMenu({
     const destination = destinationRef.current;
     destinationRef.current = null;
 
-    window.requestAnimationFrame(() => {
-      if (destination) {
-        const section = document.querySelector<HTMLElement>(destination);
-        const heading = section?.querySelector<HTMLElement>("h2, h3");
-        heading?.focus({ preventScroll: true });
-        return;
-      }
+    if (destination) {
+      const section = document.querySelector<HTMLElement>(destination);
+      const heading = section?.querySelector<HTMLElement>("h2, h3");
+      const reducedMotion = window.matchMedia?.(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
 
+      if (window.location.hash !== destination) {
+        window.history.pushState(null, "", destination);
+      }
+      section?.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+      window.requestAnimationFrame(() => {
+        heading?.focus({ preventScroll: true });
+      });
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
       triggerRef.current?.focus();
     });
   };
 
   const closeMenu = () => {
     if (dialogRef.current?.open) dialogRef.current.close();
+    restorePage();
   };
 
   const openMenu = () => {
@@ -247,7 +261,6 @@ export function MobileMenu({
         onClick={(event) => {
           if (event.target === event.currentTarget) closeMenu();
         }}
-        onClose={restorePage}
       >
         <div className="mobile-menu-panel">
           <div className="mobile-menu-head">
@@ -269,7 +282,8 @@ export function MobileMenu({
                 href={item.href}
                 key={item.href}
                 aria-current={activeHref === item.href ? "location" : undefined}
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault();
                   destinationRef.current = item.href;
                   closeMenu();
                 }}

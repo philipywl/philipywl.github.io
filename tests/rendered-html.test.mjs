@@ -158,7 +158,11 @@ function expectApprovedPhotos(html, locale) {
     const image = images.find((tag) => getAttribute(tag, "alt") === alt);
     assert.ok(image, `missing photograph alt text: ${alt}`);
     assert.equal(getAttribute(image, "width"), "1200");
-    assert.equal(getAttribute(image, "height"), "1500");
+    const imageSource = getAttribute(image, "src") ?? "";
+    assert.equal(
+      getAttribute(image, "height"),
+      imageSource.includes("/portrait-") ? "1600" : "1500",
+    );
     assert.match(getAttribute(image, "sizes") ?? "", /vw|px/);
     assert.match(getAttribute(image, "src") ?? "", /^\/media\/oliver\/(?:portrait|everyday-smile|family-care)-800\.webp$/);
     const srcset = getAttribute(image, "srcset") ?? "";
@@ -199,7 +203,7 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Family & Care/);
   assert.match(text, /Growing together, surrounded by care/);
   assert.match(text, /Oliver is loved by many people/);
-  assert.match(text, /Many caring hands/);
+  assert.match(text, /Loved by many people/);
   assert.match(text, /Oliver at 13 months/);
   assert.match(text, /An everyday smile at 18 months/);
   assert.match(text, /How we continued alongside him/);
@@ -207,7 +211,8 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /This little journal begins with shared reading/);
   assert.match(text, /Story spaces for moments still to come/);
   assert.match(text, /中文 \| English/);
-  assert.equal((text.match(/A new learning story · 01/g) ?? []).length, 1);
+  assert.equal((text.match(/The next little story · 01/g) ?? []).length, 1);
+  assert.match(text, /Age at the time · added with the story/);
   assert.equal((text.match(/Photo story|Photo sequence|Photo \+ short video|Short video/g) ?? []).length, 4);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/);
@@ -245,7 +250,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /家庭與陪伴/);
   assert.match(text, /在陪伴中，一起慢慢成長/);
   assert.match(text, /昊熹身邊有很多疼愛他的人/);
-  assert.match(text, /許多溫柔的手/);
+  assert.match(text, /在許多人的疼愛中/);
   assert.match(text, /13個月大的昊熹/);
   assert.match(text, /18個月大的日常笑臉/);
   assert.match(text, /我們如何繼續陪伴/);
@@ -253,7 +258,8 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /這份成長記錄，從每天一起閱讀/);
   assert.match(text, /日後故事的幾個方向/);
   assert.match(text, /中文 \| English/);
-  assert.equal((text.match(/新的成長故事 · 01/g) ?? []).length, 1);
+  assert.equal((text.match(/下一個小故事 · 01/g) ?? []).length, 1);
+  assert.match(text, /當時年齡 · 隨故事加入/);
   assert.equal((text.match(/相片故事|連續相片|相片＋短片|短片/g) ?? []).length >= 4, true);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">你好，我是昊熹。<\/span>/);

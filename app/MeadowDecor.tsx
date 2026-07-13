@@ -8,7 +8,12 @@ import {
 } from "react";
 import type { PortfolioLocale } from "./portfolio-copy";
 
-export type MeadowDecorVariant = "rainbow" | "tree" | "balloons" | "dog";
+export type MeadowDecorVariant =
+  | "rainbow"
+  | "tree"
+  | "balloons"
+  | "dog"
+  | "garden";
 
 export type MeadowDecorProps = {
   variant: MeadowDecorVariant;
@@ -19,7 +24,7 @@ export type MeadowDecorProps = {
 type MotionState = "idle" | "active" | "settled";
 
 function dogSessionKey(locale: PortfolioLocale) {
-  return `oliver-meadow-dog-${locale}-v1`;
+  return `oliver-meadow-dog-${locale}-v2`;
 }
 
 export default function MeadowDecor({
@@ -29,11 +34,11 @@ export default function MeadowDecor({
 }: MeadowDecorProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [motionState, setMotionState] = useState<MotionState>(
-    variant === "rainbow" ? "settled" : "idle",
+    variant === "rainbow" || variant === "garden" ? "settled" : "idle",
   );
 
   useEffect(() => {
-    if (variant === "rainbow") return;
+    if (variant === "rainbow" || variant === "garden") return;
 
     const root = rootRef.current;
     if (!root) return;
@@ -116,6 +121,22 @@ export default function MeadowDecor({
         data-meadow-state="settled"
         aria-hidden="true"
       />
+    );
+  }
+
+  if (variant === "garden") {
+    return (
+      <div
+        ref={rootRef}
+        className={classes}
+        data-meadow-state="settled"
+        aria-hidden="true"
+      >
+        <span className="meadow-garden-path" />
+        <span className="meadow-flower meadow-flower-honey" />
+        <span className="meadow-flower meadow-flower-coral" />
+        <span className="meadow-flower meadow-flower-blue" />
+      </div>
     );
   }
 
