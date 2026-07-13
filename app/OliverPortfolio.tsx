@@ -29,9 +29,9 @@ export default function OliverPortfolio({
   const copy = portfolioCopy[locale];
   const navigationItems = [
     { href: "#about", label: copy.nav.about },
+    { href: "#stories", label: copy.nav.stories },
     { href: "#growth", label: copy.nav.growth },
     { href: "#family", label: copy.nav.family },
-    { href: "#stories", label: copy.nav.stories },
   ];
   const [activeHref, setActiveHref] = useState("");
   const focusMain = () => {
@@ -52,7 +52,7 @@ export default function OliverPortfolio({
   };
 
   useEffect(() => {
-    const sections = ["about", "growth", "family", "stories"]
+    const sections = ["about", "stories", "growth", "family"]
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
     const visibleSections = new Set<string>();
@@ -134,7 +134,6 @@ export default function OliverPortfolio({
 
       <main id="main-content" tabIndex={-1}>
         <section className="hero section-pad" aria-labelledby="hero-title">
-          <MeadowDecor variant="rainbow" locale={locale} />
           <div className="page-grid hero-grid">
             <div className="hero-copy">
               <p className="eyebrow">{copy.hero.eyebrow}</p>
@@ -160,8 +159,8 @@ export default function OliverPortfolio({
               <div className="button-row no-print">
                 <a
                   className="button primary-button"
-                  href="#growth"
-                  onClick={() => focusSection("#growth")}
+                  href="#stories"
+                  onClick={() => focusSection("#stories")}
                 >
                   {copy.hero.storiesAction}
                 </a>
@@ -175,14 +174,17 @@ export default function OliverPortfolio({
               </div>
             </div>
 
-            <ResponsivePhoto
-              name="portrait"
-              alt={copy.photos.hero.alt}
-              caption={copy.photos.hero.caption}
-              sizes="(min-width: 60rem) 294px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
-              priority
-              className="hero-preview-media"
-            />
+            <div className="hero-visual">
+              <MeadowDecor variant="rainbow" locale={locale} />
+              <ResponsivePhoto
+                name="portrait"
+                alt={copy.photos.hero.alt}
+                caption={copy.photos.hero.caption}
+                sizes="(min-width: 60rem) 294px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
+                priority
+                className="hero-preview-media"
+              />
+            </div>
           </div>
         </section>
 
@@ -220,72 +222,6 @@ export default function OliverPortfolio({
             </div>
           </div>
           <MeadowDecor variant="dog" locale={locale} />
-        </section>
-
-        <section id="growth" className="growth-section section-pad" aria-labelledby="growth-title">
-          <div className="page-grid section-intro-grid">
-            <div className="section-heading-copy">
-              <p className="eyebrow">{copy.growth.eyebrow}</p>
-              <h2 id="growth-title" tabIndex={-1}>{copy.growth.title}</h2>
-              <p>{copy.growth.intro}</p>
-            </div>
-          </div>
-
-          <div className="page-grid growth-moments-layout">
-            <section className="timeline-panel" aria-labelledby="timeline-title">
-              <h3 id="timeline-title">{copy.growth.timelineTitle}</h3>
-              <ol className="timeline-list">
-                {copy.growth.timelineItems.map((item, index) => (
-                  <li key={`${item.time}-${index}`}>
-                    <span className="timeline-dot" aria-hidden="true" />
-                    <p className="timeline-time">{item.time}</p>
-                    <p>{item.moment}</p>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          </div>
-          <MeadowDecor variant="tree" locale={locale} />
-        </section>
-
-        <section id="family" className="family-section section-pad" aria-labelledby="family-title">
-          <div className="page-grid family-grid">
-            <div className="family-copy">
-              <p className="eyebrow">{copy.family.eyebrow}</p>
-              <h2 id="family-title" tabIndex={-1}>{copy.family.title}</h2>
-              <p>{copy.family.intro}</p>
-              <div className="family-values-card">
-                <h3>{copy.family.valuesTitle}</h3>
-                <p>{copy.family.valuesBody}</p>
-              </div>
-              <div className="family-vignette-grid">
-                {copy.family.vignettes.map((vignette, index) => (
-                  <article className="family-vignette" key={vignette.title}>
-                    <span className="field-index" aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h3>{vignette.title}</h3>
-                    <p>{vignette.body}</p>
-                  </article>
-                ))}
-              </div>
-            </div>
-
-            <div className="family-media-grid">
-              <ResponsivePhoto
-                name="family-care"
-                alt={copy.photos.family.alt}
-                caption={copy.photos.family.caption}
-                sizes="(min-width: 60rem) 430px, (min-width: 48rem) 40vw, calc(100vw - 40px)"
-                className="family-photo"
-              />
-            </div>
-          </div>
-          <MeadowDecor
-            variant="garden"
-            locale={locale}
-            className="meadow-garden-family"
-          />
         </section>
 
         <section id="stories" className="stories-section section-pad preview-only" aria-labelledby="stories-title">
@@ -358,31 +294,38 @@ export default function OliverPortfolio({
                 </div>
               </article>
             ))}
-
-            <section className="planned-stories" aria-labelledby="planned-stories-title">
-              <div className="planned-stories-heading">
-                <h3 id="planned-stories-title">{copy.stories.plannedTitle}</h3>
-                <p>{copy.stories.plannedIntro}</p>
-              </div>
-              <div className="planned-story-grid">
-                {copy.stories.plannedItems.map((story, index) => (
-                  <article className="planned-story" key={story.title}>
-                    <div className="planned-story-meta">
-                      <span aria-hidden="true">{String(index + 2).padStart(2, "0")}</span>
-                      <span>{story.format}</span>
-                    </div>
-                    <h4>{story.title}</h4>
-                    <p>{story.note}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
           </div>
           <MeadowDecor
             variant="garden"
             locale={locale}
             className="meadow-garden-stories"
           />
+        </section>
+
+        <section id="growth" className="growth-section section-pad" aria-labelledby="growth-title">
+          <div className="page-grid section-intro-grid">
+            <div className="section-heading-copy">
+              <p className="eyebrow">{copy.growth.eyebrow}</p>
+              <h2 id="growth-title" tabIndex={-1}>{copy.growth.title}</h2>
+              <p>{copy.growth.intro}</p>
+            </div>
+          </div>
+
+          <div className="page-grid growth-moments-layout">
+            <section className="timeline-panel" aria-labelledby="timeline-title">
+              <h3 id="timeline-title">{copy.growth.timelineTitle}</h3>
+              <ol className="timeline-list">
+                {copy.growth.timelineItems.map((item, index) => (
+                  <li key={`${item.time}-${index}`}>
+                    <span className="timeline-dot" aria-hidden="true" />
+                    <p className="timeline-time">{item.time}</p>
+                    <p>{item.moment}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          </div>
+          <MeadowDecor variant="tree" locale={locale} />
         </section>
 
         <section className="future-growth-section section-pad preview-only" aria-labelledby="everyday-title">
@@ -410,6 +353,46 @@ export default function OliverPortfolio({
             variant="garden"
             locale={locale}
             className="meadow-garden-future"
+          />
+        </section>
+
+        <section id="family" className="family-section section-pad" aria-labelledby="family-title">
+          <div className="page-grid family-grid">
+            <div className="family-copy">
+              <p className="eyebrow">{copy.family.eyebrow}</p>
+              <h2 id="family-title" tabIndex={-1}>{copy.family.title}</h2>
+              <p>{copy.family.intro}</p>
+              <div className="family-values-card">
+                <h3>{copy.family.valuesTitle}</h3>
+                <p>{copy.family.valuesBody}</p>
+              </div>
+              <div className="family-vignette-grid">
+                {copy.family.vignettes.map((vignette, index) => (
+                  <article className="family-vignette" key={vignette.title}>
+                    <span className="field-index" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3>{vignette.title}</h3>
+                    <p>{vignette.body}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="family-media-grid">
+              <ResponsivePhoto
+                name="family-care"
+                alt={copy.photos.family.alt}
+                caption={copy.photos.family.caption}
+                sizes="(min-width: 60rem) 430px, (min-width: 48rem) 40vw, calc(100vw - 40px)"
+                className="family-photo"
+              />
+            </div>
+          </div>
+          <MeadowDecor
+            variant="garden"
+            locale={locale}
+            className="meadow-garden-family"
           />
         </section>
 
