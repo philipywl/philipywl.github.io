@@ -24,7 +24,7 @@ export type MeadowDecorProps = {
 type MotionState = "idle" | "active" | "settled";
 
 function dogSessionKey(locale: PortfolioLocale) {
-  return `oliver-meadow-dog-${locale}-v2`;
+  return `oliver-meadow-dog-${locale}-v3`;
 }
 
 export default function MeadowDecor({
@@ -120,7 +120,11 @@ export default function MeadowDecor({
         className={classes}
         data-meadow-state="settled"
         aria-hidden="true"
-      />
+      >
+        <span className="meadow-rainbow-arc" />
+        <span className="meadow-rainbow-cloud meadow-rainbow-cloud-left" />
+        <span className="meadow-rainbow-cloud meadow-rainbow-cloud-right" />
+      </div>
     );
   }
 
@@ -136,6 +140,8 @@ export default function MeadowDecor({
         <span className="meadow-flower meadow-flower-honey" />
         <span className="meadow-flower meadow-flower-coral" />
         <span className="meadow-flower meadow-flower-blue" />
+        <span className="meadow-garden-sprout" />
+        <span className="meadow-garden-butterfly" />
       </div>
     );
   }
@@ -148,6 +154,7 @@ export default function MeadowDecor({
         data-meadow-state={motionState}
         aria-hidden="true"
       >
+        <span className="meadow-tree-ground" />
         <span className="meadow-tree-trunk" />
         <span className="meadow-tree-crown" />
         <span className="meadow-tree-leaf meadow-tree-leaf-one" />
@@ -188,6 +195,12 @@ export default function MeadowDecor({
       data-meadow-state={motionState}
       aria-hidden="true"
     >
+      <span className="meadow-dog-hill meadow-dog-hill-back" />
+      <span className="meadow-dog-hill meadow-dog-hill-front" />
+      <span className="meadow-dog-path" />
+      <span className="meadow-dog-flower meadow-dog-flower-one" />
+      <span className="meadow-dog-flower meadow-dog-flower-two" />
+      <span className="meadow-dog-flower meadow-dog-flower-three" />
       <span className="meadow-dog-runner" onAnimationEnd={settleDog}>
         <span className="meadow-dog-body" />
         <span className="meadow-dog-head" />

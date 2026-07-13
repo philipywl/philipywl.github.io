@@ -405,15 +405,29 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
   assert.match(decor, /prefers-reduced-motion: reduce/);
   assert.match(decor, /sessionStorage\.getItem\(dogSessionKey\(locale\)\)/);
   assert.match(decor, /sessionStorage\.setItem\(dogSessionKey\(locale\), "seen"\)/);
-  assert.match(decor, /oliver-meadow-dog-\$\{locale\}-v2/);
+  assert.match(decor, /oliver-meadow-dog-\$\{locale\}-v3/);
+  for (const scenePart of [
+    "meadow-rainbow-cloud-left",
+    "meadow-rainbow-cloud-right",
+    "meadow-tree-ground",
+    "meadow-dog-hill-back",
+    "meadow-dog-hill-front",
+    "meadow-dog-path",
+    "meadow-garden-sprout",
+    "meadow-garden-butterfly",
+  ]) {
+    assert.match(decor, new RegExp(scenePart));
+  }
   assert.doesNotMatch(decor, /<svg|<img|<canvas|role="img"|aria-label=/i);
   assert.doesNotMatch(css, /meadow-[^;{}]*animation:[^;{}]*\binfinite\b/i);
   assert.match(css, /meadow-dog-cross 4\.8s[^;]*forwards/);
   assert.match(css, /--meadow-dog-distance:\s*min\(64vw, 748px\)/);
-  assert.match(css, /meadow-balloon-blue 4\.8s[^;]*forwards/);
-  assert.match(css, /meadow-balloon-peach 4\.6s 120ms[^;]*forwards/);
-  assert.match(css, /meadow-balloon-honey 4\.4s 220ms[^;]*forwards/);
-  assert.match(css, /\.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*clamp\(220px, 72vw, 300px\)/);
+  assert.match(css, /meadow-balloon-blue 4\.9s[^;]*forwards/);
+  assert.match(css, /meadow-balloon-peach 4\.8s 100ms[^;]*forwards/);
+  assert.match(css, /meadow-balloon-honey 4\.7s 180ms[^;]*forwards/);
+  assert.match(css, /\.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*clamp\(360px, 110vw, 430px\)/);
+  assert.match(css, /\.meadow-decor-balloons\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
+  assert.match(css, /\.meadow-decor-tree\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.meadow-decor-dog[\s\S]*?display:\s*none !important/);
   assert.match(css, /@media \(forced-colors: active\)[\s\S]*?\.meadow-decor[\s\S]*?display:\s*none !important/);
   assert.match(css, /@media print[\s\S]*?\.meadow-decor[\s\S]*?display:\s*none !important/);
