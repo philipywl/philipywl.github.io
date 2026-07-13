@@ -213,52 +213,60 @@ test("uses supplied factual content and warm placeholders without admissions or 
 
   assert.match(copy, /Oliver's everyday world/);
   assert.match(copy, /昊熹的日常小世界/);
-  assert.match(copy, /Small steps in everyday life/);
-  assert.match(copy, /日常裏的一小步/);
+  assert.match(copy, /Small steps, gathered over time/);
+  assert.match(copy, /日子裏慢慢累積的小步/);
   assert.match(copy, /Family & Care/);
   assert.match(copy, /家庭與陪伴/);
   assert.match(copy, /Growing together, surrounded by care/);
   assert.match(copy, /在陪伴中，一起慢慢成長/);
-  assert.match(copy, /A little preview/);
-  assert.match(copy, /故事預覽/);
+  assert.match(copy, /Stories taking shape/);
+  assert.match(copy, /故事正在成形/);
   assert.match(copy, /Books, every day/);
   assert.match(copy, /每天一起看書/);
   assert.match(copy, /Oliver likes cars—one of the familiar interests/);
   assert.match(copy, /昊熹喜歡車；車是他日常小世界裏熟悉的興趣之一/);
-  assert.match(copy, /Oliver also likes dogs/);
-  assert.match(copy, /昊熹也喜歡狗仔；這份簡單的喜愛/);
-  assert.match(copy, /Oliver also enjoys problem-solving/);
-  assert.match(copy, /昊熹也喜歡解難；這是他日常興趣的一部分/);
+  assert.match(copy, /Oliver notices dogs/);
+  assert.match(copy, /昊熹會留意狗仔/);
+  assert.match(copy, /Oliver enjoys exploring where things go/);
+  assert.match(copy, /昊熹喜歡探索物件應該放在哪裏/);
   assert.match(copy, /Oliver is loved by many people/);
   assert.match(copy, /昊熹身邊有很多疼愛他的人/);
   assert.match(copy, /Reading together, every day/);
   assert.match(copy, /每天一起閱讀/);
+  assert.match(copy, /A small family invitation/);
+  assert.match(copy, /一個小小的家庭邀請/);
   assert.match(copy, /Loved by many people/);
   assert.match(copy, /在許多人的疼愛中/);
   assert.match(copy, /caption: "Oliver at 13 months"/);
   assert.match(copy, /caption: "An everyday smile at 18 months"/);
-  assert.match(copy, /time: "4 months"/);
-  assert.match(copy, /time: "13 months"/);
-  assert.match(copy, /time: "18 months"/);
-  assert.match(copy, /time: "4個月大"/);
-  assert.match(copy, /time: "13個月大"/);
-  assert.match(copy, /time: "18個月大"/);
+  assert.match(copy, /time: "10 months"/);
+  assert.match(copy, /time: "14 months"/);
+  assert.match(copy, /time: "16 months"/);
+  assert.match(copy, /time: "10個月大"/);
+  assert.match(copy, /time: "14個月大"/);
+  assert.match(copy, /time: "16個月大"/);
   assert.match(copy, /How we continued alongside him/);
   assert.match(copy, /我們如何繼續陪伴/);
   assert.match(copy, /Holding close the little moments/);
   assert.match(copy, /珍惜日常裏的小片段/);
-  assert.match(copy, /This little journal begins with shared reading/);
-  assert.match(copy, /這份成長記錄，從每天一起閱讀/);
-  assert.equal((copy.match(/The next little story · 01/g) ?? []).length, 1);
-  assert.equal((copy.match(/下一個小故事 · 01/g) ?? []).length, 1);
-  assert.match(copy, /Age at the time · added with the story/);
-  assert.match(copy, /當時年齡 · 隨故事加入/);
-  assert.match(copy, /Story spaces for moments still to come/);
-  assert.match(copy, /日後故事的幾個方向/);
-  assert.match(copy, /one real family-chosen moment at a time/);
-  assert.match(copy, /每個故事，都會從爸爸媽媽挑選的真實片段開始/);
-  assert.match(copy, /Reserved for a future everyday moment chosen by Oliver's parents/);
-  assert.match(copy, /留待爸爸媽媽日後挑選一個適合分享的真實日常片段/);
+  assert.match(copy, /This little journal now brings together five real stories/);
+  assert.match(copy, /這份成長記錄，現在收集了五個真實故事/);
+  for (const title of [
+    "Little discoveries in books",
+    "Listening and helping",
+    "Finding where each piece belongs",
+    "Pouring from one cup to another",
+    "Waving along the way",
+    "書頁裏的小發現",
+    "聽一聽，一起幫忙",
+    "這一塊放哪裏？",
+    "慢慢倒進另一隻杯",
+    "一路走，一路揮揮手",
+  ]) assert.match(copy, new RegExp(title.replace(/[?？]/g, ".")));
+  assert.match(copy, /Shared-reading photograph to be added/);
+  assert.match(copy, /親子閱讀相片稍後加入/);
+  assert.match(copy, /Hidden—and found again/);
+  assert.match(copy, /不見了，再找出來/);
   assert.doesNotMatch(copy, /A learning story to come|成長故事 \d{2} · 標題稍後加入|Family & Home/);
   assert.doesNotMatch(copy, /"\[[^"]+\]"/);
 
@@ -266,7 +274,7 @@ test("uses supplied factual content and warm placeholders without admissions or 
     assert.match(portfolio, new RegExp(`id=["']${id}["']`));
   }
   assert.match(portfolio, /copy\.stories\.items\.map/);
-  assert.match(portfolio, /copy\.stories\.plannedItems\.map/);
+  assert.doesNotMatch(portfolio, /plannedItems|planned-stories/);
   assert.match(portfolio, /copy\.growth\.timelineItems\.map/);
   assert.match(portfolio, /copy\.family\.vignettes\.map/);
   assert.doesNotMatch(portfolio, /copy\.family\.media\.map/);
@@ -274,9 +282,10 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(portfolio, /future-growth-section section-pad preview-only/);
   assert.match(portfolio, /future-growth-list/);
   assert.doesNotMatch(copy, /Learning clue 0\d · to be added|學習線索 0\d · 稍後加入/);
-  assert.ok(portfolio.indexOf('id="about"') < portfolio.indexOf('id="growth"'));
-  assert.ok(portfolio.indexOf('id="growth"') < portfolio.indexOf('id="family"'));
-  assert.ok(portfolio.indexOf('id="family"') < portfolio.indexOf('id="stories"'));
+  assert.ok(portfolio.indexOf('id="about"') < portfolio.indexOf('id="stories"'));
+  assert.ok(portfolio.indexOf('id="stories"') < portfolio.indexOf('id="growth"'));
+  assert.ok(portfolio.indexOf('id="growth"') < portfolio.indexOf('id="everyday-title"'));
+  assert.ok(portfolio.indexOf('id="everyday-title"') < portfolio.indexOf('id="family"'));
   assert.equal((portfolio.match(/<ResponsivePhoto/g) ?? []).length, 3);
   for (const name of ["portrait", "everyday-smile", "family-care"]) {
     assert.match(portfolio, new RegExp(`name=["']${name}["']`));
@@ -491,7 +500,7 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(portfolio, /id="privacy-title" tabIndex=\{-1\}/);
   assert.match(portfolio, /const focusSection = \(href: string\)/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\(item\.href\)\}/);
-  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#growth"\)\}/);
+  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#stories"\)\}/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\("#about"\)\}/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\("#privacy-notice"\)\}/);
   assert.match(portfolio, /href="#hero-title"[\s\S]*?onClick=\{focusHero\}/);

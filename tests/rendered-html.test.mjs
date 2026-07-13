@@ -195,25 +195,34 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Oliver's everyday world/);
   assert.match(text, /Books, every day/);
   assert.match(text, /Oliver likes cars—one of the familiar interests/);
-  assert.match(text, /Oliver also likes dogs/);
-  assert.match(text, /Oliver also enjoys problem-solving/);
+  assert.match(text, /Oliver notices dogs/);
+  assert.match(text, /Oliver enjoys exploring where things go/);
   assert.match(text, /Everyday moments, told with care/);
-  assert.match(text, /Small steps in everyday life/);
-  assert.match(text, /Three moments to treasure/);
+  assert.match(text, /Small steps, gathered over time/);
+  assert.match(text, /Growing into movement/);
   assert.match(text, /Family & Care/);
   assert.match(text, /Growing together, surrounded by care/);
   assert.match(text, /Oliver is loved by many people/);
   assert.match(text, /Loved by many people/);
+  assert.match(text, /A small family invitation/);
   assert.match(text, /Oliver at 13 months/);
   assert.match(text, /An everyday smile at 18 months/);
   assert.match(text, /How we continued alongside him/);
   assert.match(text, /Holding close the little moments/);
-  assert.match(text, /This little journal begins with shared reading/);
-  assert.match(text, /Story spaces for moments still to come/);
+  assert.match(text, /This little journal now brings together five real stories/);
+  for (const title of [
+    "Little discoveries in books",
+    "Listening and helping",
+    "Finding where each piece belongs",
+    "Pouring from one cup to another",
+    "Waving along the way",
+  ]) assert.match(text, new RegExp(title));
+  assert.match(text, /Shared-reading photograph to be added/);
+  assert.match(text, /Helping-at-home video to be added/);
+  assert.match(text, /Hidden—and found again/);
+  assert.match(text, /Joining tidy-up time/);
   assert.match(text, /中文 \| English/);
-  assert.equal((text.match(/The next little story · 01/g) ?? []).length, 1);
-  assert.match(text, /Age at the time · added with the story/);
-  assert.equal((text.match(/Photo story|Photo sequence|Photo \+ short video|Short video/g) ?? []).length, 4);
+  assert.equal((html.match(/class="story-card/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/);
   assert.match(html, /class="greeting-visual" aria-hidden="true"/);
@@ -242,25 +251,34 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /昊熹的日常小世界/);
   assert.match(text, /每天一起看書/);
   assert.match(text, /昊熹喜歡車；車是他日常小世界裏熟悉的興趣之一/);
-  assert.match(text, /昊熹也喜歡狗仔；這份簡單的喜愛/);
-  assert.match(text, /昊熹也喜歡解難；這是他日常興趣的一部分/);
+  assert.match(text, /昊熹會留意狗仔/);
+  assert.match(text, /昊熹喜歡探索物件應該放在哪裏/);
   assert.match(text, /用心記下每個日常片段/);
-  assert.match(text, /日常裏的一小步/);
-  assert.match(text, /三個珍藏片段/);
+  assert.match(text, /日子裏慢慢累積的小步/);
+  assert.match(text, /一步一步去探索/);
   assert.match(text, /家庭與陪伴/);
   assert.match(text, /在陪伴中，一起慢慢成長/);
   assert.match(text, /昊熹身邊有很多疼愛他的人/);
   assert.match(text, /在許多人的疼愛中/);
+  assert.match(text, /一個小小的家庭邀請/);
   assert.match(text, /13個月大的昊熹/);
   assert.match(text, /18個月大的日常笑臉/);
   assert.match(text, /我們如何繼續陪伴/);
   assert.match(text, /珍惜日常裏的小片段/);
-  assert.match(text, /這份成長記錄，從每天一起閱讀/);
-  assert.match(text, /日後故事的幾個方向/);
+  assert.match(text, /這份成長記錄，現在收集了五個真實故事/);
+  for (const title of [
+    "書頁裏的小發現",
+    "聽一聽，一起幫忙",
+    "這一塊放哪裏？",
+    "慢慢倒進另一隻杯",
+    "一路走，一路揮揮手",
+  ]) assert.match(text, new RegExp(title.replace(/[?？]/g, ".")));
+  assert.match(text, /親子閱讀相片稍後加入/);
+  assert.match(text, /日常幫忙短片稍後加入/);
+  assert.match(text, /不見了，再找出來/);
+  assert.match(text, /一起收拾的日常/);
   assert.match(text, /中文 \| English/);
-  assert.equal((text.match(/下一個小故事 · 01/g) ?? []).length, 1);
-  assert.match(text, /當時年齡 · 隨故事加入/);
-  assert.equal((text.match(/相片故事|連續相片|相片＋短片|短片/g) ?? []).length >= 4, true);
+  assert.equal((html.match(/class="story-card/g) ?? []).length, 5);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
   assert.match(html, /<span class="sr-only">你好，我是昊熹。<\/span>/);
   assert.doesNotMatch(html, /href="\/zh-hant\/summary\/"/);

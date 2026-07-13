@@ -416,26 +416,33 @@ for (const expected of [
   "Oliver's little learning journey",
   "Hello, I'm Oliver.",
   "This little collection gathers everyday moments around the things Oliver enjoys—books, cars, dogs and problem-solving",
-  "A little preview",
+  "Stories taking shape",
   "Oliver's everyday world",
   "Books, every day",
   "Oliver likes cars—one of the familiar interests",
-  "Oliver also likes dogs",
-  "Oliver also enjoys problem-solving",
+  "Oliver notices dogs",
+  "Oliver enjoys exploring where things go",
   "Everyday moments, told with care",
   "When a short video helps tell the story",
-  "Small steps in everyday life",
-  "Three moments to treasure",
+  "Small steps, gathered over time",
+  "Growing into movement",
   "Family & Care",
   "Growing together, surrounded by care",
   "Oliver is loved by many people",
   "Loved by many people",
+  "A small family invitation",
   "Oliver at 13 months",
   "An everyday smile at 18 months",
   "How we continued alongside him",
   "Holding close the little moments",
-  "This little journal begins with shared reading",
-  "Story spaces for moments still to come",
+  "This little journal now brings together five real stories",
+  "Little discoveries in books",
+  "Listening and helping",
+  "Finding where each piece belongs",
+  "Pouring from one cup to another",
+  "Waving along the way",
+  "Shared-reading photograph to be added",
+  "Hidden—and found again",
   "This portfolio is carefully gathered by Oliver's parents. To help protect his privacy",
   "中文 | English",
 ]) {
@@ -444,26 +451,33 @@ for (const expected of [
 for (const expected of [
   "昊熹的小小成長旅程",
   "這裏收集了一個個日常片段：昊熹喜歡看書、車、狗仔和解難",
-  "故事預覽",
+  "故事正在成形",
   "昊熹的日常小世界",
   "每天一起看書",
   "昊熹喜歡車；車是他日常小世界裏熟悉的興趣之一",
-  "昊熹也喜歡狗仔；這份簡單的喜愛",
-  "昊熹也喜歡解難；這是他日常興趣的一部分",
+  "昊熹會留意狗仔",
+  "昊熹喜歡探索物件應該放在哪裏",
   "用心記下每個日常片段",
   "短片只會在有助完整呈現故事時加入",
-  "日常裏的一小步",
-  "三個珍藏片段",
+  "日子裏慢慢累積的小步",
+  "一步一步去探索",
   "家庭與陪伴",
   "在陪伴中，一起慢慢成長",
   "昊熹身邊有很多疼愛他的人",
   "在許多人的疼愛中",
+  "一個小小的家庭邀請",
   "13個月大的昊熹",
   "18個月大的日常笑臉",
   "我們如何繼續陪伴",
   "珍惜日常裏的小片段",
-  "這份成長記錄，從每天一起閱讀",
-  "日後故事的幾個方向",
+  "這份成長記錄，現在收集了五個真實故事",
+  "書頁裏的小發現",
+  "聽一聽，一起幫忙",
+  "這一塊放哪裏？",
+  "慢慢倒進另一隻杯",
+  "一路走，一路揮揮手",
+  "親子閱讀相片稍後加入",
+  "不見了，再找出來",
   "本作品集由昊熹的爸爸媽媽用心整理。為保護孩子的私隱",
   "中文 | English",
 ]) {
@@ -479,21 +493,9 @@ if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail(
 if (/href="\/(?:en|zh-hant)\/summary\//i.test(routeHtml.english + routeHtml.chinese)) {
   fail("a removed one-page summary link remains on a locale page");
 }
-if ((englishText.match(/The next little story · 01/g) ?? []).length !== 1) {
-  fail("English page does not contain the approved full story preview");
-}
-if ((chineseText.match(/下一個小故事 · 01/g) ?? []).length !== 1) {
-  fail("Chinese page does not contain the approved full story preview");
-}
-if (!englishText.includes("Age at the time · added with the story")) {
-  fail("English story preview lacks the approved age placeholder");
-}
-if (!chineseText.includes("當時年齡 · 隨故事加入")) {
-  fail("Chinese story preview lacks the approved age placeholder");
-}
 for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
-  if ((html.match(/class="planned-story"/g) ?? []).length !== 4) {
-    fail(`${route} page does not contain the four approved compact story spaces`);
+  if ((html.match(/class="story-card/g) ?? []).length !== 5) {
+    fail(`${route} page does not contain the five approved learning stories`);
   }
 }
 if (/\[[^\]]+\]/.test(englishText + chineseText)) {
