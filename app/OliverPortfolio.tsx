@@ -281,6 +281,11 @@ export default function OliverPortfolio({
               />
             </div>
           </div>
+          <MeadowDecor
+            variant="garden"
+            locale={locale}
+            className="meadow-garden-family"
+          />
         </section>
 
         <section id="stories" className="stories-section section-pad preview-only" aria-labelledby="stories-title">
@@ -373,6 +378,11 @@ export default function OliverPortfolio({
               </div>
             </section>
           </div>
+          <MeadowDecor
+            variant="garden"
+            locale={locale}
+            className="meadow-garden-stories"
+          />
         </section>
 
         <section className="future-growth-section section-pad preview-only" aria-labelledby="everyday-title">
@@ -396,6 +406,11 @@ export default function OliverPortfolio({
               ))}
             </ul>
           </div>
+          <MeadowDecor
+            variant="garden"
+            locale={locale}
+            className="meadow-garden-future"
+          />
         </section>
 
         <section className="closing-section section-pad" aria-labelledby="closing-title">

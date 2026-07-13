@@ -233,8 +233,8 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(copy, /昊熹身邊有很多疼愛他的人/);
   assert.match(copy, /Reading together, every day/);
   assert.match(copy, /每天一起閱讀/);
-  assert.match(copy, /Many caring hands/);
-  assert.match(copy, /許多溫柔的手/);
+  assert.match(copy, /Loved by many people/);
+  assert.match(copy, /在許多人的疼愛中/);
   assert.match(copy, /caption: "Oliver at 13 months"/);
   assert.match(copy, /caption: "An everyday smile at 18 months"/);
   assert.match(copy, /time: "4 months"/);
@@ -249,8 +249,10 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(copy, /珍惜日常裏的小片段/);
   assert.match(copy, /This little journal begins with shared reading/);
   assert.match(copy, /這份成長記錄，從每天一起閱讀/);
-  assert.equal((copy.match(/A new learning story · 01/g) ?? []).length, 1);
-  assert.equal((copy.match(/新的成長故事 · 01/g) ?? []).length, 1);
+  assert.equal((copy.match(/The next little story · 01/g) ?? []).length, 1);
+  assert.equal((copy.match(/下一個小故事 · 01/g) ?? []).length, 1);
+  assert.match(copy, /Age at the time · added with the story/);
+  assert.match(copy, /當時年齡 · 隨故事加入/);
   assert.match(copy, /Story spaces for moments still to come/);
   assert.match(copy, /日後故事的幾個方向/);
   assert.match(copy, /one real family-chosen moment at a time/);
@@ -291,8 +293,10 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(responsivePhoto, /type="image\/avif"/);
   assert.match(responsivePhoto, /<img/);
   assert.match(responsivePhoto, /srcSet=\{srcSet\(name, "webp"\)\}/);
-  assert.match(responsivePhoto, /width="1200"/);
-  assert.match(responsivePhoto, /height="1500"/);
+  assert.match(responsivePhoto, /portrait:\s*\{ width: 1200, height: 1600 \}/);
+  assert.match(responsivePhoto, /"everyday-smile":\s*\{ width: 1200, height: 1500 \}/);
+  assert.match(responsivePhoto, /width=\{dimensions\.width\}/);
+  assert.match(responsivePhoto, /height=\{dimensions\.height\}/);
   assert.match(responsivePhoto, /loading=\{priority \? "eager" : "lazy"\}/);
   assert.match(responsivePhoto, /fetchPriority=\{priority \? "high" : "auto"\}/);
   assert.match(responsivePhoto, /decoding="async"/);
@@ -386,24 +390,30 @@ test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct",
   assert.match(css, /\.greeting-heading \.greeting-cursor[\s\S]*?display:\s*none !important/);
 });
 
-test("adds restrained Sunlit Meadow decoration without accessibility or motion debt", async () => {
+test("adds lively Sunlit Meadow decoration without accessibility or motion debt", async () => {
   const [portfolio, decor, css] = await Promise.all([
     read("app/OliverPortfolio.tsx"),
     read("app/MeadowDecor.tsx"),
     read("app/globals.css"),
   ]);
 
-  for (const variant of ["rainbow", "tree", "balloons", "dog"]) {
-    assert.match(portfolio, new RegExp(`MeadowDecor variant=["']${variant}["']`));
+  for (const variant of ["rainbow", "tree", "balloons", "dog", "garden"]) {
+    assert.match(portfolio, new RegExp(`MeadowDecor\\s+variant=["']${variant}["']`));
   }
   assert.match(decor, /aria-hidden="true"/);
   assert.match(decor, /IntersectionObserver/);
   assert.match(decor, /prefers-reduced-motion: reduce/);
   assert.match(decor, /sessionStorage\.getItem\(dogSessionKey\(locale\)\)/);
   assert.match(decor, /sessionStorage\.setItem\(dogSessionKey\(locale\), "seen"\)/);
+  assert.match(decor, /oliver-meadow-dog-\$\{locale\}-v2/);
   assert.doesNotMatch(decor, /<svg|<img|<canvas|role="img"|aria-label=/i);
   assert.doesNotMatch(css, /meadow-[^;{}]*animation:[^;{}]*\binfinite\b/i);
-  assert.match(css, /meadow-dog-cross 4\.4s[^;]*forwards/);
+  assert.match(css, /meadow-dog-cross 4\.8s[^;]*forwards/);
+  assert.match(css, /--meadow-dog-distance:\s*min\(64vw, 748px\)/);
+  assert.match(css, /meadow-balloon-blue 4\.8s[^;]*forwards/);
+  assert.match(css, /meadow-balloon-peach 4\.6s 120ms[^;]*forwards/);
+  assert.match(css, /meadow-balloon-honey 4\.4s 220ms[^;]*forwards/);
+  assert.match(css, /\.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*clamp\(220px, 72vw, 300px\)/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.meadow-decor-dog[\s\S]*?display:\s*none !important/);
   assert.match(css, /@media \(forced-colors: active\)[\s\S]*?\.meadow-decor[\s\S]*?display:\s*none !important/);
   assert.match(css, /@media print[\s\S]*?\.meadow-decor[\s\S]*?display:\s*none !important/);
@@ -474,6 +484,9 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.doesNotMatch(portfolio, /className="section-count"/);
   assert.match(controls, /destinationRef/);
   assert.match(controls, /heading\?\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(controls, /event\.preventDefault\(\)[\s\S]*?destinationRef\.current = item\.href/);
+  assert.match(controls, /window\.history\.pushState\(null, "", destination\)/);
+  assert.match(controls, /section\?\.scrollIntoView\([\s\S]*?behavior: reducedMotion \? "auto" : "smooth"/);
   assert.match(controls, /event\.target === event\.currentTarget/);
   assert.match(css, /\.mobile-menu-panel[\s\S]*?height:\s*100dvh[\s\S]*?overflow-y:\s*auto[\s\S]*?overscroll-behavior:\s*contain/);
   assert.match(css, /\.mobile-menu-dialog\[open\] \.mobile-menu-panel[\s\S]*?animation:\s*menu-panel-in/);
@@ -487,6 +500,7 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(media, /className="preview-media-kind" aria-hidden="true"/);
   assert.match(responsivePhoto, /const widths = \[480, 800, 1200\] as const/);
   assert.match(css, /\.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*4 \/ 5/);
+  assert.match(css, /\.portfolio-photo-portrait \.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*3 \/ 4/);
   assert.match(css, /\.portfolio-photo img\s*\{[\s\S]*?object-fit:\s*cover/);
   assert.match(css, /\.family-media-grid > \*\s*\{[\s\S]*?grid-column:\s*1 \/ -1/);
 });

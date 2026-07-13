@@ -275,7 +275,9 @@ function requireApprovedPhotos(html, route, expectedAlts) {
   for (const alt of expectedAlts) {
     const image = images.find((tag) => getAttribute(tag, "alt") === alt);
     if (!image) fail(`${route} lacks approved photograph alt text: ${alt}`);
-    if (getAttribute(image, "width") !== "1200" || getAttribute(image, "height") !== "1500") {
+    const source = getAttribute(image, "src") ?? "";
+    const expectedHeight = source.includes("/portrait-") ? "1600" : "1500";
+    if (getAttribute(image, "width") !== "1200" || getAttribute(image, "height") !== expectedHeight) {
       fail(`${route} photograph lacks stable intrinsic dimensions: ${alt}`);
     }
     if (!getAttribute(image, "sizes") || !getAttribute(image, "srcset")) {
@@ -427,7 +429,7 @@ for (const expected of [
   "Family & Care",
   "Growing together, surrounded by care",
   "Oliver is loved by many people",
-  "Many caring hands",
+  "Loved by many people",
   "Oliver at 13 months",
   "An everyday smile at 18 months",
   "How we continued alongside him",
@@ -455,7 +457,7 @@ for (const expected of [
   "家庭與陪伴",
   "在陪伴中，一起慢慢成長",
   "昊熹身邊有很多疼愛他的人",
-  "許多溫柔的手",
+  "在許多人的疼愛中",
   "13個月大的昊熹",
   "18個月大的日常笑臉",
   "我們如何繼續陪伴",
@@ -477,11 +479,17 @@ if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail(
 if (/href="\/(?:en|zh-hant)\/summary\//i.test(routeHtml.english + routeHtml.chinese)) {
   fail("a removed one-page summary link remains on a locale page");
 }
-if ((englishText.match(/A new learning story · 01/g) ?? []).length !== 1) {
+if ((englishText.match(/The next little story · 01/g) ?? []).length !== 1) {
   fail("English page does not contain the approved full story preview");
 }
-if ((chineseText.match(/新的成長故事 · 01/g) ?? []).length !== 1) {
+if ((chineseText.match(/下一個小故事 · 01/g) ?? []).length !== 1) {
   fail("Chinese page does not contain the approved full story preview");
+}
+if (!englishText.includes("Age at the time · added with the story")) {
+  fail("English story preview lacks the approved age placeholder");
+}
+if (!chineseText.includes("當時年齡 · 隨故事加入")) {
+  fail("Chinese story preview lacks the approved age placeholder");
 }
 for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
   if ((html.match(/class="planned-story"/g) ?? []).length !== 4) {

@@ -968,6 +968,10 @@ h4 {
   background: var(--paper);
 }
 
+.portfolio-photo-portrait .portfolio-photo-frame {
+  aspect-ratio: 3 / 4;
+}
+
 .portfolio-photo picture,
 .portfolio-photo img {
   display: block;
@@ -1016,17 +1020,64 @@ h4 {
 /* Sunlit Meadow decorative atmosphere. These elements are presentational,
    stay behind content, and never participate in interaction or layout. */
 .hero,
+.about-section,
 .growth-section,
+.family-section,
+.stories-section,
+.future-growth-section,
 .closing-section {
+  position: relative;
   isolation: isolate;
   overflow: clip;
 }
 
 .hero-grid,
+.about-section > .page-grid,
 .growth-section > .page-grid,
+.family-section > .page-grid,
+.stories-section > .page-grid,
+.future-growth-section > .page-grid,
 .closing-inner {
   position: relative;
   z-index: 1;
+}
+
+.hero::before,
+.hero::after {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.hero::before {
+  top: 610px;
+  right: clamp(34px, 12vw, 172px);
+  width: clamp(58px, 12vw, 94px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgb(244 201 93 / 72%);
+  box-shadow:
+    0 -17px 0 -14px rgb(224 173 63 / 58%),
+    0 17px 0 -14px rgb(224 173 63 / 58%),
+    17px 0 0 -14px rgb(224 173 63 / 58%),
+    -17px 0 0 -14px rgb(224 173 63 / 58%),
+    12px 12px 0 -14px rgb(224 173 63 / 50%),
+    -12px 12px 0 -14px rgb(224 173 63 / 50%),
+    12px -12px 0 -14px rgb(224 173 63 / 50%),
+    -12px -12px 0 -14px rgb(224 173 63 / 50%);
+}
+
+.hero::after {
+  top: 680px;
+  right: -24px;
+  width: clamp(96px, 24vw, 160px);
+  height: clamp(28px, 7vw, 46px);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 58%);
+  box-shadow:
+    -34px 7px 0 -9px rgb(255 255 255 / 48%),
+    -2px -13px 0 -8px rgb(255 255 255 / 56%);
 }
 
 .meadow-decor {
@@ -1037,35 +1088,139 @@ h4 {
   contain: layout paint;
 }
 
-/* A static, low-contrast arc keeps the hero's existing motion budget intact. */
+/* The rainbow is intentionally bold but remains static and behind the hero. */
 .meadow-decor-rainbow {
-  right: -34px;
-  bottom: 58px;
-  width: clamp(118px, 38vw, 156px);
-  height: clamp(59px, 19vw, 78px);
+  right: -88px;
+  bottom: 36px;
+  width: clamp(220px, 72vw, 300px);
+  height: clamp(110px, 36vw, 150px);
   overflow: hidden;
-  opacity: 0.72;
+  opacity: 0.94;
   background: radial-gradient(
     ellipse at 50% 100%,
-    transparent 0 36%,
-    rgb(224 173 63 / 31%) 36% 41%,
-    rgb(238 162 131 / 27%) 41% 46%,
-    rgb(92 139 127 / 23%) 46% 51%,
-    rgb(196 221 234 / 45%) 51% 56%,
-    rgb(168 151 177 / 18%) 56% 61%,
-    transparent 61%
+    transparent 0 31%,
+    rgb(224 173 63 / 68%) 31% 37%,
+    rgb(238 162 131 / 64%) 37% 43%,
+    rgb(143 186 120 / 62%) 43% 49%,
+    rgb(169 216 239 / 72%) 49% 55%,
+    rgb(166 155 194 / 58%) 55% 61%,
+    transparent 61.5%
   );
+}
+
+.meadow-decor-garden {
+  width: 154px;
+  height: 102px;
+  opacity: 0.72;
+}
+
+.meadow-garden-family {
+  right: -36px;
+  bottom: 18px;
+}
+
+.meadow-garden-stories {
+  bottom: 26px;
+  left: -54px;
+  transform: scaleX(-1);
+}
+
+.meadow-garden-future {
+  right: -40px;
+  bottom: 12px;
+  transform: rotate(-3deg);
+}
+
+.meadow-garden-path {
+  position: absolute;
+  right: 4px;
+  bottom: 11px;
+  width: 142px;
+  height: 52px;
+  border-bottom: 3px dashed rgb(63 109 101 / 58%);
+  border-radius: 0 0 70% 50%;
+  transform: rotate(-7deg);
+}
+
+.meadow-flower {
+  position: absolute;
+  width: 9px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow:
+    0 -8px 0 -1px currentColor,
+    8px 0 0 -1px currentColor,
+    0 8px 0 -1px currentColor,
+    -8px 0 0 -1px currentColor;
+}
+
+.meadow-flower::after {
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  width: 2px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--teal-deep);
+  content: "";
+}
+
+.meadow-flower-honey {
+  right: 22px;
+  bottom: 38px;
+  color: var(--honey);
+}
+
+.meadow-flower-coral {
+  right: 70px;
+  bottom: 22px;
+  color: var(--coral);
+  transform: scale(0.82);
+}
+
+.meadow-flower-blue {
+  right: 116px;
+  bottom: 47px;
+  color: var(--sky-bright);
+  transform: scale(0.72);
 }
 
 /* The tree is mostly clipped into the growth-section edge on compact screens,
    leaving the content column visually untouched. */
 .meadow-decor-tree {
-  right: -48px;
-  bottom: 22px;
-  width: 76px;
-  height: 128px;
-  opacity: 0.48;
+  right: -40px;
+  bottom: 18px;
+  width: 88px;
+  height: 148px;
+  opacity: 0.62;
   transform-origin: 50% 100%;
+}
+
+.meadow-decor-tree::before {
+  position: absolute;
+  top: 18px;
+  right: 70%;
+  width: 78px;
+  height: 28px;
+  border-top: 2px solid rgb(169 216 239 / 76%);
+  border-radius: 50%;
+  box-shadow: -14px 13px 0 -1px rgb(169 216 239 / 56%);
+  content: "";
+  transform: rotate(-7deg);
+}
+
+.meadow-decor-tree::after {
+  position: absolute;
+  right: -14px;
+  bottom: -4px;
+  width: 126px;
+  height: 24px;
+  background:
+    radial-gradient(circle at 18% 55%, rgb(238 162 131 / 78%) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 62% 42%, rgb(224 173 63 / 82%) 0 4px, transparent 4.5px),
+    repeating-linear-gradient(72deg, transparent 0 8px, rgb(92 139 127 / 48%) 9px 11px, transparent 12px 17px);
+  content: "";
 }
 
 .meadow-tree-trunk {
@@ -1244,14 +1399,26 @@ h4 {
   }
 }
 
-/* Balloons stay in the closing-section gutter. Each plays one short sway and
-   then returns to its neutral resting position. */
+/* The balloons begin beside the meadow line, rise once, and settle. */
 .meadow-decor-balloons {
-  top: 18px;
-  right: -66px;
-  width: 96px;
-  height: 126px;
-  opacity: 0.5;
+  right: -12px;
+  bottom: 0;
+  width: 116px;
+  height: 210px;
+  opacity: 0.78;
+}
+
+.meadow-decor-balloons::after {
+  position: absolute;
+  right: -8px;
+  bottom: 0;
+  width: 132px;
+  height: 26px;
+  background:
+    radial-gradient(circle at 24% 58%, rgb(238 162 131 / 82%) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 70% 42%, rgb(224 173 63 / 82%) 0 4px, transparent 4.5px),
+    repeating-linear-gradient(70deg, transparent 0 8px, rgb(63 109 101 / 56%) 9px 11px, transparent 12px 17px);
+  content: "";
 }
 
 .meadow-balloon {
@@ -1260,6 +1427,7 @@ h4 {
   aspect-ratio: 0.78 / 1;
   border: 1px solid rgb(var(--ink-rgb) / 20%);
   border-radius: 52% 48% 50% 50% / 46% 46% 54% 54%;
+  opacity: 0;
   transform-origin: 50% 160%;
 }
 
@@ -1288,7 +1456,35 @@ h4 {
 .meadow-balloon-blue {
   top: 4%;
   left: 2%;
-  background: var(--blue);
+  background: var(--lilac);
+}
+
+.closing-section::before,
+.closing-section::after {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.closing-section::before {
+  height: 76px;
+  background:
+    radial-gradient(ellipse at 15% 110%, rgb(143 186 120 / 64%) 0 34%, transparent 35%),
+    radial-gradient(ellipse at 58% 118%, rgb(92 139 127 / 42%) 0 38%, transparent 39%),
+    radial-gradient(ellipse at 94% 112%, rgb(143 186 120 / 58%) 0 32%, transparent 33%);
+}
+
+.closing-section::after {
+  height: 34px;
+  background:
+    radial-gradient(circle at 10% 54%, rgb(224 173 63 / 88%) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 32% 72%, rgb(238 162 131 / 82%) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 67% 48%, rgb(166 155 194 / 78%) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 88% 66%, rgb(244 201 93 / 88%) 0 4px, transparent 4.5px);
 }
 
 .meadow-balloon-peach {
@@ -1303,72 +1499,110 @@ h4 {
   background: var(--honey);
 }
 
+.meadow-decor-balloons[data-meadow-state="settled"] .meadow-balloon {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) rotate(0);
+}
+
 .meadow-decor-balloons[data-meadow-state="active"] .meadow-balloon-blue {
-  animation: meadow-balloon-blue 4.4s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+  animation: meadow-balloon-blue 4.8s cubic-bezier(0.2, 0.72, 0.28, 1) forwards;
 }
 
 .meadow-decor-balloons[data-meadow-state="active"] .meadow-balloon-peach {
-  animation: meadow-balloon-peach 4.1s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+  animation: meadow-balloon-peach 4.6s 120ms cubic-bezier(0.2, 0.72, 0.28, 1) forwards;
 }
 
 .meadow-decor-balloons[data-meadow-state="active"] .meadow-balloon-honey {
-  animation: meadow-balloon-honey 3.9s cubic-bezier(0.37, 0, 0.63, 1) forwards;
+  animation: meadow-balloon-honey 4.4s 220ms cubic-bezier(0.2, 0.72, 0.28, 1) forwards;
 }
 
 @keyframes meadow-balloon-blue {
-  0%,
+  0% {
+    opacity: 0;
+    transform: translate3d(-4px, 126px, 0) rotate(-3deg);
+  }
+
+  16% {
+    opacity: 1;
+  }
+
+  72% {
+    transform: translate3d(5px, -5px, 0) rotate(2deg);
+  }
+
   100% {
+    opacity: 1;
     transform: translate3d(0, 0, 0) rotate(0);
-  }
-
-  31% {
-    transform: translate3d(4px, -3px, 0) rotate(2.4deg);
-  }
-
-  66% {
-    transform: translate3d(-3px, 1px, 0) rotate(-1.9deg);
   }
 }
 
 @keyframes meadow-balloon-peach {
-  0%,
+  0% {
+    opacity: 0;
+    transform: translate3d(5px, 112px, 0) rotate(3deg);
+  }
+
+  17% {
+    opacity: 1;
+  }
+
+  68% {
+    transform: translate3d(-5px, -4px, 0) rotate(-2deg);
+  }
+
   100% {
+    opacity: 1;
     transform: translate3d(0, 0, 0) rotate(0);
-  }
-
-  37% {
-    transform: translate3d(-4px, -2px, 0) rotate(-2.2deg);
-  }
-
-  72% {
-    transform: translate3d(3px, 2px, 0) rotate(1.7deg);
   }
 }
 
 @keyframes meadow-balloon-honey {
-  0%,
+  0% {
+    opacity: 0;
+    transform: translate3d(-3px, 138px, 0) rotate(-2deg);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  70% {
+    transform: translate3d(4px, -6px, 0) rotate(2.2deg);
+  }
+
   100% {
+    opacity: 1;
     transform: translate3d(0, 0, 0) rotate(0);
-  }
-
-  29% {
-    transform: translate3d(3px, 2px, 0) rotate(2deg);
-  }
-
-  63% {
-    transform: translate3d(-4px, -3px, 0) rotate(-2.3deg);
   }
 }
 
-/* The dog crosses once, in no more than 4.4 seconds, then remains settled at
-   the right edge. Session storage prevents replay per language. */
+/* The dog takes a shorter, slower path once per language session. */
 .meadow-decor-dog {
-  --meadow-dog-distance: calc(100vw - 86px);
+  --meadow-dog-distance: min(64vw, 748px);
   bottom: 6px;
   left: 0;
   width: 100%;
-  height: 48px;
+  height: 58px;
   overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    transparent calc(100% - 3px),
+    rgb(92 139 127 / 48%) calc(100% - 3px)
+  );
+}
+
+.meadow-decor-dog::before {
+  position: absolute;
+  right: 8%;
+  bottom: 2px;
+  width: 82%;
+  height: 22px;
+  background:
+    radial-gradient(circle at 18% 52%, rgb(224 173 63 / 82%) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 54% 65%, rgb(238 162 131 / 78%) 0 4px, transparent 4.5px),
+    radial-gradient(circle at 86% 48%, rgb(169 216 239 / 92%) 0 4px, transparent 4.5px),
+    repeating-linear-gradient(72deg, transparent 0 10px, rgb(92 139 127 / 46%) 11px 13px, transparent 14px 20px);
+  content: "";
 }
 
 .meadow-dog-runner {
@@ -1379,6 +1613,7 @@ h4 {
   width: 64px;
   height: 40px;
   transform: translate3d(18px, 0, 0);
+  z-index: 1;
 }
 
 .meadow-decor-dog[data-meadow-state="settled"] .meadow-dog-runner {
@@ -1386,7 +1621,7 @@ h4 {
 }
 
 .meadow-decor-dog[data-meadow-state="active"] .meadow-dog-runner {
-  animation: meadow-dog-cross 4.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation: meadow-dog-cross 4.8s cubic-bezier(0.34, 0.08, 0.28, 1) forwards;
 }
 
 .meadow-dog-body {
@@ -1487,19 +1722,19 @@ h4 {
 
 .meadow-decor-dog[data-meadow-state="active"] .meadow-dog-body,
 .meadow-decor-dog[data-meadow-state="active"] .meadow-dog-head {
-  animation: meadow-dog-bob 0.32s ease-in-out 13 alternate forwards;
+  animation: meadow-dog-bob 0.44s ease-in-out 10 alternate forwards;
 }
 
 .meadow-decor-dog[data-meadow-state="active"] .meadow-dog-tail {
-  animation: meadow-dog-tail-wag 0.36s ease-in-out 12 alternate forwards;
+  animation: meadow-dog-tail-wag 0.48s ease-in-out 9 alternate forwards;
 }
 
 .meadow-decor-dog[data-meadow-state="active"] .meadow-dog-leg-front {
-  animation: meadow-dog-step-front 0.28s steps(2, end) 15 alternate forwards;
+  animation: meadow-dog-step-front 0.42s steps(2, end) 11 alternate forwards;
 }
 
 .meadow-decor-dog[data-meadow-state="active"] .meadow-dog-leg-back {
-  animation: meadow-dog-step-back 0.28s steps(2, end) 15 alternate forwards;
+  animation: meadow-dog-step-back 0.42s steps(2, end) 11 alternate forwards;
 }
 
 @keyframes meadow-dog-cross {
@@ -1553,60 +1788,85 @@ h4 {
 }
 
 @media (min-width: 48rem) {
+  .hero::before {
+    top: clamp(96px, 14vw, 132px);
+  }
+
+  .hero::after {
+    top: clamp(188px, 24vw, 226px);
+  }
+
   .meadow-decor-rainbow {
-    right: -54px;
-    bottom: 104px;
-    width: 210px;
-    height: 105px;
+    right: -74px;
+    bottom: 76px;
+    width: 360px;
+    height: 180px;
   }
 
   .meadow-decor-tree {
-    right: -42px;
-    bottom: 28px;
-    width: 105px;
-    height: 176px;
+    right: -34px;
+    bottom: 24px;
+    width: 114px;
+    height: 188px;
   }
 
   .meadow-decor-balloons {
-    top: 30px;
-    right: -54px;
-    width: 118px;
-    height: 154px;
+    right: 12px;
+    bottom: 0;
+    width: 138px;
+    height: 246px;
   }
 
   .meadow-decor-dog {
-    --meadow-dog-distance: calc(100vw - 96px);
-    height: 54px;
+    --meadow-dog-distance: min(62vw, 748px);
+    height: 62px;
+  }
+
+  .meadow-decor-garden {
+    width: 184px;
+    height: 116px;
   }
 }
 
 @media (min-width: 72rem) {
   .meadow-decor-rainbow {
-    top: clamp(92px, 13vh, 140px);
-    right: clamp(20px, 4vw, 64px);
+    top: clamp(92px, 13vh, 132px);
+    right: clamp(-30px, 1vw, 18px);
     bottom: auto;
-    width: 300px;
-    height: 150px;
+    width: 520px;
+    height: 260px;
   }
 
   .meadow-decor-tree {
-    right: -36px;
-    bottom: 34px;
-    width: 112px;
-    height: 185px;
+    right: -22px;
+    bottom: 30px;
+    width: 132px;
+    height: 216px;
   }
 
   .meadow-decor-balloons {
-    top: 48px;
     right: clamp(24px, 4vw, 64px);
-    width: 160px;
-    height: 188px;
-    opacity: 0.58;
+    bottom: 0;
+    width: 174px;
+    height: 290px;
+    opacity: 0.78;
   }
 
   .meadow-decor-dog {
-    --meadow-dog-distance: calc(100vw - 110px);
-    height: 58px;
+    --meadow-dog-distance: min(58vw, 748px);
+    height: 64px;
+  }
+
+  .meadow-garden-family {
+    right: max(22px, calc((100vw - var(--page-width)) / 2 - 104px));
+  }
+
+  .meadow-garden-stories {
+    left: max(-24px, calc((100vw - var(--page-width)) / 2 - 126px));
+  }
+
+  .meadow-garden-future {
+    right: max(16px, calc((100vw - var(--page-width)) / 2 - 112px));
   }
 }
 
@@ -1639,6 +1899,7 @@ h4 {
   }
 
   .meadow-balloon {
+    opacity: 1 !important;
     transform: none !important;
   }
 

@@ -138,7 +138,7 @@ export const localePaths: Record<PortfolioLocale, { home: string }> = {
 };
 
 const englishStoryText = {
-  age: "Age will be added with the story",
+  age: "Age at the time · added with the story",
   observation:
     "A real moment will be described here, using the small details Oliver's parents saw and heard.",
   noticed:
@@ -151,7 +151,7 @@ const englishStoryText = {
 };
 
 const chineseStoryText = {
-  age: "故事加入時，會一併記下當時年齡",
+  age: "當時年齡 · 隨故事加入",
   observation: "這裏會從爸爸媽媽親眼看見、親耳聽見的小細節，如實記下一個片段。",
   noticed: "爸爸媽媽會記下甚麼引起昊熹注意，以及他如何回應。",
   support: "故事亦會記下爸爸媽媽當時如何回應和陪伴。",
@@ -253,7 +253,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       learningClues: "Learning clues",
       items: [
         {
-          title: "A new learning story · 01",
+          title: "The next little story · 01",
           ...englishStoryText,
           media: [
             {
@@ -348,7 +348,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "Oliver likes books, and his parents make time to read with him every day.",
         },
         {
-          title: "Many caring hands",
+          title: "Loved by many people",
           body:
             "Since his early months, Oliver has been gently held and cared for by many loving people around him.",
         },
@@ -462,7 +462,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       learningClues: "學習線索",
       items: [
         {
-          title: "新的成長故事 · 01",
+          title: "下一個小故事 · 01",
           ...chineseStoryText,
           media: [
             {
@@ -552,7 +552,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           body: "爸爸媽媽每天都會陪昊熹一起閱讀，讓看書成為一家人熟悉的日常。",
         },
         {
-          title: "許多溫柔的手",
+          title: "在許多人的疼愛中",
           body: "從還是小寶寶的時候開始，昊熹身邊已有很多疼愛他的人，溫柔地抱着他、照顧他、陪伴他。",
         },
       ],
