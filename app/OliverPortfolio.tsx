@@ -416,24 +416,11 @@ export default function OliverPortfolio({
           </div>
         </section>
 
-        <section
-          id="privacy-notice"
-          className="privacy-section"
-          aria-labelledby="privacy-title"
-        >
-          <div className="page-grid privacy-inner">
-            <div>
-              <p className="eyebrow">{copy.privacy.eyebrow}</p>
-              <h2 id="privacy-title" tabIndex={-1}>{copy.privacy.title}</h2>
-            </div>
-            <p>{copy.privacy.body}</p>
-          </div>
-        </section>
       </main>
 
       <footer className="site-footer">
         <div className="page-grid footer-grid">
-          <div>
+          <div className="footer-identity">
             <p className="footer-name">
               <span lang="en-HK">Oliver YEUNG</span>{" "}
               <span aria-hidden="true">·</span>{" "}
@@ -441,18 +428,7 @@ export default function OliverPortfolio({
             </p>
             <p>{copy.footer.updated}</p>
           </div>
-          <nav
-            className="footer-actions no-print"
-            aria-label={locale === "en" ? "Footer navigation" : "頁尾導覽"}
-          >
-            <a
-              href="#privacy-notice"
-              onClick={() => focusSection("#privacy-notice")}
-            >
-              {copy.privacy.link}
-            </a>
-            <a href="#hero-title" onClick={focusHero}>{copy.footer.top}</a>
-          </nav>
+          <p className="footer-privacy">{copy.privacy.body}</p>
         </div>
       </footer>
     </div>

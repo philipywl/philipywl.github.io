@@ -270,9 +270,11 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.doesNotMatch(copy, /A learning story to come|成長故事 \d{2} · 標題稍後加入|Family & Home/);
   assert.doesNotMatch(copy, /"\[[^"]+\]"/);
 
-  for (const id of ["top", "about", "stories", "growth", "family", "privacy-notice"]) {
+  for (const id of ["top", "about", "stories", "growth", "family"]) {
     assert.match(portfolio, new RegExp(`id=["']${id}["']`));
   }
+  assert.doesNotMatch(portfolio, /privacy-notice|privacy-title|href=["']#privacy/);
+  assert.match(portfolio, /className="footer-privacy">\{copy\.privacy\.body\}/);
   assert.match(portfolio, /copy\.stories\.items\.map/);
   assert.doesNotMatch(portfolio, /plannedItems|planned-stories/);
   assert.match(portfolio, /copy\.growth\.timelineItems\.map/);
@@ -435,6 +437,7 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
   assert.match(css, /meadow-balloon-peach 4\.8s 100ms[^;]*forwards/);
   assert.match(css, /meadow-balloon-honey 4\.7s 180ms[^;]*forwards/);
   assert.match(css, /\.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*clamp\(360px, 110vw, 430px\)/);
+  assert.match(css, /@media \(min-width: 48rem\) and \(max-width: 71\.999rem\)[\s\S]*?\.meadow-decor-rainbow[\s\S]*?right:\s*clamp\(-200px, calc\(31\.25vw - 440px\), -120px\)/);
   assert.match(css, /\.meadow-decor-balloons\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
   assert.match(css, /\.meadow-decor-tree\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.meadow-decor-dog[\s\S]*?display:\s*none !important/);
@@ -471,7 +474,7 @@ test("uses the Sunlit Meadow palette, one typography system, and accessible cont
   assert.match(css, /--focus-ring:\s*3px solid/);
   assert.match(css, /:focus-visible[\s\S]*?outline:\s*var\(--focus-ring\)/);
   assert.match(css, /\.closing-section \.eyebrow\s*\{[\s\S]*?color:\s*var\(--ink\)/);
-  assert.match(css, /\.footer-actions a[\s\S]*?min-width:\s*44px[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /\.footer-privacy[\s\S]*?border-inline-start:\s*3px solid var\(--sage\)/);
   assert.match(css, /aria-current="location"/);
   assert.match(css, /@media print/);
   assert.match(css, /@media print[\s\S]*?\.story-media-note\s*\{[\s\S]*?display:\s*none/);
@@ -497,12 +500,12 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(portfolio, /className="wordmark-name" lang="en-HK"/);
   assert.doesNotMatch(portfolio, /className="wordmark"[\s\S]{0,160}aria-label=/);
   assert.match(portfolio, /id="(?:about|stories|growth|family)-title" tabIndex=\{-1\}/);
-  assert.match(portfolio, /id="privacy-title" tabIndex=\{-1\}/);
+  assert.doesNotMatch(portfolio, /id="privacy-title"|id="privacy-notice"/);
   assert.match(portfolio, /const focusSection = \(href: string\)/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\(item\.href\)\}/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\("#stories"\)\}/);
   assert.match(portfolio, /onClick=\{\(\) => focusSection\("#about"\)\}/);
-  assert.match(portfolio, /onClick=\{\(\) => focusSection\("#privacy-notice"\)\}/);
+  assert.doesNotMatch(portfolio, /focusSection\("#privacy-notice"\)|href="#privacy-notice"/);
   assert.match(portfolio, /href="#hero-title"[\s\S]*?onClick=\{focusHero\}/);
   assert.doesNotMatch(portfolio, /className="section-count"/);
   assert.match(controls, /destinationRef/);
