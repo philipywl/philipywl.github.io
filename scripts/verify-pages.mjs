@@ -443,7 +443,7 @@ for (const expected of [
   "Waving along the way",
   "Shared-reading photograph to be added",
   "Hidden—and found again",
-  "This portfolio is carefully gathered by Oliver's parents. To help protect his privacy",
+  "This portfolio is carefully gathered by Oliver's parents. Please do not copy, download or redistribute",
   "中文 | English",
 ]) {
   if (!englishText.includes(expected)) fail(`English page lacks approved copy: ${expected}`);
@@ -478,7 +478,7 @@ for (const expected of [
   "一路走，一路揮揮手",
   "親子閱讀相片稍後加入",
   "不見了，再找出來",
-  "本作品集由昊熹的爸爸媽媽用心整理。為保護孩子的私隱",
+  "這份作品集由昊熹的爸爸媽媽用心整理。請勿複製、下載或轉載",
   "中文 | English",
 ]) {
   if (!chineseText.includes(expected)) fail(`Chinese page lacks approved copy: ${expected}`);
@@ -492,6 +492,12 @@ if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.english)) fail(
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail("Chinese visual greeting is not aria-hidden");
 if (/href="\/(?:en|zh-hant)\/summary\//i.test(routeHtml.english + routeHtml.chinese)) {
   fail("a removed one-page summary link remains on a locale page");
+}
+if (/href="#privacy-notice"|id="privacy-notice"|id="privacy-title"/i.test(routeHtml.english + routeHtml.chinese)) {
+  fail("a separate privacy destination remains on a locale page");
+}
+for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
+  if (!/class="footer-privacy"/.test(html)) fail(`${route} page lacks the inline footer privacy note`);
 }
 for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
   if ((html.match(/class="story-card/g) ?? []).length !== 5) {

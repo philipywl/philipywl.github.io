@@ -112,10 +112,7 @@ type PortfolioCopy = {
     hope: string;
   };
   privacy: {
-    eyebrow: string;
-    title: string;
     body: string;
-    link: string;
   };
   footer: {
     updated: string;
@@ -431,11 +428,8 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         "Around Oliver are many people who love him, bringing warmth and companionship to the everyday world in which he explores and grows.",
     },
     privacy: {
-      eyebrow: "Privacy",
-      title: "A note about this portfolio",
       body:
-        "This portfolio is carefully gathered by Oliver's parents. To help protect his privacy, please do not copy, download or redistribute its photographs or videos. Thank you for understanding.",
-      link: "Privacy",
+        "This portfolio is carefully gathered by Oliver's parents. Please do not copy, download or redistribute its photographs or videos. Thank you for understanding.",
     },
     footer: {
       updated: "Last updated · July 2026",
@@ -724,11 +718,8 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         "昊熹身邊有很多疼愛他的人，讓他在溫暖的陪伴中探索日常、慢慢成長。",
     },
     privacy: {
-      eyebrow: "私隱",
-      title: "關於本作品集",
       body:
-        "本作品集由昊熹的爸爸媽媽用心整理。為保護孩子的私隱，請勿複製、下載或轉載網站內的相片及影片。謝謝體諒。",
-      link: "私隱",
+        "這份作品集由昊熹的爸爸媽媽用心整理。請勿複製、下載或轉載當中的相片及影片。謝謝體諒。",
     },
     footer: {
       updated: "最後更新 · 2026年7月",
