@@ -1,5 +1,7 @@
+import type { PortfolioPhotoName } from "./portfolio-copy";
+
 type ResponsivePhotoProps = {
-  name: "portrait" | "everyday-smile" | "family-care";
+  name: PortfolioPhotoName;
   alt: string;
   caption: string;
   sizes: string;
@@ -14,11 +16,16 @@ const photoDimensions: Record<
   { width: number; height: number }
 > = {
   portrait: { width: 1200, height: 1600 },
-  "everyday-smile": { width: 1200, height: 1500 },
   "family-care": { width: 1200, height: 1500 },
+  "about-world": { width: 1200, height: 1500 },
+  "about-reading": { width: 1200, height: 1200 },
+  "about-car": { width: 1200, height: 1200 },
+  "story-swimming": { width: 1200, height: 800 },
+  "growth-firefighter": { width: 1200, height: 1500 },
+  "growth-pose": { width: 1200, height: 900 },
 };
 
-function srcSet(name: ResponsivePhotoProps["name"], extension: "avif" | "webp") {
+function srcSet(name: PortfolioPhotoName, extension: "avif" | "webp") {
   return widths
     .map((width) => `/media/oliver/${name}-${width}.${extension} ${width}w`)
     .join(", ");
