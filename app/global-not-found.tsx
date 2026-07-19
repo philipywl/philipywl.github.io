@@ -24,7 +24,7 @@ export default function GlobalNotFound() {
             <p lang="zh-Hant-HK">暫時找不到這一頁。</p>
             <p className="not-found-copy">
               Please choose a language to return to Oliver&apos;s learning journey.<br />
-              <span lang="zh-Hant-HK">請選擇語言，返回昊熹的小小成長旅程。</span>
+              <span lang="zh-Hant-HK">請選擇語言，返回昊熹的成長旅程。</span>
             </p>
             <nav className="button-row" aria-label="中文 | English">
               <a className="button primary-button" href="/zh-hant/" lang="zh-Hant-HK">
