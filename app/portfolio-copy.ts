@@ -50,8 +50,6 @@ type PortfolioCopy = {
     greetingLead: string;
     greetingRest: string;
     intro: string;
-    storiesAction: string;
-    aboutAction: string;
     ageLabel: string;
   };
   preview: {
@@ -143,14 +141,12 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       closeMenu: "Close menu",
     },
     hero: {
-      eyebrow: "Oliver's little learning journey",
+      eyebrow: "Oliver's learning journey",
       greeting: "Hello, I'm Oliver.",
       greetingLead: "Hello,",
       greetingRest: "I'm Oliver.",
       intro:
         "This little collection gathers everyday moments around the things Oliver enjoys—books, cars, dogs and problem-solving—and the loving care of the many people around him.",
-      storiesAction: "Explore Oliver's learning stories",
-      aboutAction: "Meet Oliver",
       ageLabel: "Oliver's current age",
     },
     preview: {
@@ -184,24 +180,24 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         "Books, cars, dogs and problem-solving are simple, genuine parts of Oliver's everyday world. Every day, he and his parents also share time with a book—a familiar rhythm of being together.",
       fields: [
         {
-          title: "Books, every day",
+          title: "Reading together",
           body:
-            "Every day, Oliver and his parents spend time reading together. He has begun pointing out familiar pictures, turning the pages into a quiet conversation they share.",
+            "Every day, Oliver reads with Mum and Dad. He often chooses a book from the shelf by himself; during story time at playgroup, he also listens closely to the teacher's story. Books are both a familiar family ritual and something he seeks out with interest.",
         },
         {
-          title: "Cars",
+          title: "Cars and dogs",
           body:
-            "Oliver likes cars—one of the familiar interests in his everyday world.",
+            "When Oliver sees a car, he happily says “vroom vroom.” When a dog passes by, he points towards it and says “woof woof.” In play, he finds different ways for his toy cars to travel and extends them into little scenarios of his own.",
         },
         {
-          title: "Dogs",
+          title: "Working things out",
           body:
-            "Oliver notices dogs and has pointed them out with an imitated 'woof'—a small, cheerful connection between books and the world around him.",
+            "When Oliver explores a toy, he often spends time examining it first. If the answer does not come straight away, he keeps trying; when he finds a way through, his delight is easy to see.",
         },
         {
-          title: "Problem-solving",
+          title: "Noticing and remembering",
           body:
-            "Oliver enjoys exploring where things go, including simple matching play and looking for an object that has been gently hidden.",
+            "Oliver recognises familiar family members and connects their everyday belongings with the person they belong to. In these small responses, Mum and Dad notice how carefully he takes in the people, objects and details around him.",
         },
       ],
     },
@@ -453,14 +449,12 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       closeMenu: "關閉選單",
     },
     hero: {
-      eyebrow: "昊熹的小小成長旅程",
+      eyebrow: "昊熹的成長旅程",
       greeting: "你好，我是昊熹。",
       greetingLead: "你好，",
       greetingRest: "我是昊熹。",
       intro:
         "這裏收集了一個個日常片段：昊熹喜歡看書、車、狗仔和解難，也在身邊許多人的疼愛與陪伴中慢慢成長。",
-      storiesAction: "閱讀昊熹的成長故事",
-      aboutAction: "認識昊熹",
       ageLabel: "昊熹現在的年齡",
     },
     preview: {
@@ -493,20 +487,20 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         "看書、車、狗仔和解難，都是昊熹日常裏簡單而真實的喜好。每天，他也會和爸爸媽媽一起閱讀；這段親子閱讀時間，成為一家人熟悉而溫暖的日常。",
       fields: [
         {
-          title: "每天一起看書",
-          body: "爸爸媽媽每天都會陪昊熹一起閱讀。他開始在書頁中指出熟悉的圖案，讓看書成為一家人之間安靜而溫暖的小對話。",
+          title: "親子共讀",
+          body: "每天，昊熹都會和爸爸媽媽一起閱讀。他平日會主動從書架拿書來看；參加 playgroup 時，也會專心聆聽老師說故事。閱讀既是熟悉的親子時光，也是他會主動投入的日常興趣。",
         },
         {
-          title: "喜歡車",
-          body: "昊熹喜歡車；車是他日常小世界裏熟悉的興趣之一。",
+          title: "車和小狗",
+          body: "昊熹喜歡車和小狗。見到車時，他會叫「嗚嗚」；每當有小狗經過，他便會指着牠說「汪汪」。玩玩具車時，他常常自由發揮，讓小車走進自己想像的不同旅程。",
         },
         {
-          title: "喜歡狗仔",
-          body: "昊熹會留意狗仔，也曾指着狗仔模仿「汪汪」；書頁裏的圖案，就這樣與身邊的世界連在一起。",
+          title: "專注解難",
+          body: "玩玩具時，昊熹常會先花時間專心研究。遇上未能立即解開的部分，他會繼續嘗試，尋找不同方法；當找到方法時，那份開心也很自然地流露出來。",
         },
         {
-          title: "喜歡解難",
-          body: "昊熹喜歡探索物件應該放在哪裏，也會找尋被輕輕遮起來的東西；這些都是他日常解難遊戲的一部分。",
+          title: "細心觀察",
+          body: "昊熹會細心留意身邊的人和物。他能認得家中成員，也會分辨他們各自常用的物品。這些日常小反應，讓爸爸媽媽看見他如何留意並記住熟悉的人與事。",
         },
       ],
     },

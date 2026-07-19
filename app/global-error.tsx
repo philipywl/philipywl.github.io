@@ -12,7 +12,7 @@ export default function GlobalError({ reset }: { reset: () => void }) {
             <p lang="zh-Hant-HK">頁面暫時未能顯示。</p>
             <p className="not-found-copy">
               Please try again, or choose a language to return to Oliver&apos;s learning journey.<br />
-              <span lang="zh-Hant-HK">請再試一次，或選擇語言返回昊熹的小小成長旅程。</span>
+              <span lang="zh-Hant-HK">請再試一次，或選擇語言返回昊熹的成長旅程。</span>
             </p>
             <div className="button-row">
               <button className="button primary-button" type="button" onClick={reset}>

@@ -6,7 +6,7 @@ export const ENGLISH_TITLE = "Oliver YEUNG | A Little Learning Journey";
 export const ENGLISH_DESCRIPTION =
   "A warm collection of everyday moments, gathered with care by Oliver's parents, showing how he explores, connects and grows at his own pace.";
 
-export const CHINESE_TITLE = "昊熹｜小小成長旅程";
+export const CHINESE_TITLE = "昊熹｜成長旅程";
 export const CHINESE_DESCRIPTION =
   "由爸爸媽媽用心整理的一個個日常片段，記下昊熹如何探索、與人互動，並按自己的步伐慢慢成長。";
 

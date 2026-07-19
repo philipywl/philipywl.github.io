@@ -156,34 +156,18 @@ export default function OliverPortfolio({
                   {age}
                 </p>
               )}
-              <div className="button-row no-print">
-                <a
-                  className="button primary-button"
-                  href="#stories"
-                  onClick={() => focusSection("#stories")}
-                >
-                  {copy.hero.storiesAction}
-                </a>
-                <a
-                  className="hero-text-link"
-                  href="#about"
-                  onClick={() => focusSection("#about")}
-                >
-                  {copy.hero.aboutAction}
-                </a>
-              </div>
             </div>
 
             <div className="hero-visual">
-              <MeadowDecor variant="rainbow" locale={locale} />
               <ResponsivePhoto
                 name="portrait"
                 alt={copy.photos.hero.alt}
                 caption={copy.photos.hero.caption}
-                sizes="(min-width: 60rem) 294px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
+                sizes="(min-width: 72rem) 390px, (min-width: 48rem) 390px, (min-width: 30rem) 350px, calc(100vw - 40px)"
                 priority
                 className="hero-preview-media"
               />
+              <MeadowDecor variant="rainbow" locale={locale} />
             </div>
           </div>
         </section>
