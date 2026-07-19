@@ -790,7 +790,11 @@ h4 {
 }
 
 .preview-media-portrait .preview-media-surface {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
+}
+
+.preview-media-square .preview-media-surface {
+  aspect-ratio: 1;
 }
 
 .preview-media-wide .preview-media-surface {
@@ -941,6 +945,19 @@ h4 {
   aspect-ratio: 3 / 4;
 }
 
+.portfolio-photo-about-reading .portfolio-photo-frame,
+.portfolio-photo-about-car .portfolio-photo-frame {
+  aspect-ratio: 1;
+}
+
+.portfolio-photo-story-swimming .portfolio-photo-frame {
+  aspect-ratio: 3 / 2;
+}
+
+.portfolio-photo-growth-pose .portfolio-photo-frame {
+  aspect-ratio: 4 / 3;
+}
+
 .portfolio-photo picture,
 .portfolio-photo img {
   display: block;
@@ -963,23 +980,175 @@ h4 {
   border-style: dashed;
 }
 
+.youtube-video {
+  min-width: 0;
+  margin: 0;
+}
+
+.youtube-video-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(var(--ink-rgb) / 18%);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 26% 24%, rgb(255 255 255 / 78%) 0 7%, transparent 7.5%),
+    linear-gradient(145deg, rgb(169 216 239 / 72%), rgb(244 201 93 / 54%));
+}
+
+.youtube-video-video .youtube-video-frame {
+  aspect-ratio: 16 / 9;
+}
+
+.youtube-video-portrait-video .youtube-video-frame {
+  width: min(100%, 340px);
+  aspect-ratio: 9 / 16;
+  margin-inline: auto;
+}
+
+.youtube-video iframe,
+.youtube-video-trigger {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.youtube-video-trigger {
+  display: grid;
+  padding: 24px;
+  border: 0;
+  place-items: center;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.youtube-video-trigger::before,
+.youtube-video-trigger::after {
+  position: absolute;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 52%);
+  content: "";
+}
+
+.youtube-video-trigger::before {
+  top: 12%;
+  right: 9%;
+  width: 24%;
+  aspect-ratio: 1;
+}
+
+.youtube-video-trigger::after {
+  bottom: 8%;
+  left: 7%;
+  width: 34%;
+  aspect-ratio: 1;
+}
+
+.youtube-video-orbit {
+  position: absolute;
+  width: 62%;
+  aspect-ratio: 1;
+  border: 2px dashed rgb(var(--ink-rgb) / 26%);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+
+.youtube-video-play {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 64px;
+  height: 64px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  place-items: center;
+  background: var(--paper);
+  box-shadow: 0 8px 20px rgb(var(--ink-rgb) / 12%);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.youtube-video-play::before {
+  width: 0;
+  height: 0;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  border-left: 14px solid var(--ink);
+  margin-left: 4px;
+  content: "";
+}
+
+.youtube-video-trigger-label {
+  position: absolute;
+  z-index: 1;
+  bottom: 20px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid rgb(var(--ink-rgb) / 16%);
+  border-radius: 999px;
+  background: rgb(255 248 236 / 94%);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.youtube-video-trigger:hover .youtube-video-play {
+  box-shadow: 0 10px 24px rgb(var(--ink-rgb) / 18%);
+  transform: translateY(-2px);
+}
+
+.youtube-video-trigger:active .youtube-video-play {
+  transform: translateY(1px) scale(0.98);
+}
+
+.youtube-video-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--blue);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.youtube-video figcaption {
+  display: grid;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  gap: 5px;
+}
+
+.youtube-video figcaption a {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 44px;
+  padding-block: 9px;
+  align-items: center;
+  color: var(--link);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
 .hero-visual {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  width: min(100%, 390px);
+  width: min(100%, 430px);
+  min-height: 500px;
   margin-inline: auto;
   align-items: center;
   justify-items: center;
-  gap: 16px;
 }
 
 .hero-preview-media {
   position: relative;
-  z-index: 1;
-  grid-row: 2;
-  width: min(100%, 350px);
+  z-index: 2;
+  width: min(calc(100% - 32px), 320px);
   margin: 0 auto;
 }
 
@@ -1033,18 +1202,20 @@ h4 {
   contain: layout paint;
 }
 
-/* The complete rainbow is a neighbouring illustration, never a photo overlay. */
+/* The rainbow sits behind the portrait surface so it feels generous without
+   crossing the face or taking part in layout. */
 .hero-visual .meadow-decor-rainbow {
-  position: relative;
-  inset: auto;
-  grid-row: 1;
-  width: min(100%, 350px);
+  position: absolute;
+  z-index: 1;
+  top: 4%;
+  left: 50%;
+  width: min(145vw, 470px);
   height: auto;
   aspect-ratio: 520 / 298;
-  margin-inline: auto;
   overflow: visible;
   contain: layout;
   opacity: 1;
+  transform: translateX(-50%);
 }
 
 .meadow-rainbow-arc {
@@ -2094,12 +2265,36 @@ h4 {
 }
 
 .about-field {
+  display: grid;
   min-width: 0;
-  padding: 22px;
+  padding: 14px;
   border: 1px solid var(--border);
   border-radius: 18px;
+  align-content: start;
+  gap: 18px;
   background: var(--card);
   box-shadow: var(--shadow-soft);
+}
+
+.about-field-copy {
+  min-width: 0;
+  padding: 0 8px 8px;
+}
+
+.about-field-photo,
+.about-field-placeholder {
+  width: 100%;
+}
+
+.about-field-photo .portfolio-photo-frame,
+.about-field-placeholder .preview-media-surface {
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.about-field-photo figcaption,
+.about-field-placeholder figcaption {
+  padding-inline: 4px;
 }
 
 .about-field:nth-child(1) {
@@ -2167,8 +2362,22 @@ h4 {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.story-media-grid .preview-media figcaption {
+.story-media-grid .preview-media figcaption,
+.story-media-grid .portfolio-photo figcaption,
+.story-media-grid .youtube-video figcaption {
   padding-inline: 4px;
+}
+
+.story-photo-landscape .portfolio-photo-frame {
+  aspect-ratio: 3 / 2;
+}
+
+.story-photo-portrait .portfolio-photo-frame {
+  aspect-ratio: 4 / 5;
+}
+
+.story-photo-wide .portfolio-photo-frame {
+  aspect-ratio: 16 / 9;
 }
 
 .story-content {
@@ -2279,11 +2488,21 @@ h4 {
   position: relative;
   z-index: 1;
   display: grid;
-  max-width: 820px;
+  align-items: start;
+  gap: 28px;
 }
 
 .growth-moments-layout .timeline-panel {
   background: rgb(255 249 230 / 84%);
+}
+
+.growth-portrait {
+  width: min(100%, 330px);
+  margin-inline: auto;
+}
+
+.growth-portrait .portfolio-photo-frame {
+  box-shadow: var(--shadow-soft);
 }
 
 .everyday-panel,
@@ -2550,6 +2769,10 @@ h4 {
   background: rgb(143 186 120 / 25%);
 }
 
+.future-growth-list li:nth-child(4) {
+  background: rgb(238 162 131 / 20%);
+}
+
 .future-growth-list .field-index {
   margin: 3px 0 0;
 }
@@ -2563,6 +2786,64 @@ h4 {
   margin-bottom: 0;
   color: var(--muted);
   font-size: 0.9375rem;
+}
+
+.recent-moments {
+  margin-top: clamp(36px, 6vw, 64px);
+}
+
+.recent-moments-heading {
+  max-width: 700px;
+  margin-bottom: 24px;
+}
+
+.recent-moments-heading h3 {
+  margin-bottom: 10px;
+  font-size: clamp(1.625rem, 4vw, 2rem);
+}
+
+.recent-moments-heading p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.recent-moments-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.recent-moment-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: var(--shadow-soft);
+}
+
+.recent-moment-photo .portfolio-photo-frame {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.recent-moment-photo figcaption {
+  padding-inline: 18px;
+}
+
+.recent-moment-copy {
+  padding: 18px 20px 22px;
+}
+
+.recent-moment-copy h4 {
+  margin-bottom: 7px;
+  font-size: 1.125rem;
+}
+
+.recent-moment-copy p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 1rem;
 }
 
 .closing-section {
@@ -2848,15 +3129,18 @@ h4 {
   }
 
   .hero-visual {
-    grid-template-columns: minmax(300px, 390px) minmax(280px, 420px);
-    width: min(100%, 860px);
-    gap: clamp(24px, 4vw, 32px);
+    width: min(100%, 600px);
+    min-height: 540px;
   }
 
-  .hero-preview-media,
+  .hero-preview-media {
+    width: min(100%, 360px);
+  }
+
   .hero-visual .meadow-decor-rainbow {
-    grid-row: 1;
-    width: 100%;
+    top: 2%;
+    left: 54%;
+    width: min(78vw, 590px);
   }
 
   .hero-intro {
@@ -2880,6 +3164,14 @@ h4 {
   }
 
   .about-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .growth-moments-layout {
+    grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
+  }
+
+  .recent-moments-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -2945,8 +3237,8 @@ h4 {
   }
 
   .hero-grid {
-    grid-template-columns: minmax(400px, 0.9fr) minmax(650px, 1.35fr);
-    gap: 32px;
+    grid-template-columns: minmax(430px, 0.9fr) minmax(560px, 1.1fr);
+    gap: 48px;
   }
 
   .hero-copy {
@@ -2956,9 +3248,18 @@ h4 {
 
   .hero-visual {
     grid-column: auto;
-    grid-template-columns: minmax(300px, 350px) minmax(300px, 360px);
-    width: min(100%, 730px);
-    gap: clamp(24px, 2.5vw, 32px);
+    width: min(100%, 650px);
+    min-height: 560px;
+  }
+
+  .hero-preview-media {
+    width: min(100%, 380px);
+  }
+
+  .hero-visual .meadow-decor-rainbow {
+    top: -1%;
+    left: 56%;
+    width: min(58vw, 680px);
   }
 
   .header-inner {
@@ -3162,6 +3463,10 @@ h4 {
   }
 
   .story-media-note {
+    display: none;
+  }
+
+  .youtube-video-frame {
     display: none;
   }
 

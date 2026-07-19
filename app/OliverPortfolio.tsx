@@ -5,6 +5,7 @@ import GreetingReveal from "./GreetingReveal";
 import MeadowDecor from "./MeadowDecor";
 import PreviewMedia from "./PreviewMedia";
 import ResponsivePhoto from "./ResponsivePhoto";
+import YouTubeVideo from "./YouTubeVideo";
 import {
   ArrowUpIcon,
   LanguageSwitch,
@@ -159,12 +160,12 @@ export default function OliverPortfolio({
             </div>
 
             <div className="hero-visual">
-              <ResponsivePhoto
-                name="portrait"
-                alt={copy.photos.hero.alt}
-                caption={copy.photos.hero.caption}
-                sizes="(min-width: 72rem) 390px, (min-width: 48rem) 390px, (min-width: 30rem) 350px, calc(100vw - 40px)"
-                priority
+              <PreviewMedia
+                label={copy.hero.portrait.label}
+                detail={copy.hero.portrait.detail}
+                kind="photo"
+                ratio="portrait"
+                tone="sky"
                 className="hero-preview-media"
               />
               <MeadowDecor variant="rainbow" locale={locale} />
@@ -179,28 +180,44 @@ export default function OliverPortfolio({
               <h2 id="about-title" tabIndex={-1}>{copy.about.title}</h2>
               <p>{copy.about.intro}</p>
             </div>
-            <aside className="preview-note preview-only" aria-label={copy.preview.badge}>
-              <span className="preview-badge">{copy.preview.badge}</span>
-              <p>{copy.preview.note}</p>
-            </aside>
           </div>
 
           <div className="page-grid about-grid">
             <ResponsivePhoto
-              name="everyday-smile"
-              alt={copy.photos.everyday.alt}
-              caption={copy.photos.everyday.caption}
+              name={copy.about.mainPhoto.name}
+              alt={copy.about.mainPhoto.alt}
+              caption={copy.about.mainPhoto.caption}
               sizes="(min-width: 60rem) 360px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
               className="about-preview-media"
             />
             <div className="about-fields">
               {copy.about.fields.map((field, index) => (
                 <article className="about-field" key={field.title}>
-                  <span className="field-index" aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3>{field.title}</h3>
-                  <p>{field.body}</p>
+                  {"name" in field.media ? (
+                    <ResponsivePhoto
+                      name={field.media.name}
+                      alt={field.media.alt}
+                      caption={field.media.caption}
+                      sizes="(min-width: 48rem) 220px, calc(100vw - 84px)"
+                      className="about-field-photo"
+                    />
+                  ) : (
+                    <PreviewMedia
+                      label={field.media.label}
+                      detail={field.media.detail}
+                      kind="photo"
+                      ratio="square"
+                      tone={mediaTones[index % mediaTones.length]}
+                      className="about-field-placeholder"
+                    />
+                  )}
+                  <div className="about-field-copy">
+                    <span className="field-index" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3>{field.title}</h3>
+                    <p>{field.body}</p>
+                  </div>
                 </article>
               ))}
             </div>
@@ -208,7 +225,7 @@ export default function OliverPortfolio({
           <MeadowDecor variant="dog" locale={locale} />
         </section>
 
-        <section id="stories" className="stories-section section-pad preview-only" aria-labelledby="stories-title">
+        <section id="stories" className="stories-section section-pad" aria-labelledby="stories-title">
           <div className="page-grid section-intro-grid">
             <div className="section-heading-copy">
               <p className="eyebrow">{copy.stories.eyebrow}</p>
@@ -226,15 +243,27 @@ export default function OliverPortfolio({
               >
                 <div className={`story-media-grid story-media-count-${story.media.length}`}>
                   {story.media.map((media, mediaIndex) => (
-                    <PreviewMedia
-                      key={`${story.title}-${media.label}`}
-                      label={media.label}
-                      detail={media.detail}
-                      kind={media.kind}
-                      ratio={media.ratio}
-                      tone={mediaTones[(storyIndex + mediaIndex) % mediaTones.length]}
-                      playLabel={copy.preview.playLabel}
-                    />
+                    media.kind === "video" ? (
+                      <YouTubeVideo
+                        key={`${story.title}-${media.videoId}`}
+                        videoId={media.videoId}
+                        title={media.title}
+                        caption={media.caption}
+                        ratio={media.ratio}
+                        playLabel={copy.controls.playVideo}
+                        loadingLabel={copy.controls.loadingVideo}
+                        openLabel={copy.controls.openYouTube}
+                      />
+                    ) : (
+                      <ResponsivePhoto
+                        key={`${story.title}-${media.name}-${mediaIndex}`}
+                        name={media.name}
+                        alt={media.alt}
+                        caption={media.caption}
+                        sizes="(min-width: 60rem) 520px, (min-width: 30rem) 46vw, calc(100vw - 64px)"
+                        className={`story-photo story-photo-${media.ratio}`}
+                      />
+                    )
                   ))}
                 </div>
 
@@ -308,11 +337,18 @@ export default function OliverPortfolio({
                 ))}
               </ol>
             </section>
+            <ResponsivePhoto
+              name={copy.growth.portrait.name}
+              alt={copy.growth.portrait.alt}
+              caption={copy.growth.portrait.caption}
+              sizes="(min-width: 60rem) 330px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
+              className="growth-portrait"
+            />
           </div>
           <MeadowDecor variant="tree" locale={locale} />
         </section>
 
-        <section className="future-growth-section section-pad preview-only" aria-labelledby="everyday-title">
+        <section className="future-growth-section section-pad" aria-labelledby="everyday-title">
           <div className="page-grid future-growth-panel">
             <div className="future-growth-heading">
               <p className="eyebrow">{copy.growth.eyebrow}</p>
@@ -333,6 +369,29 @@ export default function OliverPortfolio({
               ))}
             </ul>
           </div>
+          <section className="page-grid recent-moments" aria-labelledby="recent-moments-title">
+            <div className="recent-moments-heading">
+              <h3 id="recent-moments-title">{copy.growth.recentTitle}</h3>
+              <p>{copy.growth.recentIntro}</p>
+            </div>
+            <div className="recent-moments-grid">
+              {copy.growth.recentMoments.map((moment) => (
+                <article className="recent-moment-card" key={moment.title}>
+                  <ResponsivePhoto
+                    name={moment.photo.name}
+                    alt={moment.photo.alt}
+                    caption={moment.photo.caption}
+                    sizes="(min-width: 48rem) 520px, calc(100vw - 64px)"
+                    className="recent-moment-photo"
+                  />
+                  <div className="recent-moment-copy">
+                    <h4>{moment.title}</h4>
+                    <p>{moment.body}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
           <MeadowDecor
             variant="garden"
             locale={locale}
@@ -365,9 +424,9 @@ export default function OliverPortfolio({
 
             <div className="family-media-grid">
               <ResponsivePhoto
-                name="family-care"
-                alt={copy.photos.family.alt}
-                caption={copy.photos.family.caption}
+                name={copy.family.photo.name}
+                alt={copy.family.photo.alt}
+                caption={copy.family.photo.caption}
                 sizes="(min-width: 60rem) 430px, (min-width: 48rem) 40vw, calc(100vw - 40px)"
                 className="family-photo"
               />

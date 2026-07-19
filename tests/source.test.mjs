@@ -178,8 +178,8 @@ test("defines accurate public metadata, review robots, alternates, and icons", a
   ]);
 
   assert.match(metadata, /Oliver YEUNG \| A Little Learning Journey/);
-  assert.match(metadata, /gathered with care by Oliver's parents/);
-  assert.match(metadata, /由爸爸媽媽用心整理的一個個日常片段/);
+  assert.match(metadata, /lovingly gathered by Oliver's parents/);
+  assert.match(metadata, /爸爸媽媽用心收集一個個日常片段/);
   for (const directive of ["index: false", "follow: false", "noarchive: true", "nosnippet: true", "noimageindex: true"]) {
     assert.match(metadata, new RegExp(directive.replace(" ", "\\s*")));
   }
@@ -191,15 +191,16 @@ test("defines accurate public metadata, review robots, alternates, and icons", a
   assert.match(chineseLayout, /<html lang="zh-Hant-HK">/);
 });
 
-test("uses supplied factual content and warm placeholders without admissions or institutional copy", async () => {
+test("uses supplied factual content, restrained placeholders, and privacy-enhanced video", async () => {
   const appFiles = (await collectSourceFiles("app")).filter((file) => /\.[jt]sx?$/.test(file));
   const appSource = (await Promise.all(appFiles.map(read))).join("\n");
-  const [portfolio, controls, copy, media, responsivePhoto] = await Promise.all([
+  const [portfolio, controls, copy, media, responsivePhoto, youtubeVideo] = await Promise.all([
     read("app/OliverPortfolio.tsx"),
     read("app/PortfolioControls.tsx"),
     read("app/portfolio-copy.ts"),
     read("app/PreviewMedia.tsx"),
     read("app/ResponsivePhoto.tsx"),
+    read("app/YouTubeVideo.tsx"),
   ]);
 
   for (const pattern of [
@@ -213,14 +214,12 @@ test("uses supplied factual content and warm placeholders without admissions or 
 
   assert.match(copy, /Oliver's everyday world/);
   assert.match(copy, /昊熹的日常小世界/);
-  assert.match(copy, /Small steps, gathered over time/);
-  assert.match(copy, /日子裏慢慢累積的小步/);
+  assert.match(copy, /Small steps, quietly gathering/);
+  assert.match(copy, /把一點一滴，慢慢收進成長裏/);
   assert.match(copy, /Family & Care/);
   assert.match(copy, /家庭與陪伴/);
-  assert.match(copy, /Growing together, surrounded by care/);
-  assert.match(copy, /在陪伴中，一起慢慢成長/);
-  assert.match(copy, /Stories taking shape/);
-  assert.match(copy, /故事正在成形/);
+  assert.match(copy, /Growing within a circle of care/);
+  assert.match(copy, /在愛與陪伴中，一起長大/);
   assert.match(copy, /Oliver's learning journey/);
   assert.match(copy, /昊熹的成長旅程/);
   assert.match(copy, /Reading together/);
@@ -231,53 +230,62 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(copy, /專注解難/);
   assert.match(copy, /Noticing and remembering/);
   assert.match(copy, /細心觀察/);
-  assert.match(copy, /chooses a book from the shelf by himself/);
+  assert.match(copy, /often chooses one from the shelf by himself/);
   assert.match(copy, /主動從書架拿書來看/);
-  assert.match(copy, /says “vroom vroom.”/);
-  assert.match(copy, /會叫「嗚嗚」/);
-  assert.match(copy, /connects their everyday belongings with the person they belong to/);
-  assert.match(copy, /分辨他們各自常用的物品/);
+  assert.match(copy, /vroom vroom/);
+  assert.match(copy, /車一出現.*說「嗚嗚」/);
+  assert.match(copy, /connects everyday belongings with the person they belong to/);
+  assert.match(copy, /把日常物品與它們的主人連繫起來/);
   assert.doesNotMatch(copy, /fast learner|有很強記憶力|looks towards the teacher/i);
-  assert.match(copy, /Oliver is loved by many people/);
-  assert.match(copy, /昊熹身邊有很多疼愛他的人/);
-  assert.match(copy, /Reading together, every day/);
-  assert.match(copy, /每天一起閱讀/);
-  assert.match(copy, /A small family invitation/);
-  assert.match(copy, /一個小小的家庭邀請/);
-  assert.match(copy, /Loved by many people/);
-  assert.match(copy, /在許多人的疼愛中/);
-  assert.match(copy, /caption: "Oliver at 13 months"/);
-  assert.match(copy, /caption: "An everyday smile at 18 months"/);
+  assert.match(copy, /Oliver's days are held by many people who love him/);
+  assert.match(copy, /昊熹的日常，由許多疼愛他的人/);
+  assert.match(copy, /A book together, every day/);
+  assert.match(copy, /每天共讀一頁/);
+  assert.match(copy, /A pair of slippers, a little invitation/);
+  assert.match(copy, /一雙拖鞋的小邀請/);
+  assert.match(copy, /Held by many loving hands/);
+  assert.match(copy, /許多雙疼愛他的手/);
+  assert.match(copy, /A quiet portrait from 13 months/);
+  assert.match(copy, /13個月大時留下的一張安靜近照/);
   assert.match(copy, /time: "10 months"/);
   assert.match(copy, /time: "14 months"/);
   assert.match(copy, /time: "16 months"/);
   assert.match(copy, /time: "10個月大"/);
   assert.match(copy, /time: "14個月大"/);
   assert.match(copy, /time: "16個月大"/);
-  assert.match(copy, /How we continued alongside him/);
+  assert.match(copy, /How we continue alongside him/);
   assert.match(copy, /我們如何繼續陪伴/);
-  assert.match(copy, /Holding close the little moments/);
-  assert.match(copy, /珍惜日常裏的小片段/);
-  assert.match(copy, /This little journal now brings together five real stories/);
-  assert.match(copy, /這份成長記錄，現在收集了五個真實故事/);
+  assert.match(copy, /Keeping these little days close/);
+  assert.match(copy, /把這些小日子，好好珍藏/);
+  assert.match(copy, /Five learning stories, a handful of everyday observations/);
+  assert.match(copy, /五個成長故事、一些日常觀察/);
   for (const title of [
-    "Little discoveries in books",
-    "Listening and helping",
-    "Finding where each piece belongs",
-    "Pouring from one cup to another",
-    "Waving along the way",
-    "書頁裏的小發現",
-    "聽一聽，一起幫忙",
-    "這一塊放哪裏？",
-    "慢慢倒進另一隻杯",
-    "一路走，一路揮揮手",
-  ]) assert.match(copy, new RegExp(title.replace(/[?？]/g, ".")));
-  assert.match(copy, /Shared-reading photograph to be added/);
-  assert.match(copy, /親子閱讀相片稍後加入/);
-  assert.match(copy, /Hidden—and found again/);
-  assert.match(copy, /不見了，再找出來/);
-  assert.doesNotMatch(copy, /A learning story to come|成長故事 \d{2} · 標題稍後加入|Family & Home/);
+    "A page of his own",
+    "Words that bring us together",
+    "A door, a handle, a little idea",
+    "The piano corner he always finds",
+    "A little step into the water",
+    "自己翻開下一頁",
+    "聽見，也回應",
+    "一扇門，一個小辦法",
+    "總會走近的琴鍵",
+    "水裏的一小步",
+  ]) assert.match(copy, new RegExp(title));
+  assert.match(copy, /Oliver's new portrait is coming/);
+  assert.match(copy, /昊熹的新近照稍後加入/);
+  assert.match(copy, /A problem-solving moment to be added/);
+  assert.match(copy, /解難小片段稍後加入/);
+  assert.doesNotMatch(copy, /Stories taking shape|故事正在成形|A learning story to come|Family & Home/);
   assert.doesNotMatch(copy, /"\[[^"]+\]"/);
+
+  for (const videoId of [
+    "2RE83LVmTVk",
+    "FW24LCUNS_w",
+    "BxMkQkxApBg",
+    "9QrYnWYsVUQ",
+    "1Fxx4dzHCFo",
+    "kgPKylmVI7s",
+  ]) assert.equal(copy.split(videoId).length - 1, 2, videoId);
 
   for (const id of ["top", "about", "stories", "growth", "family"]) {
     assert.match(portfolio, new RegExp(`id=["']${id}["']`));
@@ -289,18 +297,18 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.match(portfolio, /copy\.growth\.timelineItems\.map/);
   assert.match(portfolio, /copy\.family\.vignettes\.map/);
   assert.doesNotMatch(portfolio, /copy\.family\.media\.map/);
-  assert.match(portfolio, /stories-section section-pad preview-only/);
-  assert.match(portfolio, /future-growth-section section-pad preview-only/);
+  assert.match(portfolio, /stories-section section-pad/);
+  assert.match(portfolio, /future-growth-section section-pad/);
+  assert.doesNotMatch(portfolio, /stories-section section-pad preview-only|future-growth-section section-pad preview-only/);
   assert.match(portfolio, /future-growth-list/);
+  assert.match(portfolio, /recent-moments-grid/);
+  assert.match(portfolio, /<YouTubeVideo/);
   assert.doesNotMatch(copy, /Learning clue 0\d · to be added|學習線索 0\d · 稍後加入/);
   assert.ok(portfolio.indexOf('id="about"') < portfolio.indexOf('id="stories"'));
   assert.ok(portfolio.indexOf('id="stories"') < portfolio.indexOf('id="growth"'));
   assert.ok(portfolio.indexOf('id="growth"') < portfolio.indexOf('id="everyday-title"'));
   assert.ok(portfolio.indexOf('id="everyday-title"') < portfolio.indexOf('id="family"'));
-  assert.equal((portfolio.match(/<ResponsivePhoto/g) ?? []).length, 3);
-  for (const name of ["portrait", "everyday-smile", "family-care"]) {
-    assert.match(portfolio, new RegExp(`name=["']${name}["']`));
-  }
+  assert.ok((portfolio.match(/<ResponsivePhoto/g) ?? []).length >= 6);
   assert.match(portfolio, /IntersectionObserver/);
   assert.match(portfolio, /aria-current=\{activeHref === item\.href \? "location"/);
   assert.doesNotMatch(portfolio, /SummaryLink|copy\.videos|journal-principles|usePointerContextMenuDeterrent/);
@@ -309,25 +317,50 @@ test("uses supplied factual content and warm placeholders without admissions or 
   assert.doesNotMatch(copy, /Print this page|列印本頁|printLabel/);
   assert.doesNotMatch(media, /preview-play/);
   assert.doesNotMatch(portfolio, /<img\b|<video\b|<picture\b|<iframe\b/);
+  assert.match(youtubeVideo, /https:\/\/www\.youtube-nocookie\.com\/embed\/\$\{videoId\}/);
+  assert.match(youtubeVideo, /active \? \(/);
+  assert.match(youtubeVideo, /onClick=\{\(\) => setActive\(true\)\}/);
+  assert.match(youtubeVideo, /\{loadingLabel\}/);
+  assert.match(copy, /loadingVideo: "Loading video…"/);
+  assert.match(copy, /loadingVideo: "正在載入影片……"/);
+  assert.match(youtubeVideo, /loading="lazy"/);
+  assert.match(youtubeVideo, /tabIndex=\{0\}/);
+  assert.match(youtubeVideo, /useLayoutEffect/);
+  assert.match(youtubeVideo, /iframeRef\.current\?\.focus\(\)/);
+  assert.doesNotMatch(youtubeVideo, /onLoad=\{\(\) => \{[\s\S]*?iframeRef\.current\?\.focus\(\)/);
+  assert.match(youtubeVideo, /referrerPolicy="strict-origin-when-cross-origin"/);
+  assert.match(youtubeVideo, /allowFullScreen/);
+  assert.doesNotMatch(youtubeVideo, /youtube\.com\/embed|autoplay=1[^\n]*setActive\(true\)/);
   assert.match(responsivePhoto, /<picture>/);
   assert.match(responsivePhoto, /type="image\/avif"/);
   assert.match(responsivePhoto, /<img/);
   assert.match(responsivePhoto, /srcSet=\{srcSet\(name, "webp"\)\}/);
   assert.match(responsivePhoto, /portrait:\s*\{ width: 1200, height: 1600 \}/);
-  assert.match(responsivePhoto, /"everyday-smile":\s*\{ width: 1200, height: 1500 \}/);
+  assert.match(responsivePhoto, /"about-world":\s*\{ width: 1200, height: 1500 \}/);
+  assert.match(responsivePhoto, /"story-swimming":\s*\{ width: 1200, height: 800 \}/);
+  assert.match(responsivePhoto, /"growth-pose":\s*\{ width: 1200, height: 900 \}/);
   assert.match(responsivePhoto, /width=\{dimensions\.width\}/);
   assert.match(responsivePhoto, /height=\{dimensions\.height\}/);
   assert.match(responsivePhoto, /loading=\{priority \? "eager" : "lazy"\}/);
   assert.match(responsivePhoto, /fetchPriority=\{priority \? "high" : "auto"\}/);
   assert.match(responsivePhoto, /decoding="async"/);
-  assert.doesNotMatch(responsivePhoto, /\.jpe?g|100[123]|\b20\d{2}-\d{2}-\d{2}\b/i);
+  assert.doesNotMatch(responsivePhoto, /\.jpe?g|10(?:0\d|1\d)|\b20\d{2}-\d{2}-\d{2}\b/i);
 });
 
 test("ships only the approved reduced metadata-free photo derivatives", async () => {
   const photoDirectory = path.join(projectRoot, "public", "media", "oliver");
   const files = (await readdir(photoDirectory)).sort();
   const expected = [];
-  for (const name of ["everyday-smile", "family-care", "portrait"]) {
+  for (const name of [
+    "about-car",
+    "about-reading",
+    "about-world",
+    "family-care",
+    "growth-firefighter",
+    "growth-pose",
+    "portrait",
+    "story-swimming",
+  ]) {
     for (const width of [480, 800, 1200]) {
       for (const extension of ["avif", "webp"]) expected.push(`${name}-${width}.${extension}`);
     }
@@ -338,9 +371,9 @@ test("ships only the approved reduced metadata-free photo derivatives", async ()
     const bytes = await readFile(path.join(photoDirectory, file));
     assert.ok(bytes.length > 1_000 && bytes.length < 250_000, file);
     assert.equal(bytes.includes(Buffer.from("Exif")), false, file);
-    assert.equal(bytes.includes(Buffer.from("1001")), false, file);
-    assert.equal(bytes.includes(Buffer.from("1002")), false, file);
-    assert.equal(bytes.includes(Buffer.from("1003")), false, file);
+    for (const originalName of [
+      "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1016",
+    ]) assert.equal(bytes.includes(Buffer.from(originalName)), false, file);
     assert.equal(bytes.includes(Buffer.from("GPS")), false, file);
   }
 });
@@ -445,10 +478,11 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
   assert.match(css, /meadow-balloon-blue 4\.9s[^;]*forwards/);
   assert.match(css, /meadow-balloon-peach 4\.8s 100ms[^;]*forwards/);
   assert.match(css, /meadow-balloon-honey 4\.7s 180ms[^;]*forwards/);
-  assert.match(css, /\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?position:\s*relative[\s\S]*?grid-row:\s*1[\s\S]*?aspect-ratio:\s*520 \/ 298[\s\S]*?opacity:\s*1/);
-  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.hero-visual\s*\{[\s\S]*?grid-template-columns:\s*minmax\(300px, 390px\) minmax\(280px, 420px\)/);
-  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.hero-visual\s*\{[\s\S]*?grid-template-columns:\s*minmax\(300px, 350px\) minmax\(300px, 360px\)/);
-  assert.doesNotMatch(css, /rainbow sits behind the portrait|right:\s*-210px|31\.25vw - 440px/);
+  assert.match(css, /\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?position:\s*absolute[\s\S]*?z-index:\s*1[\s\S]*?width:\s*min\(145vw, 470px\)[\s\S]*?aspect-ratio:\s*520 \/ 298/);
+  assert.match(css, /\.hero-preview-media\s*\{[\s\S]*?z-index:\s*2/);
+  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*min\(78vw, 590px\)/);
+  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*min\(58vw, 680px\)/);
+  assert.doesNotMatch(css, /right:\s*-210px|31\.25vw - 440px/);
   assert.match(css, /\.meadow-decor-balloons\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
   assert.match(css, /\.meadow-decor-tree\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.meadow-decor-dog[\s\S]*?display:\s*none !important/);

@@ -2,7 +2,7 @@ type PreviewMediaProps = {
   label: string;
   detail: string;
   kind?: "photo" | "video";
-  ratio?: "landscape" | "portrait" | "wide" | "video" | "portrait-video";
+  ratio?: "landscape" | "portrait" | "square" | "wide" | "video" | "portrait-video";
   tone?: "sky" | "honey" | "peach" | "teal";
   playLabel?: string;
   className?: string;
