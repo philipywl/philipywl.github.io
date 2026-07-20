@@ -82,10 +82,12 @@ export function LanguageSwitch({
   locale,
   label,
   selectedLabel,
+  activeHref,
 }: {
   locale: PortfolioLocale;
   label: string;
   selectedLabel: string;
+  activeHref: string;
 }) {
   useEffect(() => {
     try {
@@ -105,8 +107,9 @@ export function LanguageSwitch({
       // The preference is optional; route navigation must still work.
     }
 
-    if (window.location.hash) {
-      event.currentTarget.href = `${localePaths[nextLocale].home}${window.location.hash}`;
+    const equivalentSection = window.location.hash || activeHref;
+    if (equivalentSection) {
+      event.currentTarget.href = `${localePaths[nextLocale].home}${equivalentSection}`;
     }
   };
 

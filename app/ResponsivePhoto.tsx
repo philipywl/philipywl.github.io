@@ -17,12 +17,16 @@ const photoDimensions: Record<
 > = {
   portrait: { width: 1200, height: 1600 },
   "family-care": { width: 1200, height: 1500 },
+  "family-main": { width: 1200, height: 800 },
+  "family-origin": { width: 1200, height: 1500 },
   "about-world": { width: 1200, height: 1500 },
   "about-reading": { width: 1200, height: 1200 },
   "about-car": { width: 1200, height: 1200 },
+  "about-observing": { width: 1200, height: 900 },
   "story-swimming": { width: 1200, height: 800 },
+  "story-animals": { width: 1200, height: 800 },
   "growth-firefighter": { width: 1200, height: 1500 },
-  "growth-pose": { width: 1200, height: 900 },
+  "growth-swing": { width: 1200, height: 1500 },
 };
 
 function srcSet(name: PortfolioPhotoName, extension: "avif" | "webp") {

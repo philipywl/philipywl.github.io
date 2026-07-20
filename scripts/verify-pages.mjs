@@ -5,13 +5,19 @@ const outputRoot = path.resolve(process.cwd(), "out");
 const approvedSocialPreview = "social-preview.jpg";
 const approvedPhotoNames = [
   "about-car",
+  "about-observing",
   "about-reading",
   "about-world",
   "family-care",
+  "family-main",
+  "family-origin",
   "growth-firefighter",
-  "growth-pose",
+  "growth-swing",
   "portrait",
+  "story-animals",
   "story-swimming",
+  "welcome-family",
+  "welcome-walk",
 ];
 const approvedVideoIds = [
   "2RE83LVmTVk",
@@ -20,6 +26,7 @@ const approvedVideoIds = [
   "9QrYnWYsVUQ",
   "1Fxx4dzHCFo",
   "kgPKylmVI7s",
+  "rcpBdZzHJAk",
 ];
 const approvedPhotoWidths = [480, 800, 1200];
 const requiredPhotoFiles = approvedPhotoNames.flatMap((name) =>
@@ -280,8 +287,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  if (pictures.length !== 8 || sources.length !== 8 || images.length !== 8) {
-    fail(`${route} must contain exactly eight approved responsive photographs`);
+  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 14) {
+    fail(`${route} must contain exactly fourteen approved responsive photographs`);
   }
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
@@ -314,11 +321,21 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
     }
   }
 
-  if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 0) {
-    fail(`${route} must not eagerly load below-fold photographs while the hero uses a placeholder`);
+  for (const name of ["welcome-family", "welcome-walk"]) {
+    const image = images.find((tag) => getAttribute(tag, "src") === `/media/oliver/${name}-800.webp`);
+    if (!image || getAttribute(image, "alt") !== "") {
+      fail(`${route} lacks the approved decorative welcome photograph: ${name}`);
+    }
+    if (getAttribute(image, "width") !== "1200" || getAttribute(image, "height") !== "1500") {
+      fail(`${route} welcome photograph lacks stable intrinsic dimensions: ${name}`);
+    }
   }
-  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 8) {
-    fail(`${route} must lazy-load all eight below-fold photographs`);
+
+  if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 2) {
+    fail(`${route} must eagerly load only the two welcome photographs`);
+  }
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 12) {
+    fail(`${route} must lazy-load all twelve content photographs`);
   }
 }
 
@@ -344,6 +361,7 @@ if (JSON.stringify(artifactPhotos) !== JSON.stringify(requiredPhotoFiles.sort())
 
 const privateBirthDate = process.env.OLIVER_BIRTH_DATE?.trim();
 let hasPrivacyEnhancedVideoEmbed = false;
+const foundApprovedVideoIds = new Set();
 for (const relativePath of files) {
   if (privateBirthDate && relativePath.includes(privateBirthDate)) {
     fail(`private birth date found in an artifact path`);
@@ -356,7 +374,7 @@ for (const relativePath of files) {
       fail(`photo derivative has an unexpected size: out/${relativePath}`);
     }
     for (const marker of [
-      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1016",
+      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022",
     ]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`photo derivative contains private metadata or an original filename: out/${relativePath}`);
@@ -369,7 +387,7 @@ for (const relativePath of files) {
       fail(`social preview has an unexpected size: out/${relativePath}`);
     }
     for (const marker of [
-      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1016",
+      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022",
     ]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`social preview contains private metadata or an original filename: out/${relativePath}`);
@@ -386,6 +404,9 @@ for (const relativePath of files) {
   if (!textExtensions.has(path.extname(relativePath).toLowerCase())) continue;
   const contents = await readFile(absolutePath, "utf8");
   if (contents.includes("youtube-nocookie.com/embed")) hasPrivacyEnhancedVideoEmbed = true;
+  for (const videoId of approvedVideoIds) {
+    if (contents.includes(videoId)) foundApprovedVideoIds.add(videoId);
+  }
   for (const [label, pattern] of forbiddenText) {
     const match = contents.match(pattern);
     if (match) fail(`${label} found in out/${relativePath}`);
@@ -446,9 +467,8 @@ for (const expected of [
   "Noticing and remembering",
   "often chooses one from the shelf by himself",
   "vroom vroom",
-  "connects everyday belongings with the person they belong to",
-  "A problem-solving moment to be added",
-  "A noticing moment to be added",
+  "glasses remind him of Dad, a bald head of Grandpa",
+  "Welcome to Oliver's little world.",
   "Everyday moments, held with care",
   "Videos never play automatically",
   "Small steps, quietly gathering",
@@ -457,22 +477,24 @@ for (const expected of [
   "Little moments from recent days",
   "Family & Care",
   "Growing within a circle of care",
-  "Oliver's days are held by many people who love him",
+  "Oliver's days unfold within the steady warmth of family",
   "Held by many loving hands",
-  "A pair of slippers, a little invitation",
+  "Where our story began",
   "A quiet portrait from 13 months",
   "How we continue alongside him",
   "Keeping these little days close",
   "Five learning stories, a handful of everyday observations",
-  "A page of his own",
-  "Words that bring us together",
-  "A door, a handle, a little idea",
-  "The piano corner he always finds",
+  "He listens, then responds",
+  "Turning to the next page",
   "A little step into the water",
+  "The piano corner he always finds",
+  "A gentle hello to the animals",
   "Matching shapes",
   "Pouring between cups",
   "Joining tidy-up time",
   "Waving along the way",
+  "Clean up",
+  "Bye bye",
   "This portfolio has been lovingly gathered by Oliver's parents. Please help us care for these memories",
   "中文 | English",
 ]) {
@@ -489,9 +511,8 @@ for (const expected of [
   "細心觀察",
   "主動從書架拿書來看",
   "車一出現，昊熹便會開心地說「嗚嗚」",
-  "把日常物品與它們的主人連繫起來",
-  "解難小片段稍後加入",
-  "觀察小片段稍後加入",
+  "戴眼鏡的是爸爸，光頭的是公公",
+  "歡迎走進昊熹的小小世界。",
   "把日常片段，輕輕收進故事裏",
   "影片不會自動播放",
   "把一點一滴，慢慢收進成長裏",
@@ -500,26 +521,50 @@ for (const expected of [
   "近日裏的小小片段",
   "家庭與陪伴",
   "在愛與陪伴中，一起長大",
-  "昊熹的日常，由許多疼愛他的人",
+  "昊熹的日常，在家人安穩的愛裏慢慢展開",
   "許多雙疼愛他的手",
-  "一雙拖鞋的小邀請",
+  "回到故事起點",
   "13個月大時留下的一張安靜近照",
   "我們如何繼續陪伴",
   "把這些小日子，好好珍藏",
   "五個成長故事、一些日常觀察",
-  "自己翻開下一頁",
   "聽見，也回應",
-  "一扇門，一個小辦法",
-  "總會走近的琴鍵",
+  "自己翻開下一頁",
   "水裏的一小步",
+  "總會走近的琴鍵",
+  "輕輕走近小動物",
   "配對形狀",
   "倒進另一杯",
   "一起收拾",
-  "揮手問好",
+  "揮手道別",
+  "Clean up",
+  "Bye bye",
   "本作品集由昊熹的爸爸媽媽用心整理。為了好好守護這些珍貴片段",
   "中文 | English",
 ]) {
   if (!chineseText.includes(expected)) fail(`Chinese page lacks approved copy: ${expected}`);
+}
+for (const removedCopy of [
+  "A problem-solving moment to be added",
+  "A noticing moment to be added",
+  "解難小片段稍後加入",
+  "觀察小片段稍後加入",
+]) {
+  if ((englishText + chineseText).includes(removedCopy)) fail(`removed placeholder remains: ${removedCopy}`);
+}
+for (const [text, orderedTitles, route] of [
+  [englishText, ["He listens, then responds", "Turning to the next page", "A little step into the water", "The piano corner he always finds", "A gentle hello to the animals"], "English"],
+  [chineseText, ["聽見，也回應", "自己翻開下一頁", "水裏的一小步", "總會走近的琴鍵", "輕輕走近小動物"], "Chinese"],
+]) {
+  let previousIndex = -1;
+  for (const title of orderedTitles) {
+    const currentIndex = text.indexOf(title);
+    if (currentIndex <= previousIndex) fail(`${route} learning stories are out of order at: ${title}`);
+    previousIndex = currentIndex;
+  }
+}
+for (const videoId of approvedVideoIds) {
+  if (!foundApprovedVideoIds.has(videoId)) fail(`approved deferred YouTube video is missing: ${videoId}`);
 }
 if ((routeHtml.english.match(/<h1\b/gi) ?? []).length !== 1) fail("English page must contain one H1");
 if ((routeHtml.chinese.match(/<h1\b/gi) ?? []).length !== 1) fail("Chinese page must contain one H1");
@@ -541,16 +586,14 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
   if ((html.match(/class="story-card/g) ?? []).length !== 5) {
     fail(`${route} page does not contain the five approved learning stories`);
   }
-  if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 6) {
-    fail(`${route} page does not contain six explicit click-to-load video controls`);
+  if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 7) {
+    fail(`${route} page does not contain seven explicit click-to-load video controls`);
   }
   if (/<iframe\b|youtube-nocookie\.com\/embed/i.test(html)) {
     fail(`${route} page loads a YouTube player before visitor interaction`);
   }
-  for (const videoId of approvedVideoIds) {
-    if (!html.includes(`https://www.youtube.com/watch?v=${videoId}`)) {
-      fail(`${route} page lacks the approved YouTube fallback link for ${videoId}`);
-    }
+  if (/youtube\.com\/watch\?v=|在 YouTube 開啟這段影片|Open this video on YouTube/i.test(html)) {
+    fail(`${route} page exposes a removed YouTube outbound link`);
   }
 }
 if (!hasPrivacyEnhancedVideoEmbed) {
@@ -563,20 +606,28 @@ requireApprovedPhotos(routeHtml.english, "English page", [
   ["Nineteen-month-old Oliver looks towards the camera from inside a large green play vehicle.", "about-world", "1500"],
   ["Twelve-month-old Oliver sits close to an adult family member as they look at a board book together; the adult points to the page.", "about-reading", "1200"],
   ["Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.", "about-car", "1200"],
+  ["Eighteen-month-old Oliver stands in front of a group of colourful cartoon figures, raising one arm to point towards them.", "about-observing", "900"],
   ["Nineteen-month-old Oliver smiles in a swimming pool, with an adult close by.", "story-swimming", "800"],
+  ["Fifteen-month-old Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
   ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
-  ["Eighteen-month-old Oliver stands with one arm raised, posing beside a display of colourful cartoon figures.", "growth-pose", "900"],
+  ["Sixteen-month-old Oliver smiles broadly while holding both sides of a toddler swing.", "growth-swing", "1500"],
   ["Nineteen-month-old Oliver stands outdoors holding a yellow firefighter helmet.", "growth-firefighter", "1500"],
+  ["Fifteen-month-old Oliver is held close between Mum and Dad beneath flowering trees during a family outing.", "family-main", "800"],
+  ["Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.", "family-origin", "1500"],
   ["Four-month-old Oliver sits in a cushioned baby seat while several people gently support him with their hands.", "family-care", "1500"],
 ]);
 requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
   ["19個月大的昊熹身處一架大型綠色玩樂車輛內，望向鏡頭。", "about-world", "1500"],
   ["12個月大的昊熹依偎在一位成年家人身旁一起看圖書，家人正指着書頁。", "about-reading", "1200"],
   ["17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。", "about-car", "1200"],
-  ["19個月大的昊熹在泳池裏開心地笑，身旁有成人陪伴。", "story-swimming", "800"],
+  ["18個月大的昊熹站在一組色彩繽紛的卡通人物佈景前，舉起一隻手指向人物。", "about-observing", "900"],
+  ["19個月大的昊熹在泳池裏開心地笑，身旁有大人陪伴。", "story-swimming", "800"],
+  ["15個月大的昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
   ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
-  ["18個月大的昊熹站在色彩繽紛的卡通人物佈景旁，舉起一隻手臂擺姿勢。", "growth-pose", "900"],
+  ["16個月大的昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。", "growth-swing", "1500"],
   ["19個月大的昊熹站在戶外，雙手拿着一頂黃色消防頭盔。", "growth-firefighter", "1500"],
+  ["15個月大的昊熹在花樹下依偎在爸爸媽媽中間，一家三口望向鏡頭。", "family-main", "800"],
+  ["6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。", "family-origin", "1500"],
   ["4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正溫柔承托着他。", "family-care", "1500"],
 ]);
 requireMetadata(
