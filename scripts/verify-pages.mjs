@@ -11,13 +11,13 @@ const approvedPhotoNames = [
   "family-care",
   "family-main",
   "family-origin",
+  "family-playful",
   "growth-firefighter",
+  "growth-supported",
   "growth-swing",
   "portrait",
   "story-animals",
   "story-swimming",
-  "welcome-family",
-  "welcome-walk",
 ];
 const approvedVideoIds = [
   "2RE83LVmTVk",
@@ -334,16 +334,6 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
     }
   }
 
-  for (const name of ["welcome-family", "welcome-walk"]) {
-    const image = images.find((tag) => getAttribute(tag, "src") === `/media/oliver/${name}-800.webp`);
-    if (!image || getAttribute(image, "alt") !== "") {
-      fail(`${route} lacks the approved decorative welcome photograph: ${name}`);
-    }
-    if (getAttribute(image, "width") !== "1200" || getAttribute(image, "height") !== "1500") {
-      fail(`${route} welcome photograph lacks stable intrinsic dimensions: ${name}`);
-    }
-  }
-
   for (const { name, widths, width, height } of approvedVideoPosters) {
     const [small, large] = widths;
     const image = images.find((tag) => getAttribute(tag, "src") === `/media/video/${name}-${large}.webp`);
@@ -363,11 +353,11 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
     }
   }
 
-  if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 2) {
-    fail(`${route} must eagerly load only the two welcome photographs`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 0) {
+    fail(`${route} must not eagerly load below-fold portfolio photographs`);
   }
-  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 19) {
-    fail(`${route} must lazy-load twelve content photographs and seven video posters`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 21) {
+    fail(`${route} must lazy-load fourteen content photographs and seven video posters`);
   }
 }
 
@@ -520,20 +510,18 @@ for (const expected of [
   "glasses remind him of Dad, a bald head of Grandpa",
   "Welcome to Oliver's little world.",
   "Everyday moments, held with care",
-  "Videos never play automatically",
   "Small steps, quietly gathering",
-  "One step, then another",
-  "Little moments that become part of the day",
-  "Little moments from recent days",
+  "Twelve everyday moments along the way",
   "Family & Care",
   "Growing within a circle of care",
   "Oliver's days unfold within the steady warmth of family",
   "Held by many loving hands",
+  "Laughter held close",
   "Where our story began",
   "A quiet portrait from 13 months",
   "How we continue alongside him",
-  "Keeping these little days close",
-  "Five learning stories, a handful of everyday observations",
+  "Growing alongside him",
+  "a child's learning begins in the steady companionship of family",
   "He listens, then responds",
   "Turning to the next page",
   "A little step into the water",
@@ -542,7 +530,7 @@ for (const expected of [
   "Matching shapes",
   "Pouring between cups",
   "Joining tidy-up time",
-  "Waving along the way",
+  "Waving Bye bye",
   "Clean up",
   "Bye bye",
   "This portfolio has been lovingly gathered by Oliver's parents. Please help us care for these memories",
@@ -564,29 +552,28 @@ for (const expected of [
   "戴眼鏡的是爸爸，光頭的是公公",
   "歡迎走進昊熹的小小世界。",
   "把日常片段，輕輕收進故事裏",
-  "影片不會自動播放",
   "把一點一滴，慢慢收進成長裏",
-  "一步一步，慢慢走起來",
-  "慢慢走進日常的小片段",
-  "近日裏的小小片段",
+  "十二個日常片段，一步一步走來",
   "家庭與陪伴",
   "在愛與陪伴中，一起長大",
   "昊熹的日常，在家人安穩的愛裏慢慢展開",
   "許多雙疼愛他的手",
+  "笑聲留在身旁",
   "回到故事起點",
   "13個月大時留下的一張安靜近照",
   "我們如何繼續陪伴",
-  "把這些小日子，好好珍藏",
-  "五個成長故事、一些日常觀察",
+  "陪着他，一起長大",
+  "孩子的成長從家庭裏每一次安穩的陪伴開始",
   "聽見，也回應",
   "自己翻開下一頁",
   "水裏的一小步",
   "總會走近的琴鍵",
   "輕輕走近小動物",
-  "配對形狀",
-  "倒進另一杯",
-  "一起收拾",
-  "揮手道別",
+  "尋找躲起的物件",
+  "把形狀放對位置",
+  "倒進另一隻杯",
+  "一起 Clean up",
+  "揮手說 Bye bye",
   "Clean up",
   "Bye bye",
   "本作品集由昊熹的爸爸媽媽用心整理。為了好好守護這些珍貴片段",
@@ -636,6 +623,9 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
   if ((html.match(/class="story-card/g) ?? []).length !== 5) {
     fail(`${route} page does not contain the five approved learning stories`);
   }
+  if ((html.match(/class="growth-milestone(?: |")/g) ?? []).length !== 12) {
+    fail(`${route} page does not contain one twelve-item everyday growth path`);
+  }
   if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 7) {
     fail(`${route} page does not contain seven explicit click-to-load video controls`);
   }
@@ -645,6 +635,15 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
   if (/youtube\.com\/watch\?v=|在 YouTube 開啟這段影片|Open this video on YouTube/i.test(html)) {
     fail(`${route} page exposes a removed YouTube outbound link`);
   }
+  if (/Videos never play automatically|影片不會自動播放/i.test(visibleText(html))) {
+    fail(`${route} page exposes the removed video helper note`);
+  }
+}
+for (const clue of [
+  "聆聽回應", "語言互動", "自主翻閱", "專注看書", "水中活動",
+  "願意嘗試", "音樂探索", "持續興趣", "細心觀察", "溫柔接觸",
+]) {
+  if (!chineseText.includes(clue)) fail(`Chinese page lacks approved four-character learning clue: ${clue}`);
 }
 if (!hasPrivacyEnhancedVideoEmbed) {
   fail("the click-to-load player does not use YouTube's privacy-enhanced embed host");
@@ -657,28 +656,32 @@ requireApprovedPhotos(routeHtml.english, "English page", [
   ["Twelve-month-old Oliver sits close to an adult family member as they look at a board book together; the adult points to the page.", "about-reading", "1200"],
   ["Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.", "about-car", "1200"],
   ["Eighteen-month-old Oliver stands in front of a group of colourful cartoon figures, raising one arm to point towards them.", "about-observing", "900"],
-  ["Nineteen-month-old Oliver smiles in a swimming pool, with an adult close by.", "story-swimming", "800"],
-  ["Fifteen-month-old Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
+  ["Oliver smiles in a swimming pool, with an adult close by.", "story-swimming", "800"],
+  ["Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
   ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
-  ["Sixteen-month-old Oliver smiles broadly while holding both sides of a toddler swing.", "growth-swing", "1500"],
-  ["Nineteen-month-old Oliver stands outdoors holding a yellow firefighter helmet.", "growth-firefighter", "1500"],
+  ["One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.", "growth-supported", "1500"],
+  ["Oliver smiles broadly while holding both sides of a toddler swing.", "growth-swing", "1500"],
+  ["Oliver stands outdoors holding a yellow firefighter helmet.", "growth-firefighter", "1500"],
   ["Fifteen-month-old Oliver is held close between Mum and Dad beneath flowering trees during a family outing.", "family-main", "800"],
   ["Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.", "family-origin", "1500"],
   ["Four-month-old Oliver sits in a cushioned baby seat while several people gently support him with their hands.", "family-care", "1500"],
+  ["One-year-old Oliver smiles outdoors while Mum and Dad hold him between them.", "family-playful", "1500"],
 ]);
 requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
   ["19個月大的昊熹身處一架大型綠色玩樂車輛內，望向鏡頭。", "about-world", "1500"],
   ["12個月大的昊熹依偎在一位成年家人身旁一起看圖書，家人正指着書頁。", "about-reading", "1200"],
   ["17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。", "about-car", "1200"],
   ["18個月大的昊熹站在一組色彩繽紛的卡通人物佈景前，舉起一隻手指向人物。", "about-observing", "900"],
-  ["19個月大的昊熹在泳池裏開心地笑，身旁有大人陪伴。", "story-swimming", "800"],
-  ["15個月大的昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
+  ["昊熹在泳池裏開心地笑，身旁有大人陪伴。", "story-swimming", "800"],
+  ["昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
   ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
-  ["16個月大的昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。", "growth-swing", "1500"],
-  ["19個月大的昊熹站在戶外，雙手拿着一頂黃色消防頭盔。", "growth-firefighter", "1500"],
+  ["1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。", "growth-supported", "1500"],
+  ["昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。", "growth-swing", "1500"],
+  ["昊熹站在戶外，雙手拿着一頂黃色消防頭盔。", "growth-firefighter", "1500"],
   ["15個月大的昊熹在花樹下依偎在爸爸媽媽中間，一家三口望向鏡頭。", "family-main", "800"],
   ["6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。", "family-origin", "1500"],
   ["4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正溫柔承托着他。", "family-care", "1500"],
+  ["1歲的昊熹在戶外由爸爸媽媽抱在中間，一家人一起笑。", "family-playful", "1500"],
 ]);
 requireMetadata(
   routeHtml.english,

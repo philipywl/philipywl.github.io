@@ -5,6 +5,7 @@ export type PortfolioPhotoName =
   | "family-care"
   | "family-main"
   | "family-origin"
+  | "family-playful"
   | "about-world"
   | "about-reading"
   | "about-car"
@@ -12,6 +13,7 @@ export type PortfolioPhotoName =
   | "story-swimming"
   | "story-animals"
   | "growth-firefighter"
+  | "growth-supported"
   | "growth-swing";
 
 type PhotoCopy = {
@@ -67,10 +69,11 @@ type Story = {
   media: StoryMedia[];
 };
 
-type GrowthMoment = {
+type GrowthMilestone = {
+  time: string;
   title: string;
-  body: string;
-  photo: PhotoCopy;
+  moment: string;
+  photo?: PhotoCopy;
 };
 
 type PortfolioCopy = {
@@ -113,7 +116,6 @@ type PortfolioCopy = {
     eyebrow: string;
     title: string;
     intro: string;
-    mediaNote: string;
     whatHappened: string;
     noticed: string;
     support: string;
@@ -125,15 +127,10 @@ type PortfolioCopy = {
     eyebrow: string;
     title: string;
     intro: string;
-    everydayTitle: string;
-    everydayIntro: string;
-    everydayItems: Array<{ title: string; body: string }>;
-    timelineTitle: string;
-    timelineItems: Array<{ time: string; moment: string }>;
+    milestonesTitle: string;
+    milestonesIntro: string;
+    milestones: GrowthMilestone[];
     portrait: PhotoCopy;
-    recentTitle: string;
-    recentIntro: string;
-    recentMoments: GrowthMoment[];
   };
   family: {
     eyebrow: string;
@@ -258,8 +255,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       title: "Everyday moments, held with care",
       intro:
         "These five stories begin with something small and real: a spoken request answered, a page turned, a little step into the water, a familiar return to the piano, or a gentle hand reaching towards an animal. Together, they show what Oliver did, how he responded and how his family stayed close beside him.",
-      mediaNote:
-        "Videos never play automatically. They load from YouTube only after you choose to play them.",
       whatHappened: "What happened",
       noticed: "What we noticed",
       support: "How we continue alongside him",
@@ -277,7 +272,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "His family continues weaving short, natural phrases into everyday routines, leaving a gentle pause for Oliver to respond in his own way.",
           reflection:
             "A few simple words can become a lovely moment of understanding and helping one another.",
-          tags: ["Communication", "Relationships"],
+          tags: ["Listening & Responding", "Language Interaction"],
           media: [
             {
               kind: "video",
@@ -286,7 +281,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title:
                 "Oliver listens to a request and brings a named item to a family member",
               caption:
-                "At 17 months, Oliver found a named item and brought it to a family member.",
+                "Oliver finds a named item and brings it to a family member.",
               ratio: "portrait-video",
             },
             {
@@ -296,7 +291,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title:
                 "Oliver listens and points to familiar people and body parts",
               caption:
-                "At 18 months, Oliver listened to simple prompts and pointed to familiar body parts as well as Mum and Dad.",
+                "Oliver listens to simple prompts and points to familiar body parts, Mum and Dad.",
               ratio: "portrait-video",
             },
           ],
@@ -312,7 +307,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "Books remain within easy reach. Mum and Dad continue reading with him each day, while leaving unhurried time for him to return to familiar pages by himself.",
           reflection:
             "When he returns to a book by himself, the pages we have shared together feel even more precious.",
-          tags: ["Exploration", "Independence"],
+          tags: ["Independent Book Exploration", "Focused Book Time"],
           media: [
             {
               kind: "video",
@@ -321,7 +316,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title:
                 "Oliver looks through a book and turns the page by himself",
               caption:
-                "At 18 months, Oliver looked through a book and turned to the next page by himself.",
+                "Oliver looks through a book and turns to the next page by himself.",
               ratio: "portrait-video",
             },
           ],
@@ -337,14 +332,14 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "Water experiences remain closely supervised and responsive to Oliver's cues, with gentle encouragement and no pressure.",
           reflection:
             "We felt proud to see this little step, and grateful to be close enough to share it with him.",
-          tags: ["Movement", "Exploration"],
+          tags: ["Movement in Water", "Willingness to Try"],
           media: [
             {
               kind: "photo",
               name: "story-swimming",
-              alt: "Nineteen-month-old Oliver smiles in a swimming pool, with an adult close by.",
+              alt: "Oliver smiles in a swimming pool, with an adult close by.",
               caption:
-                "Water play at 19 months, with an adult close by.",
+                "Oliver enjoys time in the water with an adult close by.",
               ratio: "landscape",
             },
             {
@@ -354,7 +349,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title:
                 "Oliver takes part in a closely supervised underwater swimming moment",
               caption:
-                "At 19 months, Oliver took part in a short underwater swimming moment with an adult close by.",
+                "Oliver takes part in a short underwater swimming moment with an adult close by.",
               ratio: "portrait-video",
             },
           ],
@@ -370,7 +365,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "They continue making room for unhurried musical play, listening and responding warmly to the sounds Oliver discovers.",
           reflection:
             "Among all the corners at playgroup, the piano is one he chooses to find again and again.",
-          tags: ["Creativity", "Exploration"],
+          tags: ["Musical Exploration", "Sustained Interest"],
           media: [
             {
               kind: "video",
@@ -378,7 +373,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               poster: "piano-keys",
               title: "Oliver explores the piano at playgroup",
               caption:
-                "At 17 months, Oliver returned to the piano and explored the keys in his own way.",
+                "Oliver returns to the piano and explores the keys in his own way.",
               ratio: "portrait-video",
             },
           ],
@@ -394,14 +389,14 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "Mum and Dad will continue offering calm, closely supervised encounters with nature—looking first, then moving closer at a pace that respects both Oliver and the animal.",
           reflection:
             "As his little hand reached out, it felt like a quiet hello to the natural world.",
-          tags: ["Exploration", "Care"],
+          tags: ["Careful Observation", "Gentle Contact"],
           media: [
             {
               kind: "photo",
               name: "story-animals",
-              alt: "Fifteen-month-old Oliver is held between Mum and Dad beside an owl perched on a glove.",
+              alt: "Oliver is held between Mum and Dad beside an owl perched on a glove.",
               caption:
-                "At 15 months, Oliver met an owl at close range with Mum and Dad beside him.",
+                "Oliver meets an owl at close range with Mum and Dad beside him.",
               ratio: "landscape",
             },
             {
@@ -410,7 +405,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               poster: "feeding-rabbits",
               title: "Oliver offers food to a rabbit",
               caption:
-                "At 17 months, Oliver offered food to a rabbit during a family outing.",
+                "Oliver offers food to a rabbit during a family outing.",
               ratio: "portrait-video",
             },
           ],
@@ -422,47 +417,96 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       title: "Small steps, quietly gathering",
       intro:
         "Oliver's family journal keeps the little changes that might otherwise slip quietly past. Placed side by side, they show movement, curiosity and everyday participation gradually finding their place in his world.",
-      everydayTitle: "Little moments that become part of the day",
-      everydayIntro:
-        "Four brief observations hold onto the texture of ordinary days—small actions that were easy to miss, but lovely to remember.",
-      everydayItems: [
+      milestonesTitle: "Twelve everyday moments along the way",
+      milestonesIntro:
+        "Gathered into one gentle path, these observations show movement, thinking, participation and connection finding their way into Oliver's ordinary days.",
+      milestones: [
         {
-          title: "Matching shapes",
-          body:
-            "At 14 months, Oliver placed a cylinder and a circle into openings that matched their shapes.",
+          time: "8 months",
+          title: "Looking for what disappeared",
+          moment:
+            "When an object disappeared from view, Oliver looked for it again.",
         },
-        {
-          title: "Pouring between cups",
-          body:
-            "At 16 months, Oliver tried pouring from one cup into another, then returned to the action on another day.",
-        },
-        {
-          title: "Joining tidy-up time",
-          body:
-            "At 17 months, after hearing “Clean up,” Oliver helped place toys in the basket and cards into separate slots.",
-        },
-        {
-          title: "Waving along the way",
-          body:
-            "Across familiar outings, Oliver waved to people around him and later joined shared farewells with a wave and “Bye bye.”",
-        },
-      ],
-      timelineTitle: "One step, then another",
-      timelineItems: [
         {
           time: "10 months",
+          title: "Moving between positions",
           moment:
             "Holding on with one or both hands, Oliver moved sideways for a few steps and shifted from crawling to sitting, then from sitting to standing.",
         },
         {
+          time: "12 months",
+          title: "Standing hand in hand",
+          moment:
+            "During a family photograph, Oliver stood between Mum and Dad while they held his hands.",
+          photo: {
+            name: "growth-supported",
+            alt: "One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.",
+            caption: "Standing between Mum and Dad, Oliver met the moment hand in hand.",
+          },
+        },
+        {
           time: "14 months",
+          title: "Trying independent steps",
           moment:
             "After standing without support, he began trying one or two independent steps.",
         },
         {
+          time: "14 months",
+          title: "Matching shapes",
+          moment:
+            "Oliver placed a cylinder and a circle into openings that matched their shapes.",
+        },
+        {
           time: "16 months",
+          title: "Steadier steps and stairs",
           moment:
             "His family recorded him walking more steadily and beginning to explore stairs.",
+        },
+        {
+          time: "16 months",
+          title: "Pouring between cups",
+          moment:
+            "Oliver tried pouring from one cup into another, then returned to the action on another day.",
+        },
+        {
+          time: "16 months",
+          title: "A straw cup and Cheers",
+          moment:
+            "Oliver drank milk from his straw cup and joined a familiar family Cheers.",
+        },
+        {
+          time: "16 months",
+          title: "A smile on the swing",
+          moment:
+            "Oliver held the toddler swing with both hands and met its gentle movement with a wide smile.",
+          photo: {
+            name: "growth-swing",
+            alt: "Oliver smiles broadly while holding both sides of a toddler swing.",
+            caption: "The gentle swing brought a bright smile to Oliver's face.",
+          },
+        },
+        {
+          time: "17 months",
+          title: "Joining tidy-up time",
+          moment:
+            "After hearing “Clean up,” Oliver helped place toys in the basket and cards into separate slots.",
+        },
+        {
+          time: "Along the way",
+          title: "Waving Bye bye",
+          moment:
+            "Across familiar outings, Oliver waved to people around him and later joined shared farewells with a wave and “Bye bye.”",
+        },
+        {
+          time: "19 months",
+          title: "A firefighter moment",
+          moment:
+            "Oliver held a yellow firefighter helmet during an outing. Firefighters are among the roles that catch his interest, so Mum and Dad kept this bright little moment in their journal.",
+          photo: {
+            name: "growth-firefighter",
+            alt: "Oliver stands outdoors holding a yellow firefighter helmet.",
+            caption: "A bright firefighter-themed moment from a family outing.",
+          },
         },
       ],
       portrait: {
@@ -471,31 +515,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         caption:
           "A quiet portrait from 13 months, now held within his everyday story of growth.",
       },
-      recentTitle: "Little moments from recent days",
-      recentIntro:
-        "A few family-day photographs bring us back to Oliver's playful everyday world—the expressions, interests and little poses that make each outing his own.",
-      recentMoments: [
-        {
-          title: "A smile on the swing",
-          body:
-            "At 16 months, Oliver held the toddler swing with both hands and met its gentle movement with a wide smile.",
-          photo: {
-            name: "growth-swing",
-            alt: "Sixteen-month-old Oliver smiles broadly while holding both sides of a toddler swing.",
-            caption: "At 16 months, the gentle swing brought a bright smile to Oliver's face.",
-          },
-        },
-        {
-          title: "A firefighter moment",
-          body:
-            "At 19 months, Oliver held a yellow firefighter helmet during an outing. Firefighters are among the roles that catch his interest, so Mum and Dad kept this bright little moment in their journal.",
-          photo: {
-            name: "growth-firefighter",
-            alt: "Nineteen-month-old Oliver stands outdoors holding a yellow firefighter helmet.",
-            caption: "A bright firefighter-themed moment at 19 months.",
-          },
-        },
-      ],
     },
     family: {
       eyebrow: "Family & Care",
@@ -521,6 +540,11 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           body:
             "From his earliest months, Oliver has grown among people who hold him gently, care for him and make time to stay close.",
         },
+        {
+          title: "Laughter held close",
+          body:
+            "At one year old, a family photograph caught Oliver smiling between Mum and Dad—a playful moment they still hold close.",
+        },
       ],
       photos: [
         {
@@ -541,15 +565,21 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           caption:
             "At four months, several loving hands stayed close—a quiet picture of care and togetherness.",
         },
+        {
+          name: "family-playful",
+          alt: "One-year-old Oliver smiles outdoors while Mum and Dad hold him between them.",
+          caption:
+            "A playful family photograph kept one bright shared laugh.",
+        },
       ],
     },
     closing: {
       eyebrow: "From Oliver's parents",
-      title: "Keeping these little days close",
+      title: "Growing alongside him",
       reflection:
-        "Five learning stories, a handful of everyday observations and a gentle trail of growth now sit together in this journal.",
+        "We believe a child's learning begins in the steady companionship of family. Through daily reading, play, outdoor exploration and the small routines of home, we give Oliver room to discover the world for himself—safely, gently and with plenty of encouragement—while learning to express himself and care for others.",
       hope:
-        "Around Oliver are many people who love him, giving him a warm place from which to explore, connect and grow at his own pace.",
+        "We hope Oliver will keep his curiosity, grow in health and happiness, and become a kind, confident and empathetic person. Mum and Dad will stay beside him, learning and growing with him too.",
     },
     privacy: {
       body:
@@ -654,7 +684,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       title: "把日常片段，輕輕收進故事裏",
       intro:
         "五個故事，都從一件細小而真實的事情開始：聽見一句話，便用行動回應；自己翻過一頁書；在水裏踏出一小步；再次走近琴鍵；或輕輕伸手親近小動物。每個片段都記下昊熹做了甚麼、如何回應，以及家人怎樣陪在身旁。",
-      mediaNote: "影片不會自動播放；只有在你選擇播放後，才會從 YouTube 載入。",
       whatHappened: "當時的小故事",
       noticed: "這一刻，我們看見……",
       support: "我們如何繼續陪伴",
@@ -672,14 +701,14 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "家人會繼續在日常相處中，用簡短自然的話與昊熹溝通，也輕輕停一停，等他用自己的方式回應。",
           reflection:
             "幾句簡單的說話，也可以成為一家人互相明白、互相幫忙的窩心時刻。",
-          tags: ["溝通", "相處"],
+          tags: ["聆聽回應", "語言互動"],
           media: [
             {
               kind: "video",
               videoId: "1Fxx4dzHCFo",
               poster: "following-directions",
               title: "昊熹聽到說話後，把指定物件拿給家人",
-              caption: "17個月大時，昊熹找到指定物件，再拿給家人。",
+              caption: "昊熹找到指定物件，再拿給家人。",
               ratio: "portrait-video",
             },
             {
@@ -687,7 +716,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               videoId: "FW24LCUNS_w",
               poster: "body-and-family",
               title: "昊熹按照簡單指示，指出熟悉的家人和身體部位",
-              caption: "18個月大時，昊熹按照簡單指示，指出熟悉的身體部位，以及爸爸和媽媽。",
+              caption: "昊熹按照簡單指示，指出熟悉的身體部位，以及爸爸和媽媽。",
               ratio: "portrait-video",
             },
           ],
@@ -703,14 +732,14 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "家中的書會繼續放在昊熹容易拿到的位置。爸爸媽媽每天陪他閱讀，也留一點從容時間，讓他自己再回到熟悉的書頁。",
           reflection:
             "看見昊熹自己再次走近書本，讓我們更珍惜曾經一起翻過的每一頁。",
-          tags: ["探索", "自主"],
+          tags: ["自主翻閱", "專注看書"],
           media: [
             {
               kind: "video",
               videoId: "kgPKylmVI7s",
               poster: "reading-pages",
               title: "昊熹自己看書，並自行翻到下一頁",
-              caption: "18個月大時，昊熹自己看書，並自行翻到下一頁。",
+              caption: "昊熹自己看書，並自行翻到下一頁。",
               ratio: "portrait-video",
             },
           ],
@@ -726,13 +755,13 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "往後的水中活動，也會繼續由大人在身旁細心照顧，按昊熹的反應調整步伐，輕輕鼓勵，不給壓力。",
           reflection:
             "看見這一小步，我們很為昊熹高興，也很珍惜能在身旁一起經歷。",
-          tags: ["動作", "探索"],
+          tags: ["水中活動", "願意嘗試"],
           media: [
             {
               kind: "photo",
               name: "story-swimming",
-              alt: "19個月大的昊熹在泳池裏開心地笑，身旁有大人陪伴。",
-              caption: "19個月大，在大人陪伴下享受水中時光。",
+              alt: "昊熹在泳池裏開心地笑，身旁有大人陪伴。",
+              caption: "在大人陪伴下，昊熹享受水中時光。",
               ratio: "landscape",
             },
             {
@@ -740,7 +769,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               videoId: "BxMkQkxApBg",
               poster: "water-step",
               title: "昊熹在大人陪伴下潛進水裏",
-              caption: "19個月大時，昊熹在大人陪伴下，參與了一次短短的潛水體驗。",
+              caption: "昊熹在大人陪伴下，參與一次短短的潛水體驗。",
               ratio: "portrait-video",
             },
           ],
@@ -755,14 +784,14 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "爸爸媽媽會繼續留出從容的音樂遊戲時間，細心聽着，也溫暖回應昊熹親手發現的聲音。",
           reflection: "幼兒遊戲班裏有許多角落，鋼琴總是昊熹一次又一次走回去的地方。",
-          tags: ["創作", "探索"],
+          tags: ["音樂探索", "持續興趣"],
           media: [
             {
               kind: "video",
               videoId: "2RE83LVmTVk",
               poster: "piano-keys",
               title: "昊熹在幼兒遊戲班探索鋼琴",
-              caption: "17個月大時，昊熹再次走到鋼琴旁，按自己的方式探索琴鍵。",
+              caption: "昊熹再次走到鋼琴旁，按自己的方式探索琴鍵。",
               ratio: "portrait-video",
             },
           ],
@@ -778,13 +807,13 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "爸爸媽媽會繼續帶他在安全、尊重動物的情況下親近自然：先觀察，再按昊熹和動物的反應慢慢靠近。",
           reflection:
             "小手慢慢伸出去，就像向自然說了一聲「你好」。",
-          tags: ["探索", "關愛"],
+          tags: ["細心觀察", "溫柔接觸"],
           media: [
             {
               kind: "photo",
               name: "story-animals",
-              alt: "15個月大的昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。",
-              caption: "15個月大，昊熹和爸爸媽媽近距離看一看貓頭鷹。",
+              alt: "昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。",
+              caption: "昊熹和爸爸媽媽一起，近距離看一看貓頭鷹。",
               ratio: "landscape",
             },
             {
@@ -792,7 +821,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               videoId: "rcpBdZzHJAk",
               poster: "feeding-rabbits",
               title: "昊熹把食物遞給小兔",
-              caption: "17個月大時，昊熹在家庭外出時把食物遞給小兔。",
+              caption: "家庭外出時，昊熹把食物遞給小兔。",
               ratio: "portrait-video",
             },
           ],
@@ -804,40 +833,84 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       title: "把一點一滴，慢慢收進成長裏",
       intro:
         "爸爸媽媽的日常記錄，留住了一些很容易悄悄溜走的小轉變。把它們放在一起，便看見動作、好奇心和生活參與，一點一滴走進昊熹的世界。",
-      everydayTitle: "慢慢走進日常的小片段",
-      everydayIntro:
-        "四段簡短觀察，留住平常日子裏的生活質感：動作雖小，卻值得好好記住。",
-      everydayItems: [
+      milestonesTitle: "十二個日常片段，一步一步走來",
+      milestonesIntro:
+        "把這些小觀察放在同一條成長小路上，便看見動作、思考、生活參與和與人連結，如何慢慢走進昊熹的日常。",
+      milestones: [
         {
-          title: "配對形狀",
-          body: "14個月大時，昊熹把圓柱體和圓形放進相配的洞口。",
+          time: "8個月大",
+          title: "尋找躲起的物件",
+          moment: "眼前的物件消失後，昊熹會再去找它。",
         },
-        {
-          title: "倒進另一杯",
-          body: "16個月大時，昊熹嘗試把一隻杯裏的東西倒進另一隻杯。到另一日，他又再試了一次。",
-        },
-        {
-          title: "一起收拾",
-          body: "17個月大時，聽到「Clean up」後，昊熹會幫忙把玩具放進籃子，也把字卡逐一放進不同格子。",
-        },
-        {
-          title: "揮手道別",
-          body: "在熟悉的外出日常中，昊熹會向身邊的人揮手；後來也會一邊揮手，一邊說「Bye bye」，和大家好好道別。",
-        },
-      ],
-      timelineTitle: "一步一步，慢慢走起來",
-      timelineItems: [
         {
           time: "10個月大",
-          moment: "昊熹扶着物件向旁邊走幾步，也開始在爬、坐和站之間轉換。",
+          title: "在爬、坐、站之間",
+          moment: "昊熹會用單手或雙手扶着站立，扶着橫行幾步，也會由爬行轉為坐下，再由坐下站起來。",
+        },
+        {
+          time: "12個月大",
+          title: "牽着爸爸媽媽的手",
+          moment: "一次家庭拍攝裏，昊熹站在爸爸媽媽中間，由他們一人牽着一隻手。",
+          photo: {
+            name: "growth-supported",
+            alt: "1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。",
+            caption: "站在爸爸媽媽中間，昊熹牽着兩雙熟悉的手。",
+          },
         },
         {
           time: "14個月大",
-          moment: "站穩之後，他開始嘗試獨自行一、兩步。",
+          title: "試着自己走",
+          moment: "在不用攙扶站立之後，他開始嘗試獨自行一、兩步。",
+        },
+        {
+          time: "14個月大",
+          title: "把形狀放對位置",
+          moment: "昊熹把圓柱體和圓形放進相配的洞口。",
         },
         {
           time: "16個月大",
-          moment: "家人記下他走得更穩，也開始探索樓梯。",
+          title: "步伐更穩，也看見樓梯",
+          moment: "爸爸媽媽記下他漸漸走得更穩，也開始探索樓梯。",
+        },
+        {
+          time: "16個月大",
+          title: "倒進另一隻杯",
+          moment: "昊熹嘗試把一隻杯裏的東西倒進另一隻杯；到另一日，他又再試了一次。",
+        },
+        {
+          time: "16個月大",
+          title: "飲管杯和 Cheers",
+          moment: "昊熹用飲管杯喝奶，也參與一家人熟悉的「Cheers」。",
+        },
+        {
+          time: "16個月大",
+          title: "鞦韆上的笑容",
+          moment: "昊熹雙手扶着幼兒鞦韆，在輕輕搖盪中笑得很開心。",
+          photo: {
+            name: "growth-swing",
+            alt: "昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。",
+            caption: "鞦韆輕輕一盪，昊熹的笑容也亮了起來。",
+          },
+        },
+        {
+          time: "17個月大",
+          title: "一起 Clean up",
+          moment: "聽到「Clean up」後，昊熹幫忙把玩具放進籃子，也把字卡逐一放進不同格子。",
+        },
+        {
+          time: "一路上",
+          title: "揮手說 Bye bye",
+          moment: "在熟悉的外出日常中，昊熹會向身邊的人揮手；後來也會一邊揮手，一邊說「Bye bye」，和大家道別。",
+        },
+        {
+          time: "19個月大",
+          title: "小小消防員",
+          moment: "昊熹在一次外出活動中拿着黃色消防頭盔。消防員是會吸引他留意的角色之一，爸爸媽媽也把這個明亮的小片段收進記錄裏。",
+          photo: {
+            name: "growth-firefighter",
+            alt: "昊熹站在戶外，雙手拿着一頂黃色消防頭盔。",
+            caption: "一段明亮又有趣的消防主題小片段。",
+          },
         },
       ],
       portrait: {
@@ -845,28 +918,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         alt: "13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。",
         caption: "13個月大時留下的一張安靜近照，如今也收進昊熹的日常成長故事裏。",
       },
-      recentTitle: "近日裏的小小片段",
-      recentIntro: "幾張家庭外出相片，把記錄帶回昊熹開心活潑的小世界：有他的表情、喜歡的事物，也有每次都不一樣的小姿勢。",
-      recentMoments: [
-        {
-          title: "鞦韆上的笑容",
-          body: "16個月大時，昊熹雙手扶着幼兒鞦韆，在輕輕搖盪中笑得很開心。",
-          photo: {
-            name: "growth-swing",
-            alt: "16個月大的昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。",
-            caption: "16個月大，鞦韆輕輕一盪，昊熹的笑容也亮了起來。",
-          },
-        },
-        {
-          title: "小小消防員",
-          body: "19個月大時，昊熹在一次外出活動中拿着黃色消防頭盔。消防員是會吸引他留意的角色之一，爸爸媽媽也把這個明亮的小片段收進記錄裏。",
-          photo: {
-            name: "growth-firefighter",
-            alt: "19個月大的昊熹站在戶外，雙手拿着一頂黃色消防頭盔。",
-            caption: "19個月大，一段明亮又有趣的消防主題小片段。",
-          },
-        },
-      ],
     },
     family: {
       eyebrow: "家庭與陪伴",
@@ -889,6 +940,10 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           title: "許多雙疼愛他的手",
           body: "從還是小寶寶的時候開始，昊熹已在許多人的溫柔承托、照顧和陪伴中慢慢長大。",
         },
+        {
+          title: "笑聲留在身旁",
+          body: "1歲時，一次家庭拍攝記下昊熹在爸爸媽媽中間開心地笑。那份一起玩、一起笑的輕鬆，也成為一家人想好好留住的回憶。",
+        },
       ],
       photos: [
         {
@@ -906,13 +961,18 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           alt: "4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正溫柔承托着他。",
           caption: "4個月大時，幾雙疼愛昊熹的手留在身旁，成為一幅關於照顧、安心與陪伴的安靜畫面。",
         },
+        {
+          name: "family-playful",
+          alt: "1歲的昊熹在戶外由爸爸媽媽抱在中間，一家人一起笑。",
+          caption: "一張輕快的家庭合照，留住一家人的笑聲。",
+        },
       ],
     },
     closing: {
       eyebrow: "爸爸媽媽的話",
-      title: "把這些小日子，好好珍藏",
-      reflection: "五個成長故事、一些日常觀察，還有一條溫柔延伸的成長軌跡，都在這份記錄裏相遇。",
-      hope: "昊熹身邊有很多愛他的人，給他一個溫暖安心的起點，讓他按自己的步伐探索、與人連結，慢慢長大。",
+      title: "陪着他，一起長大",
+      reflection: "我們相信，孩子的成長從家庭裏每一次安穩的陪伴開始。每天的親子閱讀、遊戲、戶外探索和生活小事，都是我們陪昊熹認識世界的方式；在安全和鼓勵中，讓他自在嘗試，也慢慢學會表達自己、關心別人。",
+      hope: "我們盼望昊熹一直保有好奇心，健康快樂地長大，成為善良、自信、有同理心的人；爸爸媽媽也會留在他身旁，陪他一起學習、一起成長。",
     },
     privacy: {
       body: "本作品集由昊熹的爸爸媽媽用心整理。為了好好守護這些珍貴片段，請勿複製、下載或轉載網站內的相片及影片。",

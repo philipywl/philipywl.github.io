@@ -20,6 +20,32 @@ type IconProps = {
   className?: string;
 };
 
+let pendingSectionTimer = 0;
+
+export function markPendingSection(destination: string) {
+  if (!["#about", "#stories", "#growth", "#family"].includes(destination)) {
+    return;
+  }
+  const root = document.documentElement;
+  root.dataset.scrollTarget = destination;
+  const clearPendingSection = () => {
+    if (root.dataset.scrollTarget === destination) {
+      delete root.dataset.scrollTarget;
+    }
+    window.clearTimeout(pendingSectionTimer);
+  };
+  const clearWhenArrived = () => {
+    const target = document.querySelector<HTMLElement>(destination);
+    if (!target || Math.abs(target.getBoundingClientRect().top - 88) > 32) {
+      return;
+    }
+    clearPendingSection();
+  };
+  window.clearTimeout(pendingSectionTimer);
+  window.addEventListener("scrollend", clearWhenArrived, { once: true });
+  pendingSectionTimer = window.setTimeout(clearPendingSection, 1800);
+}
+
 export function ArrowUpIcon({ className = "button-icon" }: IconProps) {
   return (
     <svg
@@ -107,7 +133,21 @@ export function LanguageSwitch({
       // The preference is optional; route navigation must still work.
     }
 
-    const equivalentSection = window.location.hash || activeHref;
+    const readingLine = 120;
+    const currentSection = ["about", "stories", "growth", "family"]
+      .map((id) => document.getElementById(id))
+      .find((section) => {
+        if (!section) return false;
+        const bounds = section.getBoundingClientRect();
+        return bounds.top <= readingLine && bounds.bottom > readingLine;
+      });
+    const pendingSection = document.documentElement.dataset.scrollTarget;
+    const equivalentSection =
+      pendingSection || (window.scrollY < readingLine
+        ? ""
+        : currentSection
+          ? `#${currentSection.id}`
+          : activeHref || window.location.hash);
     if (equivalentSection) {
       event.currentTarget.href = `${localePaths[nextLocale].home}${equivalentSection}`;
     }
@@ -175,6 +215,7 @@ export function MobileMenu({
       if (window.location.hash !== destination) {
         window.history.pushState(null, "", destination);
       }
+      markPendingSection(destination);
       section?.scrollIntoView({
         behavior: reducedMotion ? "auto" : "smooth",
         block: "start",

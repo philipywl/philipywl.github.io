@@ -19,6 +19,7 @@ const photoDimensions: Record<
   "family-care": { width: 1200, height: 1500 },
   "family-main": { width: 1200, height: 800 },
   "family-origin": { width: 1200, height: 1500 },
+  "family-playful": { width: 1200, height: 1500 },
   "about-world": { width: 1200, height: 1500 },
   "about-reading": { width: 1200, height: 1200 },
   "about-car": { width: 1200, height: 1200 },
@@ -26,6 +27,7 @@ const photoDimensions: Record<
   "story-swimming": { width: 1200, height: 800 },
   "story-animals": { width: 1200, height: 800 },
   "growth-firefighter": { width: 1200, height: 1500 },
+  "growth-supported": { width: 1200, height: 1500 },
   "growth-swing": { width: 1200, height: 1500 },
 };
 

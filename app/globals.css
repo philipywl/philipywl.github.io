@@ -33,9 +33,13 @@
 html {
   background: var(--paper);
   scrollbar-gutter: stable;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scroll-padding-top: calc(var(--header-height) + 20px);
   text-size-adjust: 100%;
+}
+
+html.is-scroll-ready {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -211,8 +215,7 @@ body.welcome-open {
 }
 
 /* The site normally reserves a stable scrollbar gutter to prevent page shift.
-   During the fixed opening spread, release that gutter so the two photographs
-   can reach both physical viewport edges. */
+   Release it while the fixed welcome surface is visible. */
 html:has(body.welcome-open) {
   overflow: hidden;
   scrollbar-gutter: auto;
@@ -234,60 +237,12 @@ html:has(body.welcome-open) {
 
 .welcome-intro[data-welcome-state="play"] {
   display: grid;
-  animation: welcome-surface 7s linear forwards;
+  animation: welcome-surface 3.2s linear forwards;
 }
 
 .welcome-intro[data-welcome-state="exiting"] {
   display: grid;
   animation: welcome-exit 280ms cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-.welcome-photo-pair {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  width: 100vw;
-  height: 100svh;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-}
-
-.welcome-photo {
-  min-width: 0;
-  height: 100svh;
-  overflow: hidden;
-  border: 0;
-  border-radius: 0;
-  aspect-ratio: auto;
-  background: rgb(255 255 255 / 60%);
-  opacity: 0;
-}
-
-.welcome-photo-family {
-  animation: welcome-photo-left 7s linear forwards;
-}
-
-.welcome-photo-walk {
-  border-inline-start: 1px solid rgb(255 248 236 / 88%);
-  animation: welcome-photo-right 7s linear forwards;
-}
-
-.welcome-photo picture,
-.welcome-photo img {
-  width: 100%;
-  height: 100%;
-}
-
-.welcome-photo img {
-  object-fit: cover;
-}
-
-.welcome-photo-family img {
-  object-position: 43% 50%;
-}
-
-.welcome-photo-walk img {
-  object-position: 50% 50%;
 }
 
 .welcome-message {
@@ -301,30 +256,26 @@ html:has(body.welcome-open) {
   opacity: 0;
   text-align: center;
   text-wrap: balance;
-  animation: welcome-message 7s linear forwards;
-}
-
-@keyframes welcome-photo-left {
-  0% { opacity: 0; }
-  6.43%, 55.71% { opacity: 1; }
-  62.14%, 100% { opacity: 0; }
-}
-
-@keyframes welcome-photo-right {
-  0%, 27.86% { opacity: 0; }
-  34.29%, 55.71% { opacity: 1; }
-  62.14%, 100% { opacity: 0; }
+  animation: welcome-message 3.2s linear forwards;
 }
 
 @keyframes welcome-message {
-  0%, 62.14% { opacity: 0; transform: translateY(6px); }
-  68.57%, 90% { opacity: 1; transform: translateY(0); }
-  96.43%, 100% { opacity: 0; transform: translateY(0); }
+  0%, 3.75% { opacity: 0; transform: translateY(6px); }
+  18.75%, 68.75% { opacity: 1; transform: translateY(0); }
+  83.75%, 100% { opacity: 0; transform: translateY(0); }
 }
 
 @keyframes welcome-surface {
-  0%, 96.43% { opacity: 1; }
-  100% { opacity: 0; }
+  0%, 83.75% {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  100% {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 @keyframes welcome-exit {
@@ -847,18 +798,6 @@ html:has(body.welcome-open) {
   line-height: 1.72;
 }
 
-.story-media-note {
-  max-width: 680px;
-  padding: 12px 14px;
-  border-left: 4px solid var(--sage);
-  border-radius: 0 12px 12px 0;
-  margin-top: 18px;
-  background: rgb(196 221 234 / 38%);
-  color: var(--muted);
-  font-size: 0.9rem !important;
-  line-height: 1.62 !important;
-}
-
 .preview-note {
   max-width: 420px;
   padding: 20px;
@@ -1293,7 +1232,6 @@ html:has(body.welcome-open) {
 .growth-section,
 .family-section,
 .stories-section,
-.future-growth-section,
 .closing-section {
   position: relative;
   isolation: isolate;
@@ -1305,7 +1243,6 @@ html:has(body.welcome-open) {
 .growth-section > .page-grid,
 .family-section > .page-grid,
 .stories-section > .page-grid,
-.future-growth-section > .page-grid,
 .closing-inner {
   position: relative;
   z-index: 1;
@@ -2609,11 +2546,6 @@ html:has(body.welcome-open) {
   font-weight: 500;
 }
 
-.growth-layout {
-  display: grid;
-  gap: 24px;
-}
-
 .growth-moments-layout {
   position: relative;
   z-index: 1;
@@ -2622,20 +2554,10 @@ html:has(body.welcome-open) {
   gap: 28px;
 }
 
-.growth-moments-layout .timeline-panel {
+.growth-milestones-panel {
   background: rgb(255 249 230 / 84%);
 }
 
-.growth-portrait {
-  width: min(100%, 330px);
-  margin-inline: auto;
-}
-
-.growth-portrait .portfolio-photo-frame {
-  box-shadow: var(--shadow-soft);
-}
-
-.everyday-panel,
 .timeline-panel {
   min-width: 0;
   padding: 24px;
@@ -2645,104 +2567,139 @@ html:has(body.welcome-open) {
   box-shadow: var(--shadow-soft);
 }
 
-.everyday-panel > h3,
 .timeline-panel > h3 {
-  margin-bottom: 22px;
+  margin-bottom: 10px;
 }
 
-.everyday-intro {
-  margin-top: -10px;
+.milestones-intro {
+  max-width: 720px;
+  margin: 0 0 26px;
   color: var(--muted);
   font-size: 1rem;
 }
 
-.everyday-list {
-  display: grid;
-  padding: 0;
-  margin: 20px 0 0;
-  gap: 10px;
-  list-style: none;
-}
-
-.everyday-list li {
-  display: grid;
-  min-width: 0;
-  padding: 16px;
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 14px;
-  background: rgb(255 255 255 / 48%);
-}
-
-.everyday-list .field-index {
-  margin: 2px 0 0;
-}
-
-.everyday-list h4 {
-  margin-bottom: 5px;
-}
-
-.everyday-list p {
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 0.9375rem;
-}
-
-.timeline-list {
+.growth-milestone-list {
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
-.timeline-list li {
+.growth-milestone-list > li {
+  --timeline-line-x: 8px;
+
   position: relative;
-  min-height: 82px;
-  padding: 0 0 24px 32px;
+  display: grid;
+  min-width: 0;
+  padding: 0 0 18px;
+  grid-template-columns: 24px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 7px;
 }
 
-.timeline-list li::before {
+.growth-milestone-list > li::before {
   position: absolute;
-  top: 14px;
-  bottom: -2px;
-  left: 8px;
+  top: 15px;
+  bottom: -3px;
+  left: var(--timeline-line-x);
   width: 2px;
   background: var(--sage);
   content: "";
-  opacity: 0.72;
+  opacity: 0.8;
 }
 
-.timeline-list li:last-child {
-  min-height: 0;
+.growth-milestone-list > li:last-child {
   padding-bottom: 0;
 }
 
-.timeline-list li:last-child::before {
+.growth-milestone-list > li:last-child::before {
   display: none;
 }
 
-.timeline-dot {
-  position: absolute;
-  top: 4px;
-  left: 0;
+.growth-milestone-list .timeline-dot {
+  position: relative;
+  z-index: 1;
+  top: auto;
+  left: auto;
   width: 18px;
   aspect-ratio: 1;
   border: 4px solid var(--sage);
   border-radius: 50%;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  justify-self: start;
+  margin-top: 2px;
   background: var(--honey);
 }
 
+.growth-milestone-list .timeline-time {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+}
+
+.milestone-card {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: rgb(169 216 239 / 24%);
+}
+
+.growth-milestone-list > li:nth-child(4n + 2) .milestone-card {
+  background: rgb(244 201 93 / 20%);
+}
+
+.growth-milestone-list > li:nth-child(4n + 3) .milestone-card {
+  background: rgb(143 186 120 / 22%);
+}
+
+.growth-milestone-list > li:nth-child(4n) .milestone-card {
+  background: rgb(238 162 131 / 18%);
+}
+
+.milestone-card h4 {
+  margin-bottom: 6px;
+  font-size: 1.0625rem;
+}
+
+.milestone-card p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
 .timeline-time {
-  margin-bottom: 4px;
   color: var(--teal-deep);
   font-size: 0.8125rem;
   font-weight: 600;
 }
 
-.timeline-list li > p:last-child {
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 1rem;
+.milestone-photo {
+  width: min(100%, 310px);
+  margin: 15px 0 0;
+}
+
+.milestone-photo .portfolio-photo-frame {
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.milestone-photo figcaption {
+  padding-top: 8px;
+  font-size: 0.875rem;
+}
+
+.growth-portrait {
+  width: min(100%, 330px);
+  margin-inline: auto;
+}
+
+.growth-portrait .portfolio-photo-frame {
+  box-shadow: var(--shadow-soft);
 }
 
 .growth-section {
@@ -2842,143 +2799,6 @@ html:has(body.welcome-open) {
 .family-photo .portfolio-photo-frame {
   border-radius: 22px;
   box-shadow: var(--shadow-soft);
-}
-
-.future-growth-section {
-  position: relative;
-  isolation: isolate;
-  overflow: clip;
-  background: rgb(166 155 194 / 14%);
-}
-
-.future-growth-panel {
-  display: grid;
-  padding: clamp(24px, 5vw, 42px);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  gap: 28px;
-  background: rgb(255 249 230 / 78%);
-  box-shadow: var(--shadow-soft);
-}
-
-.future-growth-heading {
-  max-width: 700px;
-}
-
-.future-growth-heading h2 {
-  margin-bottom: 14px;
-}
-
-.future-growth-heading > p:last-child {
-  margin-bottom: 0;
-  color: var(--muted);
-}
-
-.future-growth-list {
-  display: grid;
-  padding: 0;
-  margin: 0;
-  gap: 12px;
-  list-style: none;
-}
-
-.future-growth-list li {
-  display: grid;
-  min-width: 0;
-  padding: 17px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 14px;
-}
-
-.future-growth-list li:nth-child(1) {
-  background: rgb(169 216 239 / 27%);
-}
-
-.future-growth-list li:nth-child(2) {
-  background: rgb(244 201 93 / 24%);
-}
-
-.future-growth-list li:nth-child(3) {
-  background: rgb(143 186 120 / 25%);
-}
-
-.future-growth-list li:nth-child(4) {
-  background: rgb(238 162 131 / 20%);
-}
-
-.future-growth-list .field-index {
-  margin: 3px 0 0;
-}
-
-.future-growth-list h3 {
-  margin-bottom: 5px;
-  font-size: 1.0625rem;
-}
-
-.future-growth-list p {
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 0.9375rem;
-}
-
-.recent-moments {
-  margin-top: clamp(36px, 6vw, 64px);
-}
-
-.recent-moments-heading {
-  max-width: 700px;
-  margin-bottom: 24px;
-}
-
-.recent-moments-heading h3 {
-  margin-bottom: 10px;
-  font-size: clamp(1.625rem, 4vw, 2rem);
-}
-
-.recent-moments-heading p {
-  margin-bottom: 0;
-  color: var(--muted);
-}
-
-.recent-moments-grid {
-  display: grid;
-  gap: 22px;
-}
-
-.recent-moment-card {
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  background: var(--card);
-  box-shadow: var(--shadow-soft);
-}
-
-.recent-moment-photo .portfolio-photo-frame {
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
-}
-
-.recent-moment-photo figcaption {
-  padding-inline: 18px;
-}
-
-.recent-moment-copy {
-  padding: 18px 20px 22px;
-}
-
-.recent-moment-copy h4 {
-  margin-bottom: 7px;
-  font-size: 1.125rem;
-}
-
-.recent-moment-copy p {
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 1rem;
 }
 
 .closing-section {
@@ -3302,12 +3122,30 @@ html:has(body.welcome-open) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .growth-moments-layout {
-    grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
+  .growth-milestone-list > li {
+    --timeline-line-x: 105px;
+
+    grid-template-columns: 86px 24px minmax(0, 1fr);
+    grid-template-rows: auto;
+    column-gap: 10px;
+    row-gap: 0;
   }
 
-  .recent-moments-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .growth-milestone-list .timeline-time {
+    grid-column: 1;
+    grid-row: 1;
+    padding-top: 4px;
+    text-align: right;
+  }
+
+  .growth-milestone-list .timeline-dot {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .growth-milestone-list .milestone-card {
+    grid-column: 3;
+    grid-row: 1;
   }
 
   .stories-grid {
@@ -3335,10 +3173,9 @@ html:has(body.welcome-open) {
     grid-column: auto;
   }
 
-  .future-growth-panel {
-    grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
-    align-items: start;
-    gap: 42px;
+  .family-media-grid > .family-photo-support:last-child {
+    grid-column: 1 / -1;
+    width: min(100%, 340px);
   }
 
   .footer-grid {
@@ -3368,14 +3205,24 @@ html:has(body.welcome-open) {
     align-items: start;
   }
 
-  .growth-layout {
-    grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+  .growth-milestone-list > li.has-photo .milestone-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(190px, 240px);
     align-items: start;
+    gap: 20px;
+  }
+
+  .growth-milestone-list > li.has-photo .milestone-photo {
+    margin-top: 0;
   }
 
 }
 
 @media (min-width: 72rem) {
+  .growth-moments-layout {
+    grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
+  }
+
   .hero {
     min-height: calc(100svh - var(--header-height));
   }
@@ -3606,18 +3453,14 @@ html:has(body.welcome-open) {
     background: #FFFFFF !important;
   }
 
-  .story-media-note {
-    display: none;
-  }
-
   .youtube-video-frame {
     display: none;
   }
 
   .about-field,
   .preview-note,
-  .everyday-panel,
   .timeline-panel,
+  .milestone-card,
   .family-values-card,
   .family-vignette,
   .portfolio-photo,
