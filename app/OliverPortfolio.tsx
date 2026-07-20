@@ -10,6 +10,7 @@ import YouTubeVideo from "./YouTubeVideo";
 import {
   ArrowUpIcon,
   LanguageSwitch,
+  markPendingSection,
   MobileMenu,
 } from "./PortfolioControls";
 import {
@@ -19,6 +20,7 @@ import {
 } from "./portfolio-copy";
 
 const mediaTones = ["sky", "honey", "peach", "teal"] as const;
+const sectionIds = ["about", "stories", "growth", "family"] as const;
 
 export default function OliverPortfolio({
   initialLocale,
@@ -54,7 +56,25 @@ export default function OliverPortfolio({
   };
 
   useEffect(() => {
-    const sections = ["about", "stories", "growth", "family"]
+    const destination = window.location.hash;
+    const root = document.documentElement;
+    if (sectionIds.some((id) => destination === `#${id}`)) {
+      document
+        .querySelector<HTMLElement>(destination)
+        ?.scrollIntoView({ block: "start" });
+    }
+    const enableSmoothScroll = window.requestAnimationFrame(() => {
+      root.classList.add("is-scroll-ready");
+    });
+
+    return () => {
+      window.cancelAnimationFrame(enableSmoothScroll);
+      root.classList.remove("is-scroll-ready");
+    };
+  }, []);
+
+  useEffect(() => {
+    const sections = sectionIds
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
     const visibleSections = new Set<string>();
@@ -113,7 +133,10 @@ export default function OliverPortfolio({
                 href={item.href}
                 key={item.href}
                 aria-current={activeHref === item.href ? "location" : undefined}
-                onClick={() => focusSection(item.href)}
+                onClick={() => {
+                  markPendingSection(item.href);
+                  focusSection(item.href);
+                }}
               >
                 {item.label}
               </a>
@@ -247,7 +270,6 @@ export default function OliverPortfolio({
               <p className="eyebrow">{copy.stories.eyebrow}</p>
               <h2 id="stories-title" tabIndex={-1}>{copy.stories.title}</h2>
               <p>{copy.stories.intro}</p>
-              <p className="story-media-note">{copy.stories.mediaNote}</p>
             </div>
           </div>
 
@@ -341,14 +363,35 @@ export default function OliverPortfolio({
           </div>
 
           <div className="page-grid growth-moments-layout">
-            <section className="timeline-panel" aria-labelledby="timeline-title">
-              <h3 id="timeline-title">{copy.growth.timelineTitle}</h3>
-              <ol className="timeline-list">
-                {copy.growth.timelineItems.map((item, index) => (
-                  <li key={`${item.time}-${index}`}>
-                    <span className="timeline-dot" aria-hidden="true" />
+            <section
+              className="timeline-panel growth-milestones-panel"
+              aria-labelledby="milestones-title"
+            >
+              <h3 id="milestones-title">{copy.growth.milestonesTitle}</h3>
+              <p className="milestones-intro">{copy.growth.milestonesIntro}</p>
+              <ol className="growth-milestone-list">
+                {copy.growth.milestones.map((item, index) => (
+                  <li
+                    className={`growth-milestone ${item.photo ? "has-photo" : ""}`.trim()}
+                    key={`${item.time}-${item.title}-${index}`}
+                  >
                     <p className="timeline-time">{item.time}</p>
-                    <p>{item.moment}</p>
+                    <span className="timeline-dot" aria-hidden="true" />
+                    <article className="milestone-card">
+                      <div className="milestone-copy">
+                        <h4>{item.title}</h4>
+                        <p>{item.moment}</p>
+                      </div>
+                      {item.photo && (
+                        <ResponsivePhoto
+                          name={item.photo.name}
+                          alt={item.photo.alt}
+                          caption={item.photo.caption}
+                          sizes="(min-width: 72rem) 230px, (min-width: 48rem) 280px, calc(100vw - 96px)"
+                          className="milestone-photo"
+                        />
+                      )}
+                    </article>
                   </li>
                 ))}
               </ol>
@@ -362,57 +405,6 @@ export default function OliverPortfolio({
             />
           </div>
           <MeadowDecor variant="tree" locale={locale} />
-        </section>
-
-        <section className="future-growth-section section-pad" aria-labelledby="everyday-title">
-          <div className="page-grid future-growth-panel">
-            <div className="future-growth-heading">
-              <p className="eyebrow">{copy.growth.eyebrow}</p>
-              <h2 id="everyday-title">{copy.growth.everydayTitle}</h2>
-              <p>{copy.growth.everydayIntro}</p>
-            </div>
-            <ul className="future-growth-list">
-              {copy.growth.everydayItems.map((item, index) => (
-                <li key={item.title}>
-                  <span className="field-index" aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <section className="page-grid recent-moments" aria-labelledby="recent-moments-title">
-            <div className="recent-moments-heading">
-              <h3 id="recent-moments-title">{copy.growth.recentTitle}</h3>
-              <p>{copy.growth.recentIntro}</p>
-            </div>
-            <div className="recent-moments-grid">
-              {copy.growth.recentMoments.map((moment) => (
-                <article className="recent-moment-card" key={moment.title}>
-                  <ResponsivePhoto
-                    name={moment.photo.name}
-                    alt={moment.photo.alt}
-                    caption={moment.photo.caption}
-                    sizes="(min-width: 48rem) 520px, calc(100vw - 64px)"
-                    className="recent-moment-photo"
-                  />
-                  <div className="recent-moment-copy">
-                    <h4>{moment.title}</h4>
-                    <p>{moment.body}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-          <MeadowDecor
-            variant="garden"
-            locale={locale}
-            className="meadow-garden-future"
-          />
         </section>
 
         <section id="family" className="family-section section-pad" aria-labelledby="family-title">

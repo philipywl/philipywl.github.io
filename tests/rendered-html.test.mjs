@@ -148,28 +148,32 @@ function expectApprovedPhotos(html, locale) {
         ["Twelve-month-old Oliver sits close to an adult family member as they look at a board book together; the adult points to the page.", "about-reading", "1200"],
         ["Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.", "about-car", "1200"],
         ["Eighteen-month-old Oliver stands in front of a group of colourful cartoon figures, raising one arm to point towards them.", "about-observing", "900"],
-        ["Nineteen-month-old Oliver smiles in a swimming pool, with an adult close by.", "story-swimming", "800"],
-        ["Fifteen-month-old Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
+        ["Oliver smiles in a swimming pool, with an adult close by.", "story-swimming", "800"],
+        ["Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
         ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
-        ["Sixteen-month-old Oliver smiles broadly while holding both sides of a toddler swing.", "growth-swing", "1500"],
-        ["Nineteen-month-old Oliver stands outdoors holding a yellow firefighter helmet.", "growth-firefighter", "1500"],
+        ["One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.", "growth-supported", "1500"],
+        ["Oliver smiles broadly while holding both sides of a toddler swing.", "growth-swing", "1500"],
+        ["Oliver stands outdoors holding a yellow firefighter helmet.", "growth-firefighter", "1500"],
         ["Fifteen-month-old Oliver is held close between Mum and Dad beneath flowering trees during a family outing.", "family-main", "800"],
         ["Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.", "family-origin", "1500"],
         ["Four-month-old Oliver sits in a cushioned baby seat while several people gently support him with their hands.", "family-care", "1500"],
+        ["One-year-old Oliver smiles outdoors while Mum and Dad hold him between them.", "family-playful", "1500"],
       ]
     : [
         ["19個月大的昊熹身處一架大型綠色玩樂車輛內，望向鏡頭。", "about-world", "1500"],
         ["12個月大的昊熹依偎在一位成年家人身旁一起看圖書，家人正指着書頁。", "about-reading", "1200"],
         ["17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。", "about-car", "1200"],
         ["18個月大的昊熹站在一組色彩繽紛的卡通人物佈景前，舉起一隻手指向人物。", "about-observing", "900"],
-        ["19個月大的昊熹在泳池裏開心地笑，身旁有大人陪伴。", "story-swimming", "800"],
-        ["15個月大的昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
+        ["昊熹在泳池裏開心地笑，身旁有大人陪伴。", "story-swimming", "800"],
+        ["昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
         ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
-        ["16個月大的昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。", "growth-swing", "1500"],
-        ["19個月大的昊熹站在戶外，雙手拿着一頂黃色消防頭盔。", "growth-firefighter", "1500"],
+        ["1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。", "growth-supported", "1500"],
+        ["昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。", "growth-swing", "1500"],
+        ["昊熹站在戶外，雙手拿着一頂黃色消防頭盔。", "growth-firefighter", "1500"],
         ["15個月大的昊熹在花樹下依偎在爸爸媽媽中間，一家三口望向鏡頭。", "family-main", "800"],
         ["6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。", "family-origin", "1500"],
         ["4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正溫柔承托着他。", "family-care", "1500"],
+        ["1歲的昊熹在戶外由爸爸媽媽抱在中間，一家人一起笑。", "family-playful", "1500"],
       ];
   for (const [alt, name, height] of expected) {
     const image = images.find((tag) => getAttribute(tag, "alt") === alt);
@@ -186,15 +190,6 @@ function expectApprovedPhotos(html, locale) {
     assert.equal(getAttribute(source, "type"), "image/avif");
     const srcset = getAttribute(source, "srcset") ?? "";
     for (const width of [480, 800, 1200]) assert.match(srcset, new RegExp(`-${width}\\.avif ${width}w`));
-  }
-
-  for (const name of ["welcome-family", "welcome-walk"]) {
-    const image = images.find((tag) => getAttribute(tag, "src") === `/media/oliver/${name}-800.webp`);
-    assert.ok(image, `missing welcome photograph: ${name}`);
-    assert.equal(getAttribute(image, "alt"), "");
-    assert.equal(getAttribute(image, "width"), "1200");
-    assert.equal(getAttribute(image, "height"), "1500");
-    assert.equal(getAttribute(image, "loading"), "eager");
   }
 
   const posters = [
@@ -216,8 +211,8 @@ function expectApprovedPhotos(html, locale) {
     assert.match(getAttribute(image, "srcset") ?? "", new RegExp(`/media/video/${name}-`));
   }
 
-  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "eager").length, 2);
-  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 19);
+  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "eager").length, 0);
+  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 21);
   assert.doesNotMatch(photoSurface, /10(?:0\d|1\d)|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i);
   assert.doesNotMatch(html, /i\.ytimg\.com|img\.youtube\.com/);
 }
@@ -244,7 +239,7 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Welcome to Oliver's little world/);
   assert.match(text, /Everyday moments, held with care/);
   assert.match(text, /Small steps, quietly gathering/);
-  assert.match(text, /One step, then another/);
+  assert.match(text, /Twelve everyday moments along the way/);
   assert.match(text, /Family & Care/);
   assert.match(text, /Growing within a circle of care/);
   assert.match(text, /Oliver's days unfold within the steady warmth of family/);
@@ -252,8 +247,8 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Where our story began/);
   assert.match(text, /A quiet portrait from 13 months/);
   assert.match(text, /How we continue alongside him/);
-  assert.match(text, /Keeping these little days close/);
-  assert.match(text, /Five learning stories, a handful of everyday observations/);
+  assert.match(text, /Growing alongside him/);
+  assert.match(text, /a child's learning begins in the steady companionship of family/);
   for (const title of [
     "He listens, then responds",
     "Turning to the next page",
@@ -267,10 +262,13 @@ test("renders the refined English public homepage", async () => {
   assert.ok(text.indexOf("The piano corner he always finds") < text.indexOf("A gentle hello to the animals"));
   assert.match(text, /Oliver's new portrait is coming/);
   assert.doesNotMatch(text, /problem-solving moment to be added|noticing moment to be added/i);
+  assert.match(text, /Looking for what disappeared/);
   assert.match(text, /Matching shapes/);
   assert.match(text, /Pouring between cups/);
   assert.match(text, /Joining tidy-up time/);
-  assert.match(text, /Waving along the way/);
+  assert.match(text, /Waving Bye bye/);
+  assert.equal((html.match(/class="growth-milestone(?: |")/g) ?? []).length, 12);
+  assert.doesNotMatch(text, /Videos never play automatically/);
   assert.match(text, /中文 \| English/);
   assert.equal((html.match(/class="story-card/g) ?? []).length, 5);
   assert.equal((html.match(/class="youtube-video /g) ?? []).length, 7);
@@ -314,7 +312,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /歡迎走進昊熹的小小世界/);
   assert.match(text, /把日常片段，輕輕收進故事裏/);
   assert.match(text, /把一點一滴，慢慢收進成長裏/);
-  assert.match(text, /一步一步，慢慢走起來/);
+  assert.match(text, /十二個日常片段，一步一步走來/);
   assert.match(text, /家庭與陪伴/);
   assert.match(text, /在愛與陪伴中，一起長大/);
   assert.match(text, /昊熹的日常，在家人安穩的愛裏慢慢展開/);
@@ -322,8 +320,8 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /回到故事起點/);
   assert.match(text, /13個月大時留下的一張安靜近照/);
   assert.match(text, /我們如何繼續陪伴/);
-  assert.match(text, /把這些小日子，好好珍藏/);
-  assert.match(text, /五個成長故事、一些日常觀察/);
+  assert.match(text, /陪着他，一起長大/);
+  assert.match(text, /孩子的成長從家庭裏每一次安穩的陪伴開始/);
   for (const title of [
     "聽見，也回應",
     "自己翻開下一頁",
@@ -337,10 +335,13 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.ok(text.indexOf("總會走近的琴鍵") < text.indexOf("輕輕走近小動物"));
   assert.match(text, /新近照稍後加入/);
   assert.doesNotMatch(text, /解難小片段稍後加入|觀察小片段稍後加入/);
-  assert.match(text, /配對形狀/);
-  assert.match(text, /倒進另一杯/);
-  assert.match(text, /一起收拾/);
-  assert.match(text, /揮手道別/);
+  assert.match(text, /尋找躲起的物件/);
+  assert.match(text, /把形狀放對位置/);
+  assert.match(text, /倒進另一隻杯/);
+  assert.match(text, /一起 Clean up/);
+  assert.match(text, /揮手說 Bye bye/);
+  assert.equal((html.match(/class="growth-milestone(?: |")/g) ?? []).length, 12);
+  assert.doesNotMatch(text, /影片不會自動播放/);
   assert.match(text, /中文 \| English/);
   assert.equal((html.match(/class="story-card/g) ?? []).length, 5);
   assert.equal((html.match(/class="youtube-video /g) ?? []).length, 7);
@@ -441,15 +442,20 @@ test("keeps placeholders inert, photographs responsive, videos deferred, and mot
   assert.match(welcomeIntro, /window\.location\.hash/);
   assert.match(welcomeIntro, /event\.key === "Escape"/);
   assert.match(welcomeIntro, /setAttribute\("inert"/);
-  assert.match(welcomeIntro, /alt=""/);
-  assert.match(welcomeIntro, /motionClass: "welcome-photo-family"/);
-  assert.match(welcomeIntro, /motionClass: "welcome-photo-walk"/);
-  assert.match(welcomeIntro, /className=\{`welcome-photo \$\{motionClass\}`\}/);
-  assert.match(css, /\.welcome-photo-family\s*\{[\s\S]*?animation:\s*welcome-photo-left/);
-  assert.match(css, /\.welcome-photo-walk\s*\{[\s\S]*?animation:\s*welcome-photo-right/);
-  assert.match(welcomeIntro, /const welcomeDurationMs = 7000/);
+  assert.doesNotMatch(welcomeIntro, /<img|<picture|<source|welcome-photo|motionClass/);
+  assert.match(welcomeIntro, /<div[\s\S]*?id="welcome-intro"/);
+  assert.doesNotMatch(css, /welcome-photo|welcome-photo-pair/);
+  assert.match(css, /\.welcome-message\s*\{[\s\S]*?animation:\s*welcome-message 3\.2s/);
+  assert.match(welcomeIntro, /const welcomeDurationMs = 3200/);
   assert.match(welcomeIntro, /const completionTimer = window\.setTimeout\(\(\) => \{/);
   assert.match(welcomeIntro, /\}, welcomeDurationMs\);/);
+  assert.match(welcomeIntro, /__oliverWelcomeFailOpenTimer/);
+  assert.match(welcomeIntro, /window\.__oliverWelcomeShouldPlay = false/);
+  assert.match(welcomeIntro, /welcomeWindow\.__oliverWelcomeShouldPlay === true &&[\s\S]*?root\?\.dataset\.welcomeState === "play"/);
+  assert.match(welcomeIntro, /current\.dataset\.welcomeState = "hidden"/);
+  assert.match(welcomeIntro, /document\.getElementById\("top"\)\?\.removeAttribute\("inert"\)/);
+  assert.match(css, /@keyframes welcome-surface[\s\S]*?100%\s*\{[\s\S]*?visibility:\s*hidden[\s\S]*?pointer-events:\s*none/);
+  assert.match(css, /\.growth-milestone-list \.timeline-dot\s*\{[\s\S]*?width:\s*18px[\s\S]*?border:\s*4px solid var\(--sage\)[\s\S]*?background:\s*var\(--honey\)/);
   assert.match(css, /data-welcome-state="exiting"\][\s\S]*?animation:\s*welcome-exit 280ms/);
   assert.doesNotMatch(welcomeIntro, /skipLabel|welcome-skip|Skip welcome|略過歡迎/);
   assert.doesNotMatch(css, /\.welcome-skip/);

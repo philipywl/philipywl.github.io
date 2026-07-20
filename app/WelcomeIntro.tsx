@@ -2,23 +2,17 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-const sessionKey = "oliver-welcome-v2";
+const sessionKey = "oliver-welcome-v3";
 const completeEvent = "oliver:welcome-complete";
-const welcomeDurationMs = 7000;
+const welcomeDurationMs = 3200;
 const exitDurationMs = 280;
 
 type WelcomeIntroProps = {
   message: string;
 };
 
-function sourceSet(name: "welcome-family" | "welcome-walk", extension: "avif" | "webp") {
-  return [480, 800, 1200]
-    .map((width) => `/media/oliver/${name}-${width}.${extension} ${width}w`)
-    .join(", ");
-}
-
 export default function WelcomeIntro({ message }: WelcomeIntroProps) {
-  const rootRef = useRef<HTMLElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const closedRef = useRef(false);
   const exitTimerRef = useRef(0);
   const bootstrap = `(() => {
@@ -33,12 +27,30 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
     root.dataset.welcomeState = shouldPlay ? "play" : "hidden";
     if (shouldPlay) {
       try { window.sessionStorage.setItem(${JSON.stringify(sessionKey)}, "seen"); } catch {}
+      window.__oliverWelcomeFailOpenTimer = window.setTimeout(() => {
+        const current = document.getElementById("welcome-intro");
+        if (!current || current.dataset.welcomeState !== "play") return;
+        current.dataset.welcomeState = "hidden";
+        window.__oliverWelcomeShouldPlay = false;
+        document.getElementById("top")?.removeAttribute("inert");
+        document.body.classList.remove("welcome-open");
+        window.dispatchEvent(new Event(${JSON.stringify(completeEvent)}));
+      }, ${welcomeDurationMs});
     }
   })();`;
 
   const completeWelcome = useCallback((focusHero = false) => {
     const root = rootRef.current;
     if (!root) return;
+    const welcomeWindow = window as typeof window & {
+      __oliverWelcomeFailOpenTimer?: number;
+      __oliverWelcomeShouldPlay?: boolean;
+    };
+    if (welcomeWindow.__oliverWelcomeFailOpenTimer) {
+      window.clearTimeout(welcomeWindow.__oliverWelcomeFailOpenTimer);
+      delete welcomeWindow.__oliverWelcomeFailOpenTimer;
+    }
+    welcomeWindow.__oliverWelcomeShouldPlay = false;
     root.dataset.welcomeState = "hidden";
     document.getElementById("top")?.removeAttribute("inert");
     document.body.classList.remove("welcome-open");
@@ -59,12 +71,6 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
     );
   }, [completeWelcome]);
 
-  const failOpen = useCallback(() => {
-    if (closedRef.current) return;
-    closedRef.current = true;
-    completeWelcome(false);
-  }, [completeWelcome]);
-
   useEffect(() => {
     const root = rootRef.current;
     const site = document.getElementById("top");
@@ -72,7 +78,7 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
       __oliverWelcomeShouldPlay?: boolean;
     };
     const shouldPlay =
-      welcomeWindow.__oliverWelcomeShouldPlay === true ||
+      welcomeWindow.__oliverWelcomeShouldPlay === true &&
       root?.dataset.welcomeState === "play";
 
     if (!root || !shouldPlay) {
@@ -104,7 +110,7 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
 
   return (
     <>
-      <aside
+      <div
         id="welcome-intro"
         ref={rootRef}
         className="welcome-intro no-print"
@@ -119,38 +125,10 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
         >
           {message}
         </p>
-        <div className="welcome-photo-pair" aria-hidden="true">
-          {([
-            { name: "welcome-family", motionClass: "welcome-photo-family" },
-            { name: "welcome-walk", motionClass: "welcome-photo-walk" },
-          ] as const).map(({ name, motionClass }) => (
-            <div className={`welcome-photo ${motionClass}`} key={name}>
-              <picture>
-                <source
-                  srcSet={sourceSet(name, "avif")}
-                  sizes="50vw"
-                  type="image/avif"
-                />
-                <img
-                  src={`/media/oliver/${name}-800.webp`}
-                  srcSet={sourceSet(name, "webp")}
-                  sizes="50vw"
-                  width="1200"
-                  height="1500"
-                  alt=""
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  onError={failOpen}
-                />
-              </picture>
-            </div>
-          ))}
-        </div>
         <p className="welcome-message" aria-hidden="true">
           {message}
         </p>
-      </aside>
+      </div>
       <script dangerouslySetInnerHTML={{ __html: bootstrap }} />
     </>
   );
