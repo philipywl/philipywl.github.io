@@ -5,6 +5,7 @@ import GreetingReveal from "./GreetingReveal";
 import MeadowDecor from "./MeadowDecor";
 import PreviewMedia from "./PreviewMedia";
 import ResponsivePhoto from "./ResponsivePhoto";
+import WelcomeIntro from "./WelcomeIntro";
 import YouTubeVideo from "./YouTubeVideo";
 import {
   ArrowUpIcon,
@@ -83,7 +84,9 @@ export default function OliverPortfolio({
   }, []);
 
   return (
-    <div id="top" className="site-shell" lang={copy.lang}>
+    <>
+      <WelcomeIntro message={copy.welcome.message} skipLabel={copy.welcome.skip} />
+      <div id="top" className="site-shell" lang={copy.lang}>
       <a className="skip-link" href="#main-content" onClick={focusMain}>{copy.skip}</a>
 
       <header className="site-header no-print">
@@ -122,6 +125,7 @@ export default function OliverPortfolio({
               locale={locale}
               label={copy.controls.languages}
               selectedLabel={copy.controls.selected}
+              activeHref={activeHref}
             />
             <MobileMenu
               items={navigationItems}
@@ -193,7 +197,18 @@ export default function OliverPortfolio({
             <div className="about-fields">
               {copy.about.fields.map((field, index) => (
                 <article className="about-field" key={field.title}>
-                  {"name" in field.media ? (
+                  {"kind" in field.media ? (
+                    <div className="about-field-video">
+                      <YouTubeVideo
+                        videoId={field.media.videoId}
+                        title={field.media.title}
+                        caption={field.media.caption}
+                        ratio={field.media.ratio}
+                        playLabel={copy.controls.playVideo}
+                        loadingLabel={copy.controls.loadingVideo}
+                      />
+                    </div>
+                  ) : "name" in field.media ? (
                     <ResponsivePhoto
                       name={field.media.name}
                       alt={field.media.alt}
@@ -238,7 +253,7 @@ export default function OliverPortfolio({
           <div className="page-grid stories-grid">
             {copy.stories.items.map((story, storyIndex) => (
               <article
-                className={`story-card ${storyIndex === 0 ? "story-card-featured" : ""}`.trim()}
+                className={`story-card story-card-${storyIndex + 1} ${storyIndex === 0 ? "story-card-featured" : ""}`.trim()}
                 key={story.title}
               >
                 <div className={`story-media-grid story-media-count-${story.media.length}`}>
@@ -252,7 +267,6 @@ export default function OliverPortfolio({
                         ratio={media.ratio}
                         playLabel={copy.controls.playVideo}
                         loadingLabel={copy.controls.loadingVideo}
-                        openLabel={copy.controls.openYouTube}
                       />
                     ) : (
                       <ResponsivePhoto
@@ -423,13 +437,18 @@ export default function OliverPortfolio({
             </div>
 
             <div className="family-media-grid">
-              <ResponsivePhoto
-                name={copy.family.photo.name}
-                alt={copy.family.photo.alt}
-                caption={copy.family.photo.caption}
-                sizes="(min-width: 60rem) 430px, (min-width: 48rem) 40vw, calc(100vw - 40px)"
-                className="family-photo"
-              />
+              {copy.family.photos.map((photo, index) => (
+                <ResponsivePhoto
+                  key={photo.name}
+                  name={photo.name}
+                  alt={photo.alt}
+                  caption={photo.caption}
+                  sizes={index === 0
+                    ? "(min-width: 60rem) 520px, (min-width: 48rem) 44vw, calc(100vw - 40px)"
+                    : "(min-width: 60rem) 250px, (min-width: 48rem) 22vw, calc(100vw - 40px)"}
+                  className={`family-photo ${index === 0 ? "family-photo-main" : "family-photo-support"}`}
+                />
+              ))}
             </div>
           </div>
           <MeadowDecor
@@ -474,6 +493,7 @@ export default function OliverPortfolio({
           <p className="footer-privacy">{copy.privacy.body}</p>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }

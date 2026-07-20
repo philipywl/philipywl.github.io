@@ -23,12 +23,14 @@ export default function GreetingReveal({
 }) {
   const sessionKey = `oliver-greeting-${locale}-v1`;
   const playState = `${locale}-play`;
+  const waitingState = `${locale}-waiting`;
   const completeState = `${locale}-complete`;
   const bootstrap = `(() => {
     const heading = document.getElementById(${JSON.stringify(id)});
     if (!heading) return;
     const key = ${JSON.stringify(sessionKey)};
     const play = ${JSON.stringify(playState)};
+    const waiting = ${JSON.stringify(waitingState)};
     const complete = ${JSON.stringify(completeState)};
     let seen = false;
     try { seen = window.sessionStorage.getItem(key) === "seen"; } catch {}
@@ -36,40 +38,51 @@ export default function GreetingReveal({
     if (reduced && !seen) {
       try { window.sessionStorage.setItem(key, "seen"); } catch {}
     }
-    heading.dataset.greetingState = seen || reduced ? complete : play;
+    const welcomeWillPlay = window.__oliverWelcomeShouldPlay === true;
+    heading.dataset.greetingState = seen || reduced ? complete : (welcomeWillPlay ? waiting : play);
   })();`;
 
   useEffect(() => {
     const heading = document.getElementById(id);
-    if (heading?.dataset.greetingState !== playState) return;
-
-    // Mark the greeting as seen as soon as the one-time reveal begins. If a
-    // visitor navigates away mid-animation, it still will not replay later in
-    // the same browser session.
-    try {
-      window.sessionStorage.setItem(sessionKey, "seen");
-    } catch {
-      // Session storage is optional; the heading remains fully readable.
-    }
+    if (!heading) return;
 
     const completeGreeting = () => {
       heading.dataset.greetingState = completeState;
     };
     const finalCursor = heading.querySelector<HTMLElement>(".greeting-cursor-rest");
-    finalCursor?.addEventListener("animationend", completeGreeting, { once: true });
+    let completionTimer = 0;
 
-    // The animation event is the source of truth. This fallback only protects
-    // the fully readable final state if a browser drops that event.
-    const completionTimer = window.setTimeout(
-      completeGreeting,
-      greetingFallbackDurations[locale],
-    );
+    const startGreeting = () => {
+      heading.dataset.greetingState = playState;
+      // Mark the greeting as seen as soon as the one-time reveal begins. If a
+      // visitor navigates away mid-animation, it still will not replay later in
+      // the same browser session.
+      try {
+        window.sessionStorage.setItem(sessionKey, "seen");
+      } catch {
+        // Session storage is optional; the heading remains fully readable.
+      }
+
+      finalCursor?.addEventListener("animationend", completeGreeting, { once: true });
+      completionTimer = window.setTimeout(
+        completeGreeting,
+        greetingFallbackDurations[locale],
+      );
+    };
+
+    const waitingForWelcome = heading.dataset.greetingState === waitingState;
+    if (waitingForWelcome) {
+      window.addEventListener("oliver:welcome-complete", startGreeting, { once: true });
+    } else if (heading.dataset.greetingState === playState) {
+      startGreeting();
+    }
 
     return () => {
       window.clearTimeout(completionTimer);
+      window.removeEventListener("oliver:welcome-complete", startGreeting);
       finalCursor?.removeEventListener("animationend", completeGreeting);
     };
-  }, [completeState, id, locale, playState, sessionKey]);
+  }, [completeState, id, locale, playState, sessionKey, waitingState]);
 
   return (
     <>

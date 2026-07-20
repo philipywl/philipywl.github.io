@@ -9,7 +9,6 @@ type YouTubeVideoProps = {
   ratio: "video" | "portrait-video";
   playLabel: string;
   loadingLabel: string;
-  openLabel: string;
 };
 
 export default function YouTubeVideo({
@@ -19,12 +18,10 @@ export default function YouTubeVideo({
   ratio,
   playLabel,
   loadingLabel,
-  openLabel,
 }: YouTubeVideoProps) {
   const [active, setActive] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
   useLayoutEffect(() => {
     if (active) iframeRef.current?.focus();
@@ -67,12 +64,7 @@ export default function YouTubeVideo({
           </button>
         )}
       </div>
-      <figcaption>
-        <span>{caption}</span>
-        <a href={watchUrl} target="_blank" rel="noopener noreferrer">
-          {openLabel}
-        </a>
-      </figcaption>
+      <figcaption>{caption}</figcaption>
     </figure>
   );
 }
