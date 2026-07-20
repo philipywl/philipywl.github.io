@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 type YouTubeVideoProps = {
   videoId: string;
+  poster: string;
   title: string;
   caption: string;
   ratio: "video" | "portrait-video";
@@ -13,6 +14,7 @@ type YouTubeVideoProps = {
 
 export default function YouTubeVideo({
   videoId,
+  poster,
   title,
   caption,
   ratio,
@@ -22,6 +24,11 @@ export default function YouTubeVideo({
   const [active, setActive] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const landscape = ratio === "video";
+  const posterSmall = landscape ? 320 : 240;
+  const posterLarge = landscape ? 480 : 405;
+  const posterWidth = landscape ? 480 : 405;
+  const posterHeight = landscape ? 270 : 720;
 
   useLayoutEffect(() => {
     if (active) iframeRef.current?.focus();
@@ -58,7 +65,21 @@ export default function YouTubeVideo({
             onClick={() => setActive(true)}
             aria-label={`${playLabel}: ${title}`}
           >
-            <span className="youtube-video-orbit" aria-hidden="true" />
+            {/* These pre-cropped local posters intentionally use an explicit srcset;
+                no runtime image service is available on the static Pages build. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="youtube-video-poster"
+              src={`/media/video/${poster}-${posterLarge}.webp`}
+              srcSet={`/media/video/${poster}-${posterSmall}.webp ${posterSmall}w, /media/video/${poster}-${posterLarge}.webp ${posterLarge}w`}
+              sizes={landscape ? "(min-width: 48rem) 320px, calc(100vw - 84px)" : "(min-width: 48rem) 340px, calc(100vw - 84px)"}
+              width={posterWidth}
+              height={posterHeight}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            <span className="youtube-video-scrim" aria-hidden="true" />
             <span className="youtube-video-play" aria-hidden="true" />
             <span className="youtube-video-trigger-label">{playLabel}</span>
           </button>

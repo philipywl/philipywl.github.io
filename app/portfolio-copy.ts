@@ -25,9 +25,19 @@ type PlaceholderCopy = {
   detail: string;
 };
 
+type VideoPosterName =
+  | "problem-solving"
+  | "following-directions"
+  | "body-and-family"
+  | "reading-pages"
+  | "water-step"
+  | "piano-keys"
+  | "feeding-rabbits";
+
 type VideoCopy = {
   kind: "video";
   videoId: string;
+  poster: VideoPosterName;
   title: string;
   caption: string;
   ratio: "video" | "portrait-video";
@@ -82,7 +92,6 @@ type PortfolioCopy = {
   };
   welcome: {
     message: string;
-    skip: string;
   };
   hero: {
     eyebrow: string;
@@ -170,7 +179,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
     },
     welcome: {
       message: "Welcome to Oliver's little world.",
-      skip: "Skip welcome",
     },
     hero: {
       eyebrow: "Oliver's learning journey",
@@ -201,7 +209,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           title: "Reading together",
           body:
-            "Every day, Mum and Dad open a book with Oliver. He often chooses one from the shelf by himself; during story time at playgroup, he listens closely as the teacher reads. Books have become both a gentle family ritual and a little world he chooses to enter.",
+            "Every day, Mum and Dad open a book with Oliver. He often chooses one from the shelf by himself; during story time at playgroup, he listens closely as the teacher shares a story. Books have become both a gentle family ritual and a little world he chooses to enter.",
           media: {
             name: "about-reading",
             alt: "Twelve-month-old Oliver sits close to an adult family member as they look at a board book together; the adult points to the page.",
@@ -225,6 +233,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           media: {
             kind: "video",
             videoId: "9QrYnWYsVUQ",
+            poster: "problem-solving",
             title: "Oliver explores a problem-solving toy",
             caption:
               "At 19 months, Oliver tried the toy's movable piece in different ways and gradually found how to open it.",
@@ -273,6 +282,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "1Fxx4dzHCFo",
+              poster: "following-directions",
               title:
                 "Oliver listens to a request and brings a named item to a family member",
               caption:
@@ -282,6 +292,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "FW24LCUNS_w",
+              poster: "body-and-family",
               title:
                 "Oliver listens and points to familiar people and body parts",
               caption:
@@ -306,6 +317,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "kgPKylmVI7s",
+              poster: "reading-pages",
               title:
                 "Oliver looks through a book and turns the page by himself",
               caption:
@@ -338,6 +350,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "BxMkQkxApBg",
+              poster: "water-step",
               title:
                 "Oliver takes part in a closely supervised underwater swimming moment",
               caption:
@@ -362,6 +375,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "2RE83LVmTVk",
+              poster: "piano-keys",
               title: "Oliver explores the piano at playgroup",
               caption:
                 "At 17 months, Oliver returned to the piano and explored the keys in his own way.",
@@ -375,7 +389,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           observation:
             "At 15 months, Mum and Dad took Oliver to Kadoorie Farm to see the animals. When he met an owl at close range, he reached out for a gentle touch. At 17 months, in another animal encounter, he offered food to a rabbit.",
           noticed:
-            "In both moments, Oliver paused to look before reaching out slowly with an adult close beside him. His curiosity became a gentle beginning to meeting another living creature.",
+            "In both moments, Oliver paused to look before reaching out slowly with an adult close beside him. His curiosity became a gentle way of meeting another living creature.",
           support:
             "Mum and Dad will continue offering calm, closely supervised encounters with nature—looking first, then moving closer at a pace that respects both Oliver and the animal.",
           reflection:
@@ -393,6 +407,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "rcpBdZzHJAk",
+              poster: "feeding-rabbits",
               title: "Oliver offers food to a rabbit",
               caption:
                 "At 17 months, Oliver offered food to a rabbit during a family outing.",
@@ -564,7 +579,6 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
     },
     welcome: {
       message: "歡迎走進昊熹的小小世界。",
-      skip: "略過歡迎畫面",
     },
     hero: {
       eyebrow: "昊熹的成長旅程",
@@ -593,7 +607,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           title: "親子共讀",
           body:
-            "爸爸媽媽每天都會陪昊熹打開一本書。他平日會主動從書架拿書來看；在幼兒遊戲班的故事時間，他也會專心聽老師朗讀。書本既是一家人熟悉的溫暖日常，也是他會主動走進的小天地。",
+            "爸爸媽媽每天都會陪昊熹打開一本書。他平日會主動從書架拿書來看；在幼兒遊戲班的故事時間，他也會專心聽老師說故事。書本既是一家人熟悉的溫暖日常，也是他會主動走進的小天地。",
           media: {
             name: "about-reading",
             alt: "12個月大的昊熹依偎在一位成年家人身旁一起看圖書，家人正指着書頁。",
@@ -617,6 +631,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           media: {
             kind: "video",
             videoId: "9QrYnWYsVUQ",
+            poster: "problem-solving",
             title: "昊熹專心研究解難玩具",
             caption: "19個月大時，昊熹反覆嘗試玩具上可以開合的部件，慢慢找到讓它打開的方法。",
             ratio: "video",
@@ -638,7 +653,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "成長故事",
       title: "把日常片段，輕輕收進故事裏",
       intro:
-        "五個故事，都從一件細小而真實的事情開始：聽見一句說話並作出回應、自己翻過一頁書、在水裏踏出一小步、再次走近琴鍵，或輕輕伸手親近小動物。每個片段都記下昊熹做了甚麼、如何回應，以及家人怎樣陪在身旁。",
+        "五個故事，都從一件細小而真實的事情開始：聽見一句話，便用行動回應；自己翻過一頁書；在水裏踏出一小步；再次走近琴鍵；或輕輕伸手親近小動物。每個片段都記下昊熹做了甚麼、如何回應，以及家人怎樣陪在身旁。",
       mediaNote: "影片不會自動播放；只有在你選擇播放後，才會從 YouTube 載入。",
       whatHappened: "當時的小故事",
       noticed: "這一刻，我們看見……",
@@ -662,6 +677,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "1Fxx4dzHCFo",
+              poster: "following-directions",
               title: "昊熹聽到說話後，把指定物件拿給家人",
               caption: "17個月大時，昊熹找到指定物件，再拿給家人。",
               ratio: "portrait-video",
@@ -669,6 +685,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "FW24LCUNS_w",
+              poster: "body-and-family",
               title: "昊熹按照簡單指示，指出熟悉的家人和身體部位",
               caption: "18個月大時，昊熹按照簡單指示，指出熟悉的身體部位，以及爸爸和媽媽。",
               ratio: "portrait-video",
@@ -681,7 +698,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           observation:
             "昊熹自己看書，按自己的步伐細看眼前的一頁。看完後，他自行翻到下一頁，再繼續看下去。",
           noticed:
-            "每天一起建立的閱讀節奏，也慢慢成為昊熹可以自己展開的一段安靜小旅程。",
+            "每天一起翻過的書頁，也慢慢成為昊熹能自己展開的一段安靜小旅程。",
           support:
             "家中的書會繼續放在昊熹容易拿到的位置。爸爸媽媽每天陪他閱讀，也留一點從容時間，讓他自己再回到熟悉的書頁。",
           reflection:
@@ -691,6 +708,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "kgPKylmVI7s",
+              poster: "reading-pages",
               title: "昊熹自己看書，並自行翻到下一頁",
               caption: "18個月大時，昊熹自己看書，並自行翻到下一頁。",
               ratio: "portrait-video",
@@ -720,6 +738,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "BxMkQkxApBg",
+              poster: "water-step",
               title: "昊熹在大人陪伴下潛進水裏",
               caption: "19個月大時，昊熹在大人陪伴下，參與了一次短短的潛水體驗。",
               ratio: "portrait-video",
@@ -730,9 +749,9 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           title: "總會走近的琴鍵",
           age: "17個月大",
           observation:
-            "每次到幼兒遊戲班，昊熹總會走到鋼琴旁。這段短片記下他留在琴鍵旁，按自己的方式探索一個個聲音。",
+            "每次到幼兒遊戲班，昊熹總會走到鋼琴旁。這段短片記下他停在琴鍵前，按自己的方式探索一個個聲音。",
           noticed:
-            "爸爸媽媽留意到，遇上感興趣的事物時，昊熹總會自然地再次走近，把安靜而持續的專注放在一個個聲音上。",
+            "爸爸媽媽留意到，遇上感興趣的事物時，昊熹會一次又一次走近，安靜而專心地探索。",
           support:
             "爸爸媽媽會繼續留出從容的音樂遊戲時間，細心聽着，也溫暖回應昊熹親手發現的聲音。",
           reflection: "幼兒遊戲班裏有許多角落，鋼琴總是昊熹一次又一次走回去的地方。",
@@ -741,6 +760,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "2RE83LVmTVk",
+              poster: "piano-keys",
               title: "昊熹在幼兒遊戲班探索鋼琴",
               caption: "17個月大時，昊熹再次走到鋼琴旁，按自己的方式探索琴鍵。",
               ratio: "portrait-video",
@@ -757,7 +777,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "爸爸媽媽會繼續帶他在安全、尊重動物的情況下親近自然：先觀察，再按昊熹和動物的反應慢慢靠近。",
           reflection:
-            "小手輕輕伸出去，就像向自然說了一聲安靜的「你好」。",
+            "小手慢慢伸出去，就像向自然說了一聲「你好」。",
           tags: ["探索", "關愛"],
           media: [
             {
@@ -770,6 +790,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             {
               kind: "video",
               videoId: "rcpBdZzHJAk",
+              poster: "feeding-rabbits",
               title: "昊熹把食物遞給小兔",
               caption: "17個月大時，昊熹在家庭外出時把食物遞給小兔。",
               ratio: "portrait-video",
@@ -793,7 +814,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         },
         {
           title: "倒進另一杯",
-          body: "16個月大時，昊熹嘗試把一隻杯裏的東西倒進另一隻杯，之後又在另一日重拾這個動作。",
+          body: "16個月大時，昊熹嘗試把一隻杯裏的東西倒進另一隻杯。到另一日，他又再試了一次。",
         },
         {
           title: "一起收拾",

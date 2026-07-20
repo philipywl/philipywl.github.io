@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
-const sessionKey = "oliver-welcome-v1";
+const sessionKey = "oliver-welcome-v2";
 const completeEvent = "oliver:welcome-complete";
+const welcomeDurationMs = 7000;
+const exitDurationMs = 280;
 
 type WelcomeIntroProps = {
   message: string;
-  skipLabel: string;
 };
 
 function sourceSet(name: "welcome-family" | "welcome-walk", extension: "avif" | "webp") {
@@ -16,10 +17,10 @@ function sourceSet(name: "welcome-family" | "welcome-walk", extension: "avif" | 
     .join(", ");
 }
 
-export default function WelcomeIntro({ message, skipLabel }: WelcomeIntroProps) {
+export default function WelcomeIntro({ message }: WelcomeIntroProps) {
   const rootRef = useRef<HTMLElement>(null);
-  const skipRef = useRef<HTMLButtonElement>(null);
   const closedRef = useRef(false);
+  const exitTimerRef = useRef(0);
   const bootstrap = `(() => {
     const root = document.getElementById("welcome-intro");
     if (!root) return;
@@ -34,6 +35,35 @@ export default function WelcomeIntro({ message, skipLabel }: WelcomeIntroProps) 
       try { window.sessionStorage.setItem(${JSON.stringify(sessionKey)}, "seen"); } catch {}
     }
   })();`;
+
+  const completeWelcome = useCallback((focusHero = false) => {
+    const root = rootRef.current;
+    if (!root) return;
+    root.dataset.welcomeState = "hidden";
+    document.getElementById("top")?.removeAttribute("inert");
+    document.body.classList.remove("welcome-open");
+    window.dispatchEvent(new Event(completeEvent));
+    if (focusHero) {
+      document.getElementById("hero-title")?.focus({ preventScroll: true });
+    }
+  }, []);
+
+  const dismissWelcome = useCallback(() => {
+    const root = rootRef.current;
+    if (!root || closedRef.current) return;
+    closedRef.current = true;
+    root.dataset.welcomeState = "exiting";
+    exitTimerRef.current = window.setTimeout(
+      () => completeWelcome(true),
+      exitDurationMs,
+    );
+  }, [completeWelcome]);
+
+  const failOpen = useCallback(() => {
+    if (closedRef.current) return;
+    closedRef.current = true;
+    completeWelcome(false);
+  }, [completeWelcome]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -52,58 +82,25 @@ export default function WelcomeIntro({ message, skipLabel }: WelcomeIntroProps) 
 
     site?.setAttribute("inert", "");
     document.body.classList.add("welcome-open");
-    window.requestAnimationFrame(() => skipRef.current?.focus({ preventScroll: true }));
-
-    let hideTimer = 0;
-    const complete = () => {
-      root.dataset.welcomeState = "hidden";
-      site?.removeAttribute("inert");
-      document.body.classList.remove("welcome-open");
-      window.dispatchEvent(new Event(completeEvent));
-      if (root.contains(document.activeElement)) {
-        document.getElementById("hero-title")?.focus({ preventScroll: true });
-      }
-    };
-
-    const finish = (animateExit = true) => {
-      if (closedRef.current) return;
-      closedRef.current = true;
-      if (!animateExit) {
-        complete();
-        return;
-      }
-      root.dataset.welcomeState = "exiting";
-      hideTimer = window.setTimeout(complete, 320);
-    };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") finish();
+      if (event.key === "Escape") dismissWelcome();
     };
     window.addEventListener("keydown", onKeyDown);
-    const completionTimer = window.setTimeout(() => finish(false), 2700);
+    const completionTimer = window.setTimeout(() => {
+      if (closedRef.current) return;
+      closedRef.current = true;
+      completeWelcome(false);
+    }, welcomeDurationMs);
 
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       window.clearTimeout(completionTimer);
-      window.clearTimeout(hideTimer);
+      window.clearTimeout(exitTimerRef.current);
       site?.removeAttribute("inert");
       document.body.classList.remove("welcome-open");
     };
-  }, []);
-
-  const skipWelcome = () => {
-    const root = rootRef.current;
-    if (!root || closedRef.current) return;
-    closedRef.current = true;
-    root.dataset.welcomeState = "exiting";
-    window.setTimeout(() => {
-      root.dataset.welcomeState = "hidden";
-      document.getElementById("top")?.removeAttribute("inert");
-      document.body.classList.remove("welcome-open");
-      window.dispatchEvent(new Event(completeEvent));
-      document.getElementById("hero-title")?.focus({ preventScroll: true });
-    }, 320);
-  };
+  }, [completeWelcome, dismissWelcome]);
 
   return (
     <>
@@ -112,10 +109,14 @@ export default function WelcomeIntro({ message, skipLabel }: WelcomeIntroProps) 
         ref={rootRef}
         className="welcome-intro no-print"
         data-welcome-state="hidden"
-        aria-labelledby="welcome-intro-message"
         suppressHydrationWarning
       >
-        <p id="welcome-intro-message" className="sr-only">
+        <p
+          id="welcome-intro-message"
+          className="sr-only"
+          role="status"
+          aria-live="polite"
+        >
           {message}
         </p>
         <div className="welcome-photo-pair" aria-hidden="true">
@@ -127,20 +128,20 @@ export default function WelcomeIntro({ message, skipLabel }: WelcomeIntroProps) 
               <picture>
                 <source
                   srcSet={sourceSet(name, "avif")}
-                  sizes="(min-width: 48rem) 360px, calc(50vw - 28px)"
+                  sizes="50vw"
                   type="image/avif"
                 />
                 <img
                   src={`/media/oliver/${name}-800.webp`}
                   srcSet={sourceSet(name, "webp")}
-                  sizes="(min-width: 48rem) 360px, calc(50vw - 28px)"
+                  sizes="50vw"
                   width="1200"
                   height="1500"
                   alt=""
                   loading="eager"
                   fetchPriority="high"
                   decoding="async"
-                  onError={skipWelcome}
+                  onError={failOpen}
                 />
               </picture>
             </div>
@@ -149,14 +150,6 @@ export default function WelcomeIntro({ message, skipLabel }: WelcomeIntroProps) 
         <p className="welcome-message" aria-hidden="true">
           {message}
         </p>
-        <button
-          ref={skipRef}
-          className="welcome-skip"
-          type="button"
-          onClick={skipWelcome}
-        >
-          {skipLabel}
-        </button>
       </aside>
       <script dangerouslySetInnerHTML={{ __html: bootstrap }} />
     </>

@@ -140,7 +140,7 @@ function expectApprovedPhotos(html, locale) {
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
   assert.equal(pictures.length, 14);
   assert.equal(sources.length, 14);
-  assert.equal(images.length, 14);
+  assert.equal(images.length, 21);
 
   const expected = locale === "en"
     ? [
@@ -197,9 +197,29 @@ function expectApprovedPhotos(html, locale) {
     assert.equal(getAttribute(image, "loading"), "eager");
   }
 
+  const posters = [
+    ["problem-solving", "480", "270"],
+    ["following-directions", "405", "720"],
+    ["body-and-family", "405", "720"],
+    ["reading-pages", "405", "720"],
+    ["water-step", "405", "720"],
+    ["piano-keys", "405", "720"],
+    ["feeding-rabbits", "405", "720"],
+  ];
+  for (const [name, width, height] of posters) {
+    const image = images.find((tag) => getAttribute(tag, "src") === `/media/video/${name}-${width}.webp`);
+    assert.ok(image, `missing local video poster: ${name}`);
+    assert.equal(getAttribute(image, "alt"), "");
+    assert.equal(getAttribute(image, "width"), width);
+    assert.equal(getAttribute(image, "height"), height);
+    assert.equal(getAttribute(image, "loading"), "lazy");
+    assert.match(getAttribute(image, "srcset") ?? "", new RegExp(`/media/video/${name}-`));
+  }
+
   assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "eager").length, 2);
-  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 12);
+  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 19);
   assert.doesNotMatch(photoSurface, /10(?:0\d|1\d)|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i);
+  assert.doesNotMatch(html, /i\.ytimg\.com|img\.youtube\.com/);
 }
 
 test("renders the refined English public homepage", async () => {
@@ -406,6 +426,13 @@ test("keeps placeholders inert, photographs responsive, videos deferred, and mot
   assert.match(youtubeVideo, /loading="lazy"/);
   assert.match(youtubeVideo, /onClick=\{\(\) => setActive\(true\)\}/);
   assert.match(youtubeVideo, /\{loadingLabel\}/);
+  assert.match(youtubeVideo, /const posterSmall = landscape \? 320 : 240/);
+  assert.match(youtubeVideo, /const posterLarge = landscape \? 480 : 405/);
+  assert.match(youtubeVideo, /\/media\/video\/\$\{poster\}-\$\{posterSmall\}\.webp/);
+  assert.match(youtubeVideo, /\/media\/video\/\$\{poster\}-\$\{posterLarge\}\.webp/);
+  assert.match(youtubeVideo, /srcSet=/);
+  assert.match(youtubeVideo, /alt=""/);
+  assert.doesNotMatch(youtubeVideo, /i\.ytimg\.com|img\.youtube\.com/);
   assert.doesNotMatch(youtubeVideo, /<video\b|autoPlay|\bloop\b/);
   assert.match(greeting, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
   assert.match(welcomeIntro, /sessionStorage\.getItem/);
@@ -420,8 +447,12 @@ test("keeps placeholders inert, photographs responsive, videos deferred, and mot
   assert.match(welcomeIntro, /className=\{`welcome-photo \$\{motionClass\}`\}/);
   assert.match(css, /\.welcome-photo-family\s*\{[\s\S]*?animation:\s*welcome-photo-left/);
   assert.match(css, /\.welcome-photo-walk\s*\{[\s\S]*?animation:\s*welcome-photo-right/);
-  assert.match(welcomeIntro, /setTimeout\(\(\) => finish\(false\), 2700\)/);
-  assert.match(css, /data-welcome-state="exiting"\][\s\S]*?animation:\s*welcome-exit 300ms/);
+  assert.match(welcomeIntro, /const welcomeDurationMs = 7000/);
+  assert.match(welcomeIntro, /const completionTimer = window\.setTimeout\(\(\) => \{/);
+  assert.match(welcomeIntro, /\}, welcomeDurationMs\);/);
+  assert.match(css, /data-welcome-state="exiting"\][\s\S]*?animation:\s*welcome-exit 280ms/);
+  assert.doesNotMatch(welcomeIntro, /skipLabel|welcome-skip|Skip welcome|略過歡迎/);
+  assert.doesNotMatch(css, /\.welcome-skip/);
   assert.doesNotMatch(welcomeIntro, /setInterval|\bloop\b/);
   assert.match(responsivePhoto, /<picture>/);
   assert.match(responsivePhoto, /image\/avif/);

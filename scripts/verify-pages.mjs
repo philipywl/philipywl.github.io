@@ -28,12 +28,24 @@ const approvedVideoIds = [
   "kgPKylmVI7s",
   "rcpBdZzHJAk",
 ];
+const approvedVideoPosters = [
+  { name: "problem-solving", widths: [320, 480], width: "480", height: "270" },
+  { name: "following-directions", widths: [240, 405], width: "405", height: "720" },
+  { name: "body-and-family", widths: [240, 405], width: "405", height: "720" },
+  { name: "reading-pages", widths: [240, 405], width: "405", height: "720" },
+  { name: "water-step", widths: [240, 405], width: "405", height: "720" },
+  { name: "piano-keys", widths: [240, 405], width: "405", height: "720" },
+  { name: "feeding-rabbits", widths: [240, 405], width: "405", height: "720" },
+];
 const approvedPhotoWidths = [480, 800, 1200];
 const requiredPhotoFiles = approvedPhotoNames.flatMap((name) =>
   approvedPhotoWidths.flatMap((width) => [
     `media/oliver/${name}-${width}.avif`,
     `media/oliver/${name}-${width}.webp`,
   ]),
+);
+const requiredVideoPosterFiles = approvedVideoPosters.flatMap(({ name, widths }) =>
+  widths.map((width) => `media/video/${name}-${width}.webp`),
 );
 const requiredFiles = [
   "index.html",
@@ -47,6 +59,7 @@ const requiredFiles = [
   "apple-touch-icon.png",
   approvedSocialPreview,
   ...requiredPhotoFiles,
+  ...requiredVideoPosterFiles,
 ];
 const textExtensions = new Set([
   ".html",
@@ -287,8 +300,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 14) {
-    fail(`${route} must contain exactly fourteen approved responsive photographs`);
+  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 21) {
+    fail(`${route} must contain fourteen responsive photographs and seven local video posters`);
   }
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
@@ -331,11 +344,30 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
     }
   }
 
+  for (const { name, widths, width, height } of approvedVideoPosters) {
+    const [small, large] = widths;
+    const image = images.find((tag) => getAttribute(tag, "src") === `/media/video/${name}-${large}.webp`);
+    if (!image || getAttribute(image, "class") !== "youtube-video-poster") {
+      fail(`${route} lacks the approved local video poster: ${name}`);
+    }
+    if (getAttribute(image, "width") !== width || getAttribute(image, "height") !== height) {
+      fail(`${route} video poster lacks stable intrinsic dimensions: ${name}`);
+    }
+    if (getAttribute(image, "alt") !== "" || getAttribute(image, "loading") !== "lazy") {
+      fail(`${route} video poster must be decorative and lazy-loaded: ${name}`);
+    }
+    const srcset = getAttribute(image, "srcset") ?? "";
+    if (!srcset.includes(`/media/video/${name}-${small}.webp ${small}w`) ||
+        !srcset.includes(`/media/video/${name}-${large}.webp ${large}w`)) {
+      fail(`${route} video poster lacks the approved responsive srcset: ${name}`);
+    }
+  }
+
   if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 2) {
     fail(`${route} must eagerly load only the two welcome photographs`);
   }
-  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 12) {
-    fail(`${route} must lazy-load all twelve content photographs`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 19) {
+    fail(`${route} must lazy-load twelve content photographs and seven video posters`);
   }
 }
 
@@ -358,6 +390,10 @@ const artifactPhotos = files.filter((file) => file.startsWith("media/oliver/")).
 if (JSON.stringify(artifactPhotos) !== JSON.stringify(requiredPhotoFiles.sort())) {
   fail("the Pages artifact does not contain exactly the approved reduced photo derivatives");
 }
+const artifactVideoPosters = files.filter((file) => file.startsWith("media/video/")).sort();
+if (JSON.stringify(artifactVideoPosters) !== JSON.stringify(requiredVideoPosterFiles.sort())) {
+  fail("the Pages artifact does not contain exactly the approved local video posters");
+}
 
 const privateBirthDate = process.env.OLIVER_BIRTH_DATE?.trim();
 let hasPrivacyEnhancedVideoEmbed = false;
@@ -378,6 +414,20 @@ for (const relativePath of files) {
     ]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`photo derivative contains private metadata or an original filename: out/${relativePath}`);
+      }
+    }
+  }
+  if (relativePath.startsWith("media/video/")) {
+    const bytes = await readFile(absolutePath);
+    if (bytes.length < 5_000 || bytes.length > 120_000) {
+      fail(`video poster has an unexpected size: out/${relativePath}`);
+    }
+    for (const marker of [
+      "Exif", "GPS", "XMP", ...approvedVideoIds,
+      "1004", "1005", "1006", "1007", "1008", "1009", "1015",
+    ]) {
+      if (bytes.includes(Buffer.from(marker))) {
+        fail(`video poster contains private metadata or a source identifier: out/${relativePath}`);
       }
     }
   }
