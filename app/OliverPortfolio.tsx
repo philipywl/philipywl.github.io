@@ -85,7 +85,7 @@ export default function OliverPortfolio({
 
   return (
     <>
-      <WelcomeIntro message={copy.welcome.message} skipLabel={copy.welcome.skip} />
+      <WelcomeIntro message={copy.welcome.message} />
       <div id="top" className="site-shell" lang={copy.lang}>
       <a className="skip-link" href="#main-content" onClick={focusMain}>{copy.skip}</a>
 
@@ -201,6 +201,7 @@ export default function OliverPortfolio({
                     <div className="about-field-video">
                       <YouTubeVideo
                         videoId={field.media.videoId}
+                        poster={field.media.poster}
                         title={field.media.title}
                         caption={field.media.caption}
                         ratio={field.media.ratio}
@@ -262,6 +263,7 @@ export default function OliverPortfolio({
                       <YouTubeVideo
                         key={`${story.title}-${media.videoId}`}
                         videoId={media.videoId}
+                        poster={media.poster}
                         title={media.title}
                         caption={media.caption}
                         ratio={media.ratio}

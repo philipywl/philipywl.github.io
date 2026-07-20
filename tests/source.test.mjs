@@ -297,6 +297,16 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
     "rcpBdZzHJAk",
   ]) assert.equal(copy.split(videoId).length - 1, 2, videoId);
 
+  for (const poster of [
+    "problem-solving",
+    "following-directions",
+    "body-and-family",
+    "reading-pages",
+    "water-step",
+    "piano-keys",
+    "feeding-rabbits",
+  ]) assert.equal(copy.split(`poster: "${poster}"`).length - 1, 2, poster);
+
   for (const id of ["top", "about", "stories", "growth", "family"]) {
     assert.match(portfolio, new RegExp(`id=["']${id}["']`));
   }
@@ -332,6 +342,11 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(youtubeVideo, /active \? \(/);
   assert.match(youtubeVideo, /onClick=\{\(\) => setActive\(true\)\}/);
   assert.match(youtubeVideo, /\{loadingLabel\}/);
+  assert.match(youtubeVideo, /className="youtube-video-poster"/);
+  assert.match(youtubeVideo, /\/media\/video\/\$\{poster\}-\$\{posterLarge\}\.webp/);
+  assert.match(youtubeVideo, /srcSet=.*posterSmall[\s\S]*?posterLarge/);
+  assert.match(youtubeVideo, /alt=""/);
+  assert.doesNotMatch(youtubeVideo, /i\.ytimg\.com|img\.youtube\.com/);
   assert.match(copy, /loadingVideo: "Loading video…"/);
   assert.match(copy, /loadingVideo: "正在載入影片……"/);
   assert.match(youtubeVideo, /loading="lazy"/);
@@ -354,9 +369,17 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(welcomeIntro, /motionClass: "welcome-photo-family"/);
   assert.match(welcomeIntro, /motionClass: "welcome-photo-walk"/);
   assert.match(welcomeIntro, /className=\{`welcome-photo \$\{motionClass\}`\}/);
-  assert.doesNotMatch(welcomeIntro, /setInterval|\bloop\b|\.jpe?g|10(?:0\d|1\d)/i);
-  assert.match(welcomeIntro, /setTimeout\(\(\) => finish\(false\), 2700\)/);
-  assert.match(css, /data-welcome-state="exiting"\][\s\S]*?animation:\s*welcome-exit 300ms/);
+  assert.doesNotMatch(welcomeIntro, /setInterval|\bloop\b|\.jpe?g|10(?:0\d|1\d)|skipLabel|welcome-skip/i);
+  assert.match(welcomeIntro, /const welcomeDurationMs = 7000/);
+  assert.match(welcomeIntro, /window\.setTimeout\(\(\) => \{[\s\S]*?completeWelcome\(false\)[\s\S]*?welcomeDurationMs/);
+  assert.match(css, /data-welcome-state="exiting"\][\s\S]*?animation:\s*welcome-exit 280ms/);
+  assert.match(css, /\.welcome-photo-pair\s*\{[\s\S]*?width:\s*100vw[\s\S]*?height:\s*100svh[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(css, /\.welcome-photo-family\s*\{[\s\S]*?animation:\s*welcome-photo-left 7s/);
+  assert.match(css, /\.welcome-photo-walk\s*\{[\s\S]*?animation:\s*welcome-photo-right 7s/);
+  assert.match(css, /\.welcome-message\s*\{[\s\S]*?animation:\s*welcome-message 7s/);
+  assert.match(css, /html:has\(body\.welcome-open\)\s*\{[\s\S]*?scrollbar-gutter:\s*auto/);
+  assert.doesNotMatch(css, /\.welcome-skip/);
+  assert.match(css, /\.youtube-video-video \.youtube-video-trigger-label\s*\{[\s\S]*?display:\s*none/);
   assert.match(responsivePhoto, /<picture>/);
   assert.match(responsivePhoto, /type="image\/avif"/);
   assert.match(responsivePhoto, /<img/);
@@ -410,6 +433,35 @@ test("ships only the approved reduced metadata-free photo derivatives", async ()
       "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022",
     ]) assert.equal(bytes.includes(Buffer.from(originalName)), false, file);
     assert.equal(bytes.includes(Buffer.from("GPS")), false, file);
+  }
+});
+
+test("ships only approved local metadata-free video posters", async () => {
+  const posterDirectory = path.join(projectRoot, "public", "media", "video");
+  const files = (await readdir(posterDirectory)).sort();
+  const expected = [
+    ...["problem-solving"].flatMap((name) => [320, 480].map((width) => `${name}-${width}.webp`)),
+    ...[
+      "body-and-family",
+      "feeding-rabbits",
+      "following-directions",
+      "piano-keys",
+      "reading-pages",
+      "water-step",
+    ].flatMap((name) => [240, 405].map((width) => `${name}-${width}.webp`)),
+  ].sort();
+
+  assert.deepEqual(files, expected);
+  for (const file of files) {
+    const bytes = await readFile(path.join(posterDirectory, file));
+    assert.ok(bytes.length > 1_000 && bytes.length < 150_000, file);
+    for (const marker of [
+      "Exif", "GPS", "XMP", "youtube", "youtu.be",
+      "9QrYnWYsVUQ", "1Fxx4dzHCFo", "FW24LCUNS_w", "kgPKylmVI7s",
+      "BxMkQkxApBg", "2RE83LVmTVk", "rcpBdZzHJAk",
+    ]) {
+      assert.equal(bytes.includes(Buffer.from(marker)), false, `${file}: ${marker}`);
+    }
   }
 });
 
@@ -516,10 +568,12 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
   assert.match(css, /meadow-balloon-blue 4\.9s[^;]*forwards/);
   assert.match(css, /meadow-balloon-peach 4\.8s 100ms[^;]*forwards/);
   assert.match(css, /meadow-balloon-honey 4\.7s 180ms[^;]*forwards/);
-  assert.match(css, /\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?position:\s*absolute[\s\S]*?z-index:\s*1[\s\S]*?width:\s*min\(145vw, 470px\)[\s\S]*?aspect-ratio:\s*520 \/ 298/);
+  assert.match(css, /\.hero-copy\s*\{[\s\S]*?position:\s*relative[\s\S]*?z-index:\s*3/);
+  assert.match(css, /\.hero-visual\s*\{[\s\S]*?z-index:\s*1[\s\S]*?overflow:\s*clip/);
+  assert.match(css, /\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?position:\s*absolute[\s\S]*?z-index:\s*0[\s\S]*?width:\s*190%[\s\S]*?aspect-ratio:\s*520 \/ 298/);
   assert.match(css, /\.hero-preview-media\s*\{[\s\S]*?z-index:\s*2/);
-  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*min\(78vw, 590px\)/);
-  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*min\(58vw, 680px\)/);
+  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*190%/);
+  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*190%/);
   assert.doesNotMatch(css, /right:\s*-210px|31\.25vw - 440px/);
   assert.match(css, /\.meadow-decor-balloons\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
   assert.match(css, /\.meadow-decor-tree\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
