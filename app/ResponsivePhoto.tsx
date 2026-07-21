@@ -15,6 +15,7 @@ const photoDimensions: Record<
   ResponsivePhotoProps["name"],
   { width: number; height: number }
 > = {
+  "hero-portrait": { width: 1200, height: 1600 },
   portrait: { width: 1200, height: 1600 },
   "family-care": { width: 1200, height: 1500 },
   "family-main": { width: 1200, height: 800 },

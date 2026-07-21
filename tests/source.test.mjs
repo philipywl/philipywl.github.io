@@ -4,6 +4,7 @@ import { access, readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import test from "node:test";
+import { resolveLanguageSection } from "../app/section-navigation.mjs";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 
@@ -24,6 +25,44 @@ async function collectSourceFiles(directory) {
 
   return files;
 }
+
+test("language changes follow an in-flight target, then the visible section", () => {
+  assert.equal(
+    resolveLanguageSection({
+      nearTop: false,
+      pendingSection: "#stories",
+      currentSectionId: "about",
+      routeHash: "#about",
+    }),
+    "#stories",
+  );
+  assert.equal(
+    resolveLanguageSection({
+      nearTop: false,
+      currentSectionId: "family",
+      activeHref: "#about",
+      routeHash: "#about",
+    }),
+    "#family",
+  );
+  assert.equal(
+    resolveLanguageSection({
+      nearTop: true,
+      pendingSection: "#stories",
+      currentSectionId: "stories",
+      routeHash: "#stories",
+    }),
+    "#stories",
+  );
+  assert.equal(
+    resolveLanguageSection({
+      nearTop: true,
+      currentSectionId: "about",
+      routeHash: "#about",
+    }),
+    "",
+  );
+});
 
 test("keeps Sites and GitHub Pages workflows separate", async () => {
   const packageJson = JSON.parse(await read("package.json"));
@@ -216,12 +255,12 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
 
   assert.match(copy, /Oliver's everyday world/);
   assert.match(copy, /昊熹的日常小世界/);
-  assert.match(copy, /Small steps, quietly gathering/);
-  assert.match(copy, /把一點一滴，慢慢收進成長裏/);
+  assert.match(copy, /Everyday pages, little steps/);
+  assert.match(copy, /日子一頁頁，腳步一點點/);
   assert.match(copy, /Family & Care/);
   assert.match(copy, /家庭與陪伴/);
-  assert.match(copy, /Growing within a circle of care/);
-  assert.match(copy, /在愛與陪伴中，一起長大/);
+  assert.match(copy, /Secure in love, free to explore/);
+  assert.match(copy, /在愛裏安心，在陪伴中探索/);
   assert.match(copy, /Oliver's learning journey/);
   assert.match(copy, /昊熹的成長旅程/);
   assert.match(copy, /Reading together/);
@@ -232,15 +271,15 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /專注解難/);
   assert.match(copy, /Noticing and remembering/);
   assert.match(copy, /細心觀察/);
-  assert.match(copy, /often chooses one from the shelf by himself/);
-  assert.match(copy, /主動從書架拿書來看/);
+  assert.match(copy, /often chooses a book from the shelf/);
+  assert.match(copy, /主動從書架拿起書本/);
   assert.match(copy, /vroom vroom/);
   assert.match(copy, /車一出現.*說「嗚嗚」/);
   assert.match(copy, /glasses remind him of Dad, a bald head of Grandpa/);
   assert.match(copy, /戴眼鏡的是爸爸，光頭的是公公/);
   assert.doesNotMatch(copy, /fast learner|有很強記憶力|looks towards the teacher/i);
-  assert.match(copy, /Oliver's days unfold within the steady warmth of family/);
-  assert.match(copy, /昊熹的日常，在家人安穩的愛裏慢慢展開/);
+  assert.match(copy, /Oliver is growing up surrounded by Mum, Dad/);
+  assert.match(copy, /昊熹在爸爸媽媽和家人的陪伴中長大/);
   assert.match(copy, /A book together, every day/);
   assert.match(copy, /每天共讀一頁/);
   assert.match(copy, /Where our story began/);
@@ -255,43 +294,55 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /time: "10個月大"/);
   assert.match(copy, /time: "14個月大"/);
   assert.match(copy, /time: "16個月大"/);
-  assert.match(copy, /How we continue alongside him/);
-  assert.match(copy, /我們如何繼續陪伴/);
+  assert.match(copy, /How we stay alongside him/);
+  assert.match(copy, /我們如何陪伴/);
   assert.match(copy, /Growing alongside him/);
   assert.match(copy, /陪着他，一起長大/);
-  assert.match(copy, /a child's learning begins in the steady companionship of family/);
-  assert.match(copy, /孩子的成長從家庭裏每一次安穩的陪伴開始/);
-  assert.match(copy, /Twelve everyday moments along the way/);
-  assert.match(copy, /十二個日常片段，一步一步走來/);
+  assert.match(copy, /a child's growth begins with steady, sincere companionship at home/);
+  assert.match(copy, /孩子的成長始於家庭裏安穩而真誠的陪伴/);
+  assert.match(copy, /Twelve everyday moments/);
+  assert.match(copy, /十二個日常小片段/);
   assert.match(copy, /Laughter held close/);
   assert.match(copy, /笑聲留在身旁/);
   for (const title of [
-    "He listens, then responds",
-    "Turning to the next page",
-    "A little step into the water",
-    "The piano corner he always finds",
+    "Listening closely and following a request",
+    "Recognising his body and family",
     "A gentle hello to the animals",
-    "聽見，也回應",
-    "自己翻開下一頁",
-    "水裏的一小步",
-    "總會走近的琴鍵",
+    "A brave step into the water",
+    "Little hands turning page after page",
+    "Returning to music",
+    "細心聆聽，跟着做",
+    "認識身體和家人",
     "輕輕走近小動物",
+    "勇敢走進水中",
+    "小手翻過一頁頁書",
+    "再次走近音樂",
   ]) assert.match(copy, new RegExp(title));
-  assert.match(copy, /Oliver's new portrait is coming/);
-  assert.match(copy, /昊熹的新近照稍後加入/);
+  assert.match(copy, /name: "hero-portrait"/);
+  assert.match(copy, /A recent portrait|looks calmly towards the camera/);
+  assert.match(copy, /昊熹19個月大時的一張近照/);
   assert.match(copy, /With a problem-solving toy in front of him/);
   assert.match(copy, /玩解難玩具時/);
   assert.match(copy, /Welcome to Oliver's little world/);
-  assert.match(copy, /歡迎走進昊熹的小小世界/);
+  assert.match(copy, /歡迎走進昊熹的小世界/);
   assert.match(copy, /“Clean up,”/);
   assert.match(copy, /“Bye bye.”/);
   assert.match(copy, /「Clean up」/);
   assert.match(copy, /「Bye bye」/);
   assert.doesNotMatch(copy, /Videos never play automatically|影片不會自動播放/);
   for (const clue of [
-    "聆聽回應", "語言互動", "自主翻閱", "專注看書", "水中活動",
-    "願意嘗試", "音樂探索", "持續興趣", "細心觀察", "溫柔接觸",
+    "聆聽回應", "日常參與", "認識身體", "認出家人", "自主翻閱",
+    "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "再次走近",
+    "細心觀察", "溫柔接觸",
   ]) assert.match(copy, new RegExp(`tags: \\[.*${clue}`));
+  assert.match(copy, /These six stories/);
+  assert.match(copy, /六個小片段/);
+  assert.match(copy, /tried to climb onto the pool edge/);
+  assert.match(copy, /A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach/);
+  assert.match(copy, /every night before bed/);
+  assert.match(copy, /也試着自己爬上池邊/);
+  assert.match(copy, /家中低矮的書架放着繪本、中英文圖書和點讀書/);
+  assert.doesNotMatch(copy, /音樂天賦|冷靜平穩的性格|適時力|fast learner|有很強記憶力/i);
   assert.doesNotMatch(copy, /Stories taking shape|故事正在成形|A learning story to come|Family & Home/);
   assert.doesNotMatch(copy, /problem-solving moment to be added|noticing moment to be added|解難小片段稍後加入|觀察小片段稍後加入/i);
   assert.doesNotMatch(copy, /"\[[^"]+\]"/);
@@ -340,6 +391,7 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(portfolio, /IntersectionObserver/);
   assert.match(portfolio, /markPendingSection\(item\.href\)/);
   assert.match(portfolio, /const sectionIds = \["about", "stories", "growth", "family"\] as const/);
+  assert.match(portfolio, /markPendingSection\(destination\)[\s\S]*?scrollIntoView/);
   assert.match(portfolio, /querySelector<HTMLElement>\(destination\)[\s\S]*?scrollIntoView\(\{ block: "start" \}\)/);
   assert.match(portfolio, /root\.classList\.add\("is-scroll-ready"\)/);
   assert.match(portfolio, /root\.classList\.remove\("is-scroll-ready"\)/);
@@ -352,12 +404,11 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(controls, /const readingLine = 120/);
   assert.match(controls, /export function markPendingSection/);
   assert.match(controls, /root\.dataset\.scrollTarget = destination/);
-  assert.match(controls, /Math\.abs\(target\.getBoundingClientRect\(\)\.top - 88\) > 32/);
-  assert.match(controls, /window\.addEventListener\("scrollend", clearWhenArrived, \{ once: true \}\)/);
+  assert.doesNotMatch(controls, /scrollend|clearWhenArrived/);
   assert.match(controls, /window\.setTimeout\(clearPendingSection, 1800\)/);
   assert.match(controls, /\["about", "stories", "growth", "family"\]/);
   assert.match(controls, /bounds\.top <= readingLine && bounds\.bottom > readingLine/);
-  assert.match(controls, /pendingSection \|\| \(window\.scrollY < readingLine[\s\S]*?currentSection[\s\S]*?activeHref \|\| window\.location\.hash\)/);
+  assert.match(controls, /resolveLanguageSection\(\{[\s\S]*?nearTop: window\.scrollY < readingLine[\s\S]*?pendingSection[\s\S]*?currentSectionId: currentSection\?\.id[\s\S]*?routeHash/);
   assert.doesNotMatch(copy, /Print this page|列印本頁|printLabel/);
   assert.doesNotMatch(media, /preview-play/);
   assert.doesNotMatch(portfolio, /<img\b|<video\b|<picture\b|<iframe\b/);
@@ -386,8 +437,17 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(welcomeIntro, /navigator\.connection/);
   assert.match(welcomeIntro, /window\.location\.hash/);
   assert.match(welcomeIntro, /event\.key === "Escape"/);
-  assert.match(welcomeIntro, /setAttribute\("inert"/);
-  assert.match(welcomeIntro, /removeAttribute\("inert"/);
+  assert.doesNotMatch(welcomeIntro, /(?:set|remove)Attribute\("inert"/);
+  assert.match(welcomeIntro, /tabIndex=\{-1\}/);
+  assert.match(welcomeIntro, /document\.addEventListener\("focusin", keepFocusOnWelcome, true\)/);
+  assert.match(welcomeIntro, /event\.key === "Tab"[\s\S]*?event\.preventDefault\(\)[\s\S]*?root\.focus/);
+  assert.match(welcomeIntro, /document\.activeElement/);
+  assert.match(welcomeIntro, /document\.removeEventListener\("focusin", keepFocusOnWelcome, true\)/);
+  assert.match(welcomeIntro, /heroTitle\.dataset\.welcomeFocus = "quiet"/);
+  assert.match(welcomeIntro, /window\.addEventListener\("keydown", clearQuietFocus, true\)/);
+  assert.match(welcomeIntro, /window\.addEventListener\("pointerdown", clearQuietFocus, true\)/);
+  assert.match(css, /\.greeting-heading\[data-welcome-focus="quiet"\]:focus-visible\s*\{[\s\S]*?outline:\s*none/);
+  assert.doesNotMatch(welcomeIntro, /(?:setAttribute\("aria-hidden"|\.setAttribute\("inert")/);
   assert.doesNotMatch(welcomeIntro, /<img|<picture|<source|welcome-photo|motionClass/);
   assert.match(welcomeIntro, /<div[\s\S]*?id="welcome-intro"/);
   assert.doesNotMatch(welcomeIntro, /setInterval|\bloop\b|\.jpe?g|10(?:0\d|1\d)|skipLabel|welcome-skip/i);
@@ -397,8 +457,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(welcomeIntro, /window\.__oliverWelcomeShouldPlay = false/);
   assert.match(welcomeIntro, /welcomeWindow\.__oliverWelcomeShouldPlay === true &&[\s\S]*?root\?\.dataset\.welcomeState === "play"/);
   assert.match(welcomeIntro, /current\.dataset\.welcomeState = "hidden"/);
-  assert.match(welcomeIntro, /document\.getElementById\("top"\)\?\.removeAttribute\("inert"\)/);
-  assert.match(welcomeIntro, /\}, \$\{welcomeDurationMs\}\);/);
+  assert.match(welcomeIntro, /document\.body\.classList\.remove\("welcome-open"\)/);
+  assert.match(welcomeIntro, /\}, \$\{welcomeDurationMs \+ 1_000\}\);/);
   assert.match(css, /data-welcome-state="exiting"\][\s\S]*?animation:\s*welcome-exit 280ms/);
   assert.doesNotMatch(css, /welcome-photo|welcome-photo-pair/);
   assert.match(css, /\.welcome-message\s*\{[\s\S]*?animation:\s*welcome-message 3\.2s/);
@@ -413,6 +473,7 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(responsivePhoto, /<img/);
   assert.match(responsivePhoto, /srcSet=\{srcSet\(name, "webp"\)\}/);
   assert.match(responsivePhoto, /portrait:\s*\{ width: 1200, height: 1600 \}/);
+  assert.match(responsivePhoto, /"hero-portrait":\s*\{ width: 1200, height: 1600 \}/);
   assert.match(responsivePhoto, /"about-world":\s*\{ width: 1200, height: 1500 \}/);
   assert.match(responsivePhoto, /"story-swimming":\s*\{ width: 1200, height: 800 \}/);
   assert.match(responsivePhoto, /"about-observing":\s*\{ width: 1200, height: 900 \}/);
@@ -443,6 +504,7 @@ test("ships only the approved reduced metadata-free photo derivatives", async ()
     "family-origin",
     "growth-firefighter",
     "growth-swing",
+    "hero-portrait",
     "portrait",
     "story-animals",
     "story-swimming",
@@ -460,7 +522,7 @@ test("ships only the approved reduced metadata-free photo derivatives", async ()
     assert.ok(bytes.length > 1_000 && bytes.length < 250_000, file);
     assert.equal(bytes.includes(Buffer.from("Exif")), false, file);
     for (const originalName of [
-      "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022",
+      "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023",
     ]) assert.equal(bytes.includes(Buffer.from(originalName)), false, file);
     assert.equal(bytes.includes(Buffer.from("GPS")), false, file);
   }
@@ -526,7 +588,18 @@ test("implements immediate language routing and an accessible section-aware sele
   assert.match(controls, /window\.location\.hash/);
   assert.match(controls, /window\.scrollY < readingLine/);
   assert.match(controls, /document\.documentElement\.dataset\.scrollTarget/);
-  assert.match(controls, /currentSection[\s\S]*?activeHref \|\| window\.location\.hash/);
+  assert.match(controls, /\.desktop-nav a\[aria-current=\"location\"\]/);
+  assert.match(controls, /sectionHashes\.includes\(window\.location\.hash\)/);
+  assert.match(controls, /resolveLanguageSection/);
+  assert.match(controls, /anchor\.dataset\.languageDestination = destination/);
+  assert.match(controls, /event\.detail > 0[\s\S]*?event\.currentTarget\.dataset\.languageDestination/);
+  assert.match(controls, /event\.currentTarget\.href = destination/);
+  assert.match(controls, /const plainPrimaryClick =[\s\S]*?event\.button === 0[\s\S]*?!event\.ctrlKey[\s\S]*?!event\.metaKey[\s\S]*?!event\.shiftKey/);
+  assert.match(controls, /if \(plainPrimaryClick\)[\s\S]*?event\.preventDefault\(\)[\s\S]*?window\.location\.assign\(destination\)/);
+  assert.equal((controls.match(/onPointerDown=\{\(event\) => prepareLanguageLink/g) ?? []).length, 2);
+  assert.doesNotMatch(controls, /onFocus=/);
+  assert.equal((controls.match(/event\.key === "Enter"/g) ?? []).length, 2);
+  assert.equal((controls.match(/href=\{`\$\{localePaths\.(?:zh|en)\.home\}\$\{activeHref\}`\}/g) ?? []).length, 2);
   assert.match(portfolio, /activeHref=\{activeHref\}/);
   assert.match(controls, /dialog\.showModal\(\)/);
   assert.match(controls, /onCancel=/);
@@ -688,13 +761,14 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.doesNotMatch(css, /hero-journal-enter[^;}]*\bboth\b/);
   assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.desktop-nav[\s\S]*?display:\s*flex/);
   assert.match(css, /\.story-media-count-2\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
-  assert.match(css, /@media \(min-width: 30rem\)[\s\S]*?\.story-media-count-2[\s\S]*?repeat\(2/);
+  assert.doesNotMatch(css, /\n\s{2}\.story-media-count-2\s*\{\s*grid-template-columns:\s*repeat\(2/);
+  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-3 \.story-media-count-2,[\s\S]*?\.story-card-4 \.story-media-count-2[\s\S]*?1\.65fr[\s\S]*?0\.65fr/);
   assert.match(css, /\.button:active|\.primary-button:active/);
   assert.match(css, /@media \(hover: hover\)/);
   assert.match(media, /className="preview-media-kind" aria-hidden="true"/);
   assert.match(responsivePhoto, /const widths = \[480, 800, 1200\] as const/);
   assert.match(css, /\.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*4 \/ 5/);
-  assert.match(css, /\.portfolio-photo-portrait \.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*3 \/ 4/);
+  assert.match(css, /\.portfolio-photo-portrait \.portfolio-photo-frame,[\s\S]*?\.portfolio-photo-hero-portrait \.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*3 \/ 4/);
   assert.match(css, /\.portfolio-photo img\s*\{[\s\S]*?object-fit:\s*cover/);
   assert.match(css, /\.family-media-grid > \*\s*\{[\s\S]*?grid-column:\s*1 \/ -1/);
 });

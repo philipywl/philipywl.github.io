@@ -59,6 +59,7 @@ export default function OliverPortfolio({
     const destination = window.location.hash;
     const root = document.documentElement;
     if (sectionIds.some((id) => destination === `#${id}`)) {
+      markPendingSection(destination);
       document
         .querySelector<HTMLElement>(destination)
         ?.scrollIntoView({ block: "start" });
@@ -187,12 +188,12 @@ export default function OliverPortfolio({
             </div>
 
             <div className="hero-visual">
-              <PreviewMedia
-                label={copy.hero.portrait.label}
-                detail={copy.hero.portrait.detail}
-                kind="photo"
-                ratio="portrait"
-                tone="sky"
+              <ResponsivePhoto
+                name={copy.hero.portrait.name}
+                alt={copy.hero.portrait.alt}
+                caption={copy.hero.portrait.caption}
+                sizes="(min-width: 72rem) 380px, (min-width: 48rem) 360px, calc(100vw - 72px)"
+                priority
                 className="hero-preview-media"
               />
               <MeadowDecor variant="rainbow" locale={locale} />
@@ -276,7 +277,7 @@ export default function OliverPortfolio({
           <div className="page-grid stories-grid">
             {copy.stories.items.map((story, storyIndex) => (
               <article
-                className={`story-card story-card-${storyIndex + 1} ${storyIndex === 0 ? "story-card-featured" : ""}`.trim()}
+                className={`story-card story-card-${storyIndex + 1} ${storyIndex === 0 ? "story-card-featured" : ""} ${storyIndex === copy.stories.items.length - 1 ? "story-card-closing" : ""}`.trim()}
                 key={story.title}
               >
                 <div className={`story-media-grid story-media-count-${story.media.length}`}>
@@ -316,11 +317,13 @@ export default function OliverPortfolio({
                     <p>{story.observation}</p>
                   </div>
 
-                  <div className="story-detail-grid">
-                    <div>
-                      <p className="story-label">{copy.stories.noticed}</p>
-                      <p>{story.noticed}</p>
-                    </div>
+                  <div className={`story-detail-grid ${story.noticed ? "" : "story-detail-grid-single"}`.trim()}>
+                    {story.noticed && (
+                      <div>
+                        <p className="story-label">{copy.stories.noticed}</p>
+                        <p>{story.noticed}</p>
+                      </div>
+                    )}
                     <div>
                       <p className="story-label">{copy.stories.support}</p>
                       <p>{story.support}</p>

@@ -15,6 +15,7 @@ const approvedPhotoNames = [
   "growth-firefighter",
   "growth-supported",
   "growth-swing",
+  "hero-portrait",
   "portrait",
   "story-animals",
   "story-swimming",
@@ -300,8 +301,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 21) {
-    fail(`${route} must contain fourteen responsive photographs and seven local video posters`);
+  if (pictures.length !== 15 || sources.length !== 15 || images.length !== 22) {
+    fail(`${route} must contain fifteen responsive photographs and seven local video posters`);
   }
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
@@ -353,11 +354,11 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
     }
   }
 
-  if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 0) {
-    fail(`${route} must not eagerly load below-fold portfolio photographs`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 1) {
+    fail(`${route} must eagerly load only the hero portrait`);
   }
   if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 21) {
-    fail(`${route} must lazy-load fourteen content photographs and seven video posters`);
+    fail(`${route} must lazy-load fourteen below-fold photographs and seven video posters`);
   }
 }
 
@@ -400,7 +401,7 @@ for (const relativePath of files) {
       fail(`photo derivative has an unexpected size: out/${relativePath}`);
     }
     for (const marker of [
-      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022",
+      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023",
     ]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`photo derivative contains private metadata or an original filename: out/${relativePath}`);
@@ -427,7 +428,7 @@ for (const relativePath of files) {
       fail(`social preview has an unexpected size: out/${relativePath}`);
     }
     for (const marker of [
-      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022",
+      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023",
     ]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`social preview contains private metadata or an original filename: out/${relativePath}`);
@@ -497,36 +498,36 @@ const englishText = visibleText(routeHtml.english);
 const chineseText = visibleText(routeHtml.chinese);
 for (const expected of [
   "Oliver's learning journey",
-  "Hello, I'm Oliver.",
-  "This little collection follows the things that brighten Oliver's days—books, cars, dogs and little problems to solve",
-  "Oliver's new portrait is coming",
+  "I'd love to share the things that brighten my days",
+  "A recent portrait of Oliver at 19 months.",
   "Oliver's everyday world",
   "Reading together",
   "Cars and dogs",
   "Working things out",
   "Noticing and remembering",
-  "often chooses one from the shelf by himself",
+  "often chooses a book from the shelf",
   "vroom vroom",
   "glasses remind him of Dad, a bald head of Grandpa",
   "Welcome to Oliver's little world.",
-  "Everyday moments, held with care",
-  "Small steps, quietly gathering",
-  "Twelve everyday moments along the way",
+  "Step by step, growing a little each day",
+  "Everyday pages, little steps",
+  "Twelve everyday moments",
   "Family & Care",
-  "Growing within a circle of care",
-  "Oliver's days unfold within the steady warmth of family",
+  "Secure in love, free to explore",
+  "Oliver is growing up surrounded by Mum, Dad",
   "Held by many loving hands",
   "Laughter held close",
   "Where our story began",
   "A quiet portrait from 13 months",
-  "How we continue alongside him",
+  "How we stay alongside him",
   "Growing alongside him",
-  "a child's learning begins in the steady companionship of family",
-  "He listens, then responds",
-  "Turning to the next page",
-  "A little step into the water",
-  "The piano corner he always finds",
+  "a child's growth begins with steady, sincere companionship at home",
+  "Listening closely and following a request",
+  "Recognising his body and family",
   "A gentle hello to the animals",
+  "A brave step into the water",
+  "Little hands turning page after page",
+  "Returning to music",
   "Matching shapes",
   "Pouring between cups",
   "Joining tidy-up time",
@@ -540,35 +541,36 @@ for (const expected of [
 }
 for (const expected of [
   "昊熹的成長旅程",
-  "這裏輕輕收進昊熹日常裏喜歡的事",
-  "新近照稍後加入",
+  "我想和你分享每天喜歡的事",
+  "昊熹19個月大時的一張近照。",
   "昊熹的日常小世界",
   "親子共讀",
   "車和小狗",
   "專注解難",
   "細心觀察",
-  "主動從書架拿書來看",
+  "主動從書架拿起書本",
   "車一出現，昊熹便會開心地說「嗚嗚」",
   "戴眼鏡的是爸爸，光頭的是公公",
-  "歡迎走進昊熹的小小世界。",
-  "把日常片段，輕輕收進故事裏",
-  "把一點一滴，慢慢收進成長裏",
-  "十二個日常片段，一步一步走來",
+  "歡迎走進昊熹的小世界。",
+  "一步步向前，一點點長大",
+  "日子一頁頁，腳步一點點",
+  "十二個日常小片段",
   "家庭與陪伴",
-  "在愛與陪伴中，一起長大",
-  "昊熹的日常，在家人安穩的愛裏慢慢展開",
+  "在愛裏安心，在陪伴中探索",
+  "昊熹在爸爸媽媽和家人的陪伴中長大",
   "許多雙疼愛他的手",
   "笑聲留在身旁",
   "回到故事起點",
   "13個月大時留下的一張安靜近照",
-  "我們如何繼續陪伴",
+  "我們如何陪伴",
   "陪着他，一起長大",
-  "孩子的成長從家庭裏每一次安穩的陪伴開始",
-  "聽見，也回應",
-  "自己翻開下一頁",
-  "水裏的一小步",
-  "總會走近的琴鍵",
+  "孩子的成長始於家庭裏安穩而真誠的陪伴",
+  "細心聆聽，跟着做",
+  "認識身體和家人",
   "輕輕走近小動物",
+  "勇敢走進水中",
+  "小手翻過一頁頁書",
+  "再次走近音樂",
   "尋找躲起的物件",
   "把形狀放對位置",
   "倒進另一隻杯",
@@ -590,12 +592,12 @@ for (const removedCopy of [
   if ((englishText + chineseText).includes(removedCopy)) fail(`removed placeholder remains: ${removedCopy}`);
 }
 for (const [text, orderedTitles, route] of [
-  [englishText, ["He listens, then responds", "Turning to the next page", "A little step into the water", "The piano corner he always finds", "A gentle hello to the animals"], "English"],
-  [chineseText, ["聽見，也回應", "自己翻開下一頁", "水裏的一小步", "總會走近的琴鍵", "輕輕走近小動物"], "Chinese"],
+  [routeHtml.english, ["Listening closely and following a request", "Recognising his body and family", "A gentle hello to the animals", "A brave step into the water", "Little hands turning page after page", "Returning to music"], "English"],
+  [routeHtml.chinese, ["細心聆聽，跟着做", "認識身體和家人", "輕輕走近小動物", "勇敢走進水中", "小手翻過一頁頁書", "再次走近音樂"], "Chinese"],
 ]) {
   let previousIndex = -1;
   for (const title of orderedTitles) {
-    const currentIndex = text.indexOf(title);
+    const currentIndex = text.indexOf(`<h3>${title}</h3>`);
     if (currentIndex <= previousIndex) fail(`${route} learning stories are out of order at: ${title}`);
     previousIndex = currentIndex;
   }
@@ -605,7 +607,10 @@ for (const videoId of approvedVideoIds) {
 }
 if ((routeHtml.english.match(/<h1\b/gi) ?? []).length !== 1) fail("English page must contain one H1");
 if ((routeHtml.chinese.match(/<h1\b/gi) ?? []).length !== 1) fail("Chinese page must contain one H1");
-if (!/<span class="sr-only">你好，我是昊熹。<\/span>/.test(routeHtml.chinese)) {
+if (!/<span class="sr-only">“Hello, I(?:&#x27;|')m Oliver\.”<\/span>/.test(routeHtml.english)) {
+  fail("English page lacks the approved accessible greeting");
+}
+if (!/<span class="sr-only">「你好，我是昊熹。」<\/span>/.test(routeHtml.chinese)) {
   fail("Chinese page lacks the approved accessible greeting");
 }
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.english)) fail("English visual greeting is not aria-hidden");
@@ -620,8 +625,8 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
   if (!/class="footer-privacy"/.test(html)) fail(`${route} page lacks the inline footer privacy note`);
 }
 for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
-  if ((html.match(/class="story-card/g) ?? []).length !== 5) {
-    fail(`${route} page does not contain the five approved learning stories`);
+  if ((html.match(/class="story-card/g) ?? []).length !== 6) {
+    fail(`${route} page does not contain the six approved growth milestones`);
   }
   if ((html.match(/class="growth-milestone(?: |")/g) ?? []).length !== 12) {
     fail(`${route} page does not contain one twelve-item everyday growth path`);
@@ -640,8 +645,9 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
   }
 }
 for (const clue of [
-  "聆聽回應", "語言互動", "自主翻閱", "專注看書", "水中活動",
-  "願意嘗試", "音樂探索", "持續興趣", "細心觀察", "溫柔接觸",
+  "聆聽回應", "日常參與", "認識身體", "認出家人", "自主翻閱",
+  "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "再次走近",
+  "細心觀察", "溫柔接觸",
 ]) {
   if (!chineseText.includes(clue)) fail(`Chinese page lacks approved four-character learning clue: ${clue}`);
 }
@@ -652,11 +658,12 @@ if (/\[[^\]]+\]/.test(englishText + chineseText)) {
   fail("bracketed editorial tokens remain in visitor-visible text");
 }
 requireApprovedPhotos(routeHtml.english, "English page", [
-  ["Nineteen-month-old Oliver looks towards the camera from inside a large green play vehicle.", "about-world", "1500"],
-  ["Twelve-month-old Oliver sits close to an adult family member as they look at a board book together; the adult points to the page.", "about-reading", "1200"],
+  ["Nineteen-month-old Oliver sits facing the camera in a studio portrait, wearing a white shirt and tan trousers.", "hero-portrait", "1600"],
+  ["Nineteen-month-old Oliver sits inside a large green play car and points towards one of its wheels.", "about-world", "1500"],
+  ["Twelve-month-old Oliver sits close to Dad as they look at a board book together and Dad points to the page.", "about-reading", "1200"],
   ["Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.", "about-car", "1200"],
   ["Eighteen-month-old Oliver stands in front of a group of colourful cartoon figures, raising one arm to point towards them.", "about-observing", "900"],
-  ["Oliver smiles in a swimming pool, with an adult close by.", "story-swimming", "800"],
+  ["Oliver smiles while standing in a swimming pool, with an adult's hand close by.", "story-swimming", "800"],
   ["Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
   ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
   ["One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.", "growth-supported", "1500"],
@@ -668,11 +675,12 @@ requireApprovedPhotos(routeHtml.english, "English page", [
   ["One-year-old Oliver smiles outdoors while Mum and Dad hold him between them.", "family-playful", "1500"],
 ]);
 requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
-  ["19個月大的昊熹身處一架大型綠色玩樂車輛內，望向鏡頭。", "about-world", "1500"],
-  ["12個月大的昊熹依偎在一位成年家人身旁一起看圖書，家人正指着書頁。", "about-reading", "1200"],
+  ["19個月大的昊熹穿着白色襯衣和淺棕色長褲，坐在柔和的紫灰色背景前，正面望向鏡頭。", "hero-portrait", "1600"],
+  ["19個月大的昊熹坐在一架大型綠色玩具車裏，伸手指向車輪。", "about-world", "1500"],
+  ["12個月大的昊熹依偎在爸爸身旁一起看圖書，爸爸正指着書頁。", "about-reading", "1200"],
   ["17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。", "about-car", "1200"],
   ["18個月大的昊熹站在一組色彩繽紛的卡通人物佈景前，舉起一隻手指向人物。", "about-observing", "900"],
-  ["昊熹在泳池裏開心地笑，身旁有大人陪伴。", "story-swimming", "800"],
+  ["昊熹在泳池裏站着微笑，身旁有大人的手陪伴。", "story-swimming", "800"],
   ["昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
   ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
   ["1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。", "growth-supported", "1500"],

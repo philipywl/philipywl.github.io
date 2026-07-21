@@ -4,7 +4,7 @@ export const SITE_ORIGIN = "https://oliveryeung.com";
 
 export const ENGLISH_TITLE = "Oliver YEUNG | A Little Learning Journey";
 export const ENGLISH_DESCRIPTION =
-  "A warm collection of everyday moments, lovingly gathered by Oliver's parents, following how he explores, connects and grows at his own pace.";
+  "A warm collection of everyday moments, lovingly gathered by Oliver's parents, showing how he explores, connects and grows at his own pace.";
 
 export const CHINESE_TITLE = "昊熹｜成長旅程";
 export const CHINESE_DESCRIPTION =
