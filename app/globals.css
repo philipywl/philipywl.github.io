@@ -156,6 +156,10 @@ h4 {
   outline-offset: 3px;
 }
 
+.greeting-heading[data-welcome-focus="quiet"]:focus-visible {
+  outline: none;
+}
+
 .site-shell {
   min-width: 0;
   min-height: 100svh;
@@ -1007,7 +1011,8 @@ html:has(body.welcome-open) {
   background: var(--paper);
 }
 
-.portfolio-photo-portrait .portfolio-photo-frame {
+.portfolio-photo-portrait .portfolio-photo-frame,
+.portfolio-photo-hero-portrait .portfolio-photo-frame {
   aspect-ratio: 3 / 4;
 }
 
@@ -3046,10 +3051,6 @@ html:has(body.welcome-open) {
     display: inline;
   }
 
-  .story-media-count-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .story-header {
     align-items: flex-start;
     flex-direction: row;
@@ -3148,16 +3149,20 @@ html:has(body.welcome-open) {
     grid-row: 1;
   }
 
-  .stories-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .story-card-featured {
+    grid-column: 1 / -1;
   }
 
-  .story-card-featured {
+  .story-card-closing {
     grid-column: 1 / -1;
   }
 
   .story-detail-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .story-detail-grid-single {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .family-grid {
@@ -3190,19 +3195,20 @@ html:has(body.welcome-open) {
     padding-block: 96px;
   }
 
-  .story-card-featured {
+  .stories-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .story-card-featured,
+  .story-card-closing {
     display: grid;
     grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
     align-items: start;
   }
 
-  .story-card-featured .story-media-grid {
+  .story-card-featured .story-media-grid,
+  .story-card-closing .story-media-grid {
     padding: 16px 0 16px 16px;
-  }
-
-  .story-card-5 .story-media-count-2 {
-    grid-template-columns: minmax(0, 1.65fr) minmax(180px, 0.65fr);
-    align-items: start;
   }
 
   .growth-milestone-list > li.has-photo .milestone-card {
@@ -3219,6 +3225,12 @@ html:has(body.welcome-open) {
 }
 
 @media (min-width: 72rem) {
+  .story-card-3 .story-media-count-2,
+  .story-card-4 .story-media-count-2 {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 0.65fr);
+    align-items: start;
+  }
+
   .growth-moments-layout {
     grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
   }

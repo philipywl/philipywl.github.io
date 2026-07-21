@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-const sessionKey = "oliver-welcome-v3";
+const sessionKey = "oliver-welcome-v4";
 const completeEvent = "oliver:welcome-complete";
 const welcomeDurationMs = 3200;
 const exitDurationMs = 280;
@@ -15,6 +15,7 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const closedRef = useRef(false);
   const exitTimerRef = useRef(0);
+  const releaseFocusIsolationRef = useRef<(() => void) | null>(null);
   const bootstrap = `(() => {
     const root = document.getElementById("welcome-intro");
     if (!root) return;
@@ -32,16 +33,17 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
         if (!current || current.dataset.welcomeState !== "play") return;
         current.dataset.welcomeState = "hidden";
         window.__oliverWelcomeShouldPlay = false;
-        document.getElementById("top")?.removeAttribute("inert");
         document.body.classList.remove("welcome-open");
         window.dispatchEvent(new Event(${JSON.stringify(completeEvent)}));
-      }, ${welcomeDurationMs});
+      }, ${welcomeDurationMs + 1_000});
     }
   })();`;
 
   const completeWelcome = useCallback((focusHero = false) => {
     const root = rootRef.current;
     if (!root) return;
+    const hadWelcomeFocus = root.contains(document.activeElement);
+    releaseFocusIsolationRef.current?.();
     const welcomeWindow = window as typeof window & {
       __oliverWelcomeFailOpenTimer?: number;
       __oliverWelcomeShouldPlay?: boolean;
@@ -52,11 +54,32 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
     }
     welcomeWindow.__oliverWelcomeShouldPlay = false;
     root.dataset.welcomeState = "hidden";
-    document.getElementById("top")?.removeAttribute("inert");
     document.body.classList.remove("welcome-open");
     window.dispatchEvent(new Event(completeEvent));
-    if (focusHero) {
-      document.getElementById("hero-title")?.focus({ preventScroll: true });
+    if (focusHero || hadWelcomeFocus) {
+      const heroTitle = document.getElementById("hero-title");
+      if (!heroTitle) return;
+
+      // The timed welcome handoff should feel visually seamless. Keep the
+      // normal focus ring for an explicit keyboard dismissal, and restore it
+      // immediately when the visitor next uses a keyboard or pointer.
+      if (!focusHero) {
+        heroTitle.dataset.welcomeFocus = "quiet";
+        let cleared = false;
+        const clearQuietFocus = () => {
+          if (cleared) return;
+          cleared = true;
+          delete heroTitle.dataset.welcomeFocus;
+          window.removeEventListener("keydown", clearQuietFocus, true);
+          window.removeEventListener("pointerdown", clearQuietFocus, true);
+          heroTitle.removeEventListener("blur", clearQuietFocus);
+        };
+        window.addEventListener("keydown", clearQuietFocus, true);
+        window.addEventListener("pointerdown", clearQuietFocus, true);
+        heroTitle.addEventListener("blur", clearQuietFocus, { once: true });
+      }
+
+      heroTitle.focus({ preventScroll: true });
     }
   }, []);
 
@@ -73,7 +96,6 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
 
   useEffect(() => {
     const root = rootRef.current;
-    const site = document.getElementById("top");
     const welcomeWindow = window as typeof window & {
       __oliverWelcomeShouldPlay?: boolean;
     };
@@ -86,13 +108,33 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
       return;
     }
 
-    site?.setAttribute("inert", "");
     document.body.classList.add("welcome-open");
 
+    const keepFocusOnWelcome = (event: FocusEvent) => {
+      const target = event.target;
+      if (target instanceof Node && !root.contains(target)) {
+        root.focus({ preventScroll: true });
+      }
+    };
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        event.preventDefault();
+        root.focus({ preventScroll: true });
+        return;
+      }
       if (event.key === "Escape") dismissWelcome();
     };
     window.addEventListener("keydown", onKeyDown);
+    document.addEventListener("focusin", keepFocusOnWelcome, true);
+    const releaseFocusIsolation = () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("focusin", keepFocusOnWelcome, true);
+      if (releaseFocusIsolationRef.current === releaseFocusIsolation) {
+        releaseFocusIsolationRef.current = null;
+      }
+    };
+    releaseFocusIsolationRef.current = releaseFocusIsolation;
+    root.focus({ preventScroll: true });
     const completionTimer = window.setTimeout(() => {
       if (closedRef.current) return;
       closedRef.current = true;
@@ -100,10 +142,9 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
     }, welcomeDurationMs);
 
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
+      releaseFocusIsolation();
       window.clearTimeout(completionTimer);
       window.clearTimeout(exitTimerRef.current);
-      site?.removeAttribute("inert");
       document.body.classList.remove("welcome-open");
     };
   }, [completeWelcome, dismissWelcome]);
@@ -116,6 +157,7 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
         className="welcome-intro no-print"
         data-welcome-state="hidden"
         suppressHydrationWarning
+        tabIndex={-1}
       >
         <p
           id="welcome-intro-message"

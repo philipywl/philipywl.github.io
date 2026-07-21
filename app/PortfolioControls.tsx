@@ -10,6 +10,7 @@ import {
   localePaths,
   type PortfolioLocale,
 } from "./portfolio-copy";
+import { resolveLanguageSection } from "./section-navigation.mjs";
 
 export type NavigationItem = {
   href: string;
@@ -34,15 +35,7 @@ export function markPendingSection(destination: string) {
     }
     window.clearTimeout(pendingSectionTimer);
   };
-  const clearWhenArrived = () => {
-    const target = document.querySelector<HTMLElement>(destination);
-    if (!target || Math.abs(target.getBoundingClientRect().top - 88) > 32) {
-      return;
-    }
-    clearPendingSection();
-  };
   window.clearTimeout(pendingSectionTimer);
-  window.addEventListener("scrollend", clearWhenArrived, { once: true });
   pendingSectionTimer = window.setTimeout(clearPendingSection, 1800);
 }
 
@@ -123,6 +116,44 @@ export function LanguageSwitch({
     }
   }, [locale]);
 
+  const getLanguageDestination = (nextLocale: PortfolioLocale) => {
+    const readingLine = 120;
+    const currentSection = ["about", "stories", "growth", "family"]
+      .map((id) => document.getElementById(id))
+      .find((section) => {
+        if (!section) return false;
+        const bounds = section.getBoundingClientRect();
+        return bounds.top <= readingLine && bounds.bottom > readingLine;
+      });
+    const pendingSection = document.documentElement.dataset.scrollTarget;
+    const activeLinkHash = document
+      .querySelector<HTMLAnchorElement>('.desktop-nav a[aria-current="location"]')
+      ?.hash;
+    const sectionHashes = ["#about", "#stories", "#growth", "#family"];
+    const routeHash = sectionHashes.includes(window.location.hash)
+      ? window.location.hash
+      : "";
+    const equivalentSection = resolveLanguageSection({
+      nearTop: window.scrollY < readingLine,
+      pendingSection,
+      currentSectionId: currentSection?.id,
+      activeHref,
+      activeLinkHash,
+      routeHash,
+    });
+    return `${localePaths[nextLocale].home}${equivalentSection}`;
+  };
+
+  const prepareLanguageLink = (
+    anchor: HTMLAnchorElement,
+    nextLocale: PortfolioLocale,
+  ) => {
+    const destination = getLanguageDestination(nextLocale);
+    anchor.dataset.languageDestination = destination;
+    anchor.href = destination;
+    return destination;
+  };
+
   const rememberLanguage = (
     event: ReactMouseEvent<HTMLAnchorElement>,
     nextLocale: PortfolioLocale,
@@ -133,23 +164,24 @@ export function LanguageSwitch({
       // The preference is optional; route navigation must still work.
     }
 
-    const readingLine = 120;
-    const currentSection = ["about", "stories", "growth", "family"]
-      .map((id) => document.getElementById(id))
-      .find((section) => {
-        if (!section) return false;
-        const bounds = section.getBoundingClientRect();
-        return bounds.top <= readingLine && bounds.bottom > readingLine;
-      });
-    const pendingSection = document.documentElement.dataset.scrollTarget;
-    const equivalentSection =
-      pendingSection || (window.scrollY < readingLine
-        ? ""
-        : currentSection
-          ? `#${currentSection.id}`
-          : activeHref || window.location.hash);
-    if (equivalentSection) {
-      event.currentTarget.href = `${localePaths[nextLocale].home}${equivalentSection}`;
+    // Pointer-down captures the section before the click itself can cause a
+    // transient observer or scroll-state update. Keyboard activation has no
+    // pointer-down, so it deliberately resolves the section at activation.
+    const destination =
+      event.detail > 0
+        ? event.currentTarget.dataset.languageDestination ??
+          prepareLanguageLink(event.currentTarget, nextLocale)
+        : prepareLanguageLink(event.currentTarget, nextLocale);
+    event.currentTarget.href = destination;
+    const plainPrimaryClick =
+      event.button === 0 &&
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.shiftKey;
+    if (plainPrimaryClick) {
+      event.preventDefault();
+      window.location.assign(destination);
     }
   };
 
@@ -157,10 +189,16 @@ export function LanguageSwitch({
     <nav className="language-switch" aria-label={label}>
       <a
         className={`language-option ${locale === "zh" ? "is-selected" : ""}`}
-        href={localePaths.zh.home}
+        href={`${localePaths.zh.home}${activeHref}`}
         aria-current={locale === "zh" ? "page" : undefined}
         hrefLang="zh-Hant-HK"
         lang="zh-Hant-HK"
+        onPointerDown={(event) => prepareLanguageLink(event.currentTarget, "zh")}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            prepareLanguageLink(event.currentTarget, "zh");
+          }
+        }}
         onClick={(event) => rememberLanguage(event, "zh")}
       >
         中文
@@ -169,10 +207,16 @@ export function LanguageSwitch({
       <span className="language-divider" aria-hidden="true">|</span>
       <a
         className={`language-option ${locale === "en" ? "is-selected" : ""}`}
-        href={localePaths.en.home}
+        href={`${localePaths.en.home}${activeHref}`}
         aria-current={locale === "en" ? "page" : undefined}
         hrefLang="en-HK"
         lang="en-HK"
+        onPointerDown={(event) => prepareLanguageLink(event.currentTarget, "en")}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            prepareLanguageLink(event.currentTarget, "en");
+          }
+        }}
         onClick={(event) => rememberLanguage(event, "en")}
       >
         English
