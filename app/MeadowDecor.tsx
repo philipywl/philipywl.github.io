@@ -9,7 +9,6 @@ import {
 import type { PortfolioLocale } from "./portfolio-copy";
 
 export type MeadowDecorVariant =
-  | "rainbow"
   | "tree"
   | "balloons"
   | "dog"
@@ -34,11 +33,11 @@ export default function MeadowDecor({
 }: MeadowDecorProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [motionState, setMotionState] = useState<MotionState>(
-    variant === "rainbow" || variant === "garden" ? "settled" : "idle",
+    variant === "garden" ? "settled" : "idle",
   );
 
   useEffect(() => {
-    if (variant === "rainbow" || variant === "garden") return;
+    if (variant === "garden") return;
 
     const root = rootRef.current;
     if (!root) return;
@@ -112,21 +111,6 @@ export default function MeadowDecor({
   ]
     .filter(Boolean)
     .join(" ");
-
-  if (variant === "rainbow") {
-    return (
-      <div
-        ref={rootRef}
-        className={classes}
-        data-meadow-state="settled"
-        aria-hidden="true"
-      >
-        <span className="meadow-rainbow-arc" />
-        <span className="meadow-rainbow-cloud meadow-rainbow-cloud-left" />
-        <span className="meadow-rainbow-cloud meadow-rainbow-cloud-right" />
-      </div>
-    );
-  }
 
   if (variant === "garden") {
     return (

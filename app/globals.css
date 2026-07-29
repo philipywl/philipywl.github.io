@@ -1199,7 +1199,6 @@ html:has(body.welcome-open) {
   isolation: isolate;
   display: grid;
   width: min(100%, 430px);
-  min-height: 500px;
   margin-inline: auto;
   align-items: center;
   justify-items: center;
@@ -1259,68 +1258,6 @@ html:has(body.welcome-open) {
   pointer-events: none;
   user-select: none;
   contain: layout paint;
-}
-
-/* The rainbow is deliberately oversized, but clipped to the visual column so
-   it can never cross the hero copy. */
-.hero-visual .meadow-decor-rainbow {
-  position: absolute;
-  z-index: 0;
-  top: 4%;
-  left: 50%;
-  width: 190%;
-  max-width: none;
-  height: auto;
-  aspect-ratio: 520 / 298;
-  overflow: visible;
-  contain: layout;
-  opacity: 1;
-  transform: translateX(-50%);
-  transform-origin: 50% 44%;
-}
-
-.meadow-rainbow-arc {
-  position: absolute;
-  inset: 0 0 12px;
-  overflow: hidden;
-}
-
-.meadow-rainbow-arc::before {
-  position: absolute;
-  inset: 0;
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-  background: radial-gradient(
-    ellipse at 50% 100%,
-    transparent 0 31%,
-    rgb(166 155 194 / 82%) 31% 37%,
-    rgb(169 216 239 / 90%) 37% 43%,
-    rgb(143 186 120 / 82%) 43% 49%,
-    rgb(244 201 93 / 88%) 49% 55%,
-    rgb(238 162 131 / 88%) 55% 61%,
-    transparent 61.5%
-  );
-  content: "";
-}
-
-.meadow-rainbow-cloud {
-  position: absolute;
-  bottom: 0;
-  width: 84px;
-  height: 30px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 92%);
-  box-shadow:
-    18px -9px 0 -2px rgb(255 255 255 / 92%),
-    42px -4px 0 -5px rgb(255 255 255 / 88%);
-}
-
-.meadow-rainbow-cloud-left {
-  left: -12px;
-}
-
-.meadow-rainbow-cloud-right {
-  right: 8px;
-  transform: scaleX(-1);
 }
 
 .meadow-decor-garden {
@@ -2189,11 +2126,6 @@ html:has(body.welcome-open) {
 }
 
 @media (min-width: 48rem) {
-  .meadow-rainbow-cloud {
-    width: 102px;
-    height: 34px;
-  }
-
   .meadow-decor-tree {
     right: 24px;
     bottom: 22px;
@@ -2698,6 +2630,22 @@ html:has(body.welcome-open) {
   font-size: 0.875rem;
 }
 
+.milestone-placeholder {
+  width: min(100%, 310px);
+  margin: 15px 0 0;
+}
+
+.milestone-placeholder .preview-media-surface {
+  min-height: 154px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.milestone-placeholder figcaption {
+  padding-top: 8px;
+  font-size: 0.875rem;
+}
+
 .growth-portrait {
   width: min(100%, 330px);
   margin-inline: auto;
@@ -2734,52 +2682,6 @@ html:has(body.welcome-open) {
 .family-copy > p:not(.eyebrow) {
   max-width: 680px;
   color: var(--muted);
-}
-
-.family-values-card {
-  padding: 22px;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  margin-top: 28px;
-  background: rgb(255 249 230 / 86%);
-  box-shadow: var(--shadow-soft);
-}
-
-.family-values-card h3 {
-  margin: 0 0 9px;
-}
-
-.family-values-card p {
-  margin-bottom: 0;
-  color: var(--muted);
-}
-
-.family-vignette-grid {
-  display: grid;
-  margin-top: 16px;
-  gap: 12px;
-}
-
-.family-vignette {
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: rgb(255 255 255 / 42%);
-}
-
-.family-vignette .field-index {
-  margin-bottom: 9px;
-}
-
-.family-vignette h3 {
-  margin-bottom: 7px;
-  font-size: 1.0625rem;
-}
-
-.family-vignette p {
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 1rem;
 }
 
 .family-media-grid {
@@ -3086,17 +2988,10 @@ html:has(body.welcome-open) {
 
   .hero-visual {
     width: min(100%, 600px);
-    min-height: 540px;
   }
 
   .hero-preview-media {
     width: min(100%, 360px);
-  }
-
-  .hero-visual .meadow-decor-rainbow {
-    top: 2%;
-    left: 52%;
-    width: 190%;
   }
 
   .hero-intro {
@@ -3211,14 +3106,15 @@ html:has(body.welcome-open) {
     padding: 16px 0 16px 16px;
   }
 
-  .growth-milestone-list > li.has-photo .milestone-card {
+  .growth-milestone-list > li.has-media .milestone-card {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(190px, 240px);
     align-items: start;
     gap: 20px;
   }
 
-  .growth-milestone-list > li.has-photo .milestone-photo {
+  .growth-milestone-list > li.has-media .milestone-photo,
+  .growth-milestone-list > li.has-media .milestone-placeholder {
     margin-top: 0;
   }
 
@@ -3252,17 +3148,10 @@ html:has(body.welcome-open) {
   .hero-visual {
     grid-column: auto;
     width: min(100%, 650px);
-    min-height: 560px;
   }
 
   .hero-preview-media {
     width: min(100%, 380px);
-  }
-
-  .hero-visual .meadow-decor-rainbow {
-    top: -1%;
-    left: 54%;
-    width: 190%;
   }
 
   .header-inner {
@@ -3473,8 +3362,6 @@ html:has(body.welcome-open) {
   .preview-note,
   .timeline-panel,
   .milestone-card,
-  .family-values-card,
-  .family-vignette,
   .portfolio-photo,
   .preview-media,
   .closing-inner,

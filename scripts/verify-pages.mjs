@@ -12,9 +12,7 @@ const approvedPhotoNames = [
   "family-main",
   "family-origin",
   "family-playful",
-  "growth-firefighter",
   "growth-supported",
-  "growth-swing",
   "hero-portrait",
   "portrait",
   "story-animals",
@@ -301,8 +299,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  if (pictures.length !== 15 || sources.length !== 15 || images.length !== 22) {
-    fail(`${route} must contain fifteen responsive photographs and seven local video posters`);
+  if (pictures.length !== 13 || sources.length !== 13 || images.length !== 20) {
+    fail(`${route} must contain thirteen responsive photographs and seven local video posters`);
   }
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
@@ -357,8 +355,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 1) {
     fail(`${route} must eagerly load only the hero portrait`);
   }
-  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 21) {
-    fail(`${route} must lazy-load fourteen below-fold photographs and seven video posters`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 19) {
+    fail(`${route} must lazy-load twelve below-fold photographs and seven video posters`);
   }
 }
 
@@ -509,16 +507,14 @@ for (const expected of [
   "vroom vroom",
   "glasses remind him of Dad, a bald head of Grandpa",
   "Welcome to Oliver's little world.",
+  "Everyday Stories",
+  "Growth Milestones",
   "Step by step, growing a little each day",
-  "Everyday pages, little steps",
-  "Twelve everyday moments",
+  "Ten everyday moments",
   "Family & Care",
-  "Secure in love, free to explore",
-  "Oliver is growing up surrounded by Mum, Dad",
-  "Held by many loving hands",
-  "Laughter held close",
-  "Where our story began",
-  "A quiet portrait from 13 months",
+  "Secure in love, brave to explore",
+  "Mum, Dad and the people who love Oliver fill his days with warmth",
+  "At 13 months, Oliver looks towards the camera with a bright, curious gaze",
   "How we stay alongside him",
   "Growing alongside him",
   "a child's growth begins with steady, sincere companionship at home",
@@ -532,6 +528,8 @@ for (const expected of [
   "Pouring between cups",
   "Joining tidy-up time",
   "Waving Bye bye",
+  "Matching the rescue motorcycle",
+  "Rescue motorcycle photograph to be added",
   "Clean up",
   "Bye bye",
   "This portfolio has been lovingly gathered by Oliver's parents. Please help us care for these memories",
@@ -552,16 +550,14 @@ for (const expected of [
   "車一出現，昊熹便會開心地說「嗚嗚」",
   "戴眼鏡的是爸爸，光頭的是公公",
   "歡迎走進昊熹的小世界。",
+  "生活點滴",
+  "成長里程",
   "一步步向前，一點點長大",
-  "日子一頁頁，腳步一點點",
-  "十二個日常小片段",
+  "十個日常小片段",
   "家庭與陪伴",
-  "在愛裏安心，在陪伴中探索",
-  "昊熹在爸爸媽媽和家人的陪伴中長大",
-  "許多雙疼愛他的手",
-  "笑聲留在身旁",
-  "回到故事起點",
-  "13個月大時留下的一張安靜近照",
+  "在愛裏安心，在陪伴中勇敢探索",
+  "爸爸媽媽和家人為昊熹築起一個有愛、正面而安全的日常",
+  "13個月大的昊熹，帶着明亮好奇的目光望向鏡頭",
   "我們如何陪伴",
   "陪着他，一起長大",
   "孩子的成長始於家庭裏安穩而真誠的陪伴",
@@ -574,6 +570,8 @@ for (const expected of [
   "尋找躲起的物件",
   "把形狀放對位置",
   "倒進另一隻杯",
+  "配對救護電單車",
+  "救護電單車相片稍後加入",
   "一起 Clean up",
   "揮手說 Bye bye",
   "Clean up",
@@ -626,10 +624,10 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
 }
 for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
   if ((html.match(/class="story-card/g) ?? []).length !== 6) {
-    fail(`${route} page does not contain the six approved growth milestones`);
+    fail(`${route} page does not contain the six approved everyday stories`);
   }
-  if ((html.match(/class="growth-milestone(?: |")/g) ?? []).length !== 12) {
-    fail(`${route} page does not contain one twelve-item everyday growth path`);
+  if ((html.match(/class="growth-milestone(?: |")/g) ?? []).length !== 10) {
+    fail(`${route} page does not contain one ten-item growth path`);
   }
   if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 7) {
     fail(`${route} page does not contain seven explicit click-to-load video controls`);
@@ -667,8 +665,6 @@ requireApprovedPhotos(routeHtml.english, "English page", [
   ["Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
   ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
   ["One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.", "growth-supported", "1500"],
-  ["Oliver smiles broadly while holding both sides of a toddler swing.", "growth-swing", "1500"],
-  ["Oliver stands outdoors holding a yellow firefighter helmet.", "growth-firefighter", "1500"],
   ["Fifteen-month-old Oliver is held close between Mum and Dad beneath flowering trees during a family outing.", "family-main", "800"],
   ["Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.", "family-origin", "1500"],
   ["Four-month-old Oliver sits in a cushioned baby seat while several people gently support him with their hands.", "family-care", "1500"],
@@ -684,8 +680,6 @@ requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
   ["昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
   ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
   ["1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。", "growth-supported", "1500"],
-  ["昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。", "growth-swing", "1500"],
-  ["昊熹站在戶外，雙手拿着一頂黃色消防頭盔。", "growth-firefighter", "1500"],
   ["15個月大的昊熹在花樹下依偎在爸爸媽媽中間，一家三口望向鏡頭。", "family-main", "800"],
   ["6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。", "family-origin", "1500"],
   ["4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正溫柔承托着他。", "family-care", "1500"],

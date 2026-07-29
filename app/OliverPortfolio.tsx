@@ -196,7 +196,6 @@ export default function OliverPortfolio({
                 priority
                 className="hero-preview-media"
               />
-              <MeadowDecor variant="rainbow" locale={locale} />
             </div>
           </div>
         </section>
@@ -375,7 +374,7 @@ export default function OliverPortfolio({
               <ol className="growth-milestone-list">
                 {copy.growth.milestones.map((item, index) => (
                   <li
-                    className={`growth-milestone ${item.photo ? "has-photo" : ""}`.trim()}
+                    className={`growth-milestone ${item.photo || item.placeholder ? "has-media" : ""}`.trim()}
                     key={`${item.time}-${item.title}-${index}`}
                   >
                     <p className="timeline-time">{item.time}</p>
@@ -392,6 +391,15 @@ export default function OliverPortfolio({
                           caption={item.photo.caption}
                           sizes="(min-width: 72rem) 230px, (min-width: 48rem) 280px, calc(100vw - 96px)"
                           className="milestone-photo"
+                        />
+                      )}
+                      {item.placeholder && (
+                        <PreviewMedia
+                          label={item.placeholder.label}
+                          detail={item.placeholder.detail}
+                          ratio="landscape"
+                          tone="honey"
+                          className="milestone-placeholder"
                         />
                       )}
                     </article>
@@ -416,21 +424,6 @@ export default function OliverPortfolio({
               <p className="eyebrow">{copy.family.eyebrow}</p>
               <h2 id="family-title" tabIndex={-1}>{copy.family.title}</h2>
               <p>{copy.family.intro}</p>
-              <div className="family-values-card">
-                <h3>{copy.family.valuesTitle}</h3>
-                <p>{copy.family.valuesBody}</p>
-              </div>
-              <div className="family-vignette-grid">
-                {copy.family.vignettes.map((vignette, index) => (
-                  <article className="family-vignette" key={vignette.title}>
-                    <span className="field-index" aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h3>{vignette.title}</h3>
-                    <p>{vignette.body}</p>
-                  </article>
-                ))}
-              </div>
             </div>
 
             <div className="family-media-grid">
