@@ -2,7 +2,8 @@
  * Choose the equivalent section for a language change.
  *
  * A section that is still scrolling takes priority. After that short grace
- * period, the section at the reading line wins over a stale URL fragment.
+ * period, the settled active section wins over a transient reading-line
+ * change caused while a fixed header control receives focus.
  *
  * @param {{
  *   nearTop: boolean;
@@ -18,9 +19,9 @@ export function resolveLanguageSection(state) {
   if (state.nearTop) return "";
 
   return (
-    (state.currentSectionId ? `#${state.currentSectionId}` : "") ||
     state.activeHref ||
     state.activeLinkHash ||
+    (state.currentSectionId ? `#${state.currentSectionId}` : "") ||
     state.routeHash ||
     ""
   );

@@ -26,7 +26,7 @@ async function collectSourceFiles(directory) {
   return files;
 }
 
-test("language changes follow an in-flight target, then the visible section", () => {
+test("language changes follow an in-flight target, then the settled section", () => {
   assert.equal(
     resolveLanguageSection({
       nearTop: false,
@@ -39,9 +39,9 @@ test("language changes follow an in-flight target, then the visible section", ()
   assert.equal(
     resolveLanguageSection({
       nearTop: false,
-      currentSectionId: "family",
-      activeHref: "#about",
-      routeHash: "#about",
+      currentSectionId: "growth",
+      activeHref: "#family",
+      routeHash: "#family",
     }),
     "#family",
   );
@@ -593,13 +593,13 @@ test("implements immediate language routing and an accessible section-aware sele
   assert.match(controls, /event\.currentTarget\.href = destination/);
   assert.match(controls, /const plainPrimaryClick =[\s\S]*?event\.button === 0[\s\S]*?!event\.ctrlKey[\s\S]*?!event\.metaKey[\s\S]*?!event\.shiftKey/);
   assert.match(controls, /if \(plainPrimaryClick\)[\s\S]*?event\.preventDefault\(\)[\s\S]*?window\.location\.assign\(destination\)/);
-  assert.match(controls, /const capturePointerDestination = \(anchor: HTMLAnchorElement\)/);
-  assert.match(controls, /anchor\.getAttribute\("href"\) \|\| anchor\.href/);
-  assert.equal((controls.match(/onPointerDown=\{\(event\) => capturePointerDestination/g) ?? []).length, 2);
+  assert.equal((controls.match(/onPointerDown=\{\(event\) => prepareLanguageLink/g) ?? []).length, 2);
   assert.doesNotMatch(controls, /onFocus=/);
   assert.equal((controls.match(/event\.key === "Enter"/g) ?? []).length, 2);
   assert.equal((controls.match(/href=\{`\$\{localePaths\.(?:zh|en)\.home\}\$\{activeHref\}`\}/g) ?? []).length, 2);
   assert.match(portfolio, /activeHref=\{activeHref\}/);
+  assert.match(portfolio, /const settleActiveHref = \(href: string\)/);
+  assert.match(portfolio, /window\.setTimeout\(\(\) => \{[\s\S]*?setActiveHref\(href\)[\s\S]*?\}, 180\)/);
   assert.match(controls, /dialog\.showModal\(\)/);
   assert.match(controls, /onCancel=/);
   assert.match(controls, /onKeyDown=[\s\S]*?event\.key === "Escape"[\s\S]*?closeMenu\(\)/);
