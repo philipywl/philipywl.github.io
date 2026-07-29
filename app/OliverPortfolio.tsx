@@ -79,6 +79,13 @@ export default function OliverPortfolio({
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
     const visibleSections = new Set<string>();
+    let activeSectionTimer = 0;
+    const settleActiveHref = (href: string) => {
+      window.clearTimeout(activeSectionTimer);
+      activeSectionTimer = window.setTimeout(() => {
+        setActiveHref(href);
+      }, 180);
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -94,14 +101,17 @@ export default function OliverPortfolio({
               Math.abs(b.getBoundingClientRect().top - 96),
           );
 
-        if (visible[0]) setActiveHref(`#${visible[0].id}`);
-        else if (window.scrollY < 120) setActiveHref("");
+        if (visible[0]) settleActiveHref(`#${visible[0].id}`);
+        else if (window.scrollY < 120) settleActiveHref("");
       },
       { rootMargin: "-96px 0px -60% 0px", threshold: [0, 0.1, 0.5] },
     );
 
     sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    return () => {
+      window.clearTimeout(activeSectionTimer);
+      observer.disconnect();
+    };
   }, []);
 
   return (
