@@ -28,6 +28,7 @@ const photoDimensions: Record<
   "story-swimming": { width: 1200, height: 800 },
   "story-animals": { width: 1200, height: 800 },
   "growth-supported": { width: 1200, height: 1500 },
+  "growth-rescue-motorcycle": { width: 1200, height: 1500 },
 };
 
 function srcSet(name: PortfolioPhotoName, extension: "avif" | "webp") {

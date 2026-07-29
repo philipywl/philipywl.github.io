@@ -83,7 +83,7 @@ export default function OliverPortfolio({
     const settleActiveHref = (href: string) => {
       window.clearTimeout(activeSectionTimer);
       activeSectionTimer = window.setTimeout(() => {
-        setActiveHref(href);
+        setActiveHref(document.documentElement.dataset.scrollTarget || href);
       }, 180);
     };
 
@@ -145,6 +145,7 @@ export default function OliverPortfolio({
                 key={item.href}
                 aria-current={activeHref === item.href ? "location" : undefined}
                 onClick={() => {
+                  setActiveHref(item.href);
                   markPendingSection(item.href);
                   focusSection(item.href);
                 }}
@@ -166,6 +167,7 @@ export default function OliverPortfolio({
               menuLabel={copy.controls.menu}
               closeLabel={copy.controls.closeMenu}
               activeHref={activeHref}
+              onNavigate={setActiveHref}
             />
           </div>
         </div>
@@ -240,6 +242,7 @@ export default function OliverPortfolio({
                         ratio={field.media.ratio}
                         playLabel={copy.controls.playVideo}
                         loadingLabel={copy.controls.loadingVideo}
+                        autoplayPriority={field.media.autoplayPriority}
                       />
                     </div>
                   ) : "name" in field.media ? (
@@ -301,6 +304,7 @@ export default function OliverPortfolio({
                         ratio={media.ratio}
                         playLabel={copy.controls.playVideo}
                         loadingLabel={copy.controls.loadingVideo}
+                        autoplayPriority={media.autoplayPriority}
                       />
                     ) : (
                       <ResponsivePhoto
@@ -444,8 +448,8 @@ export default function OliverPortfolio({
                   alt={photo.alt}
                   caption={photo.caption}
                   sizes={index === 0
-                    ? "(min-width: 60rem) 520px, (min-width: 48rem) 44vw, calc(100vw - 40px)"
-                    : "(min-width: 60rem) 250px, (min-width: 48rem) 22vw, calc(100vw - 40px)"}
+                    ? "(min-width: 60rem) 920px, (min-width: 48rem) calc(100vw - 64px), calc(100vw - 40px)"
+                    : "(min-width: 60rem) 360px, (min-width: 48rem) calc((100vw - 88px) / 2), calc(100vw - 40px)"}
                   className={`family-photo ${index === 0 ? "family-photo-main" : "family-photo-support"}`}
                 />
               ))}

@@ -97,7 +97,7 @@ export default function GreetingReveal({
         <span className="sr-only">{greeting}</span>
         <span className="greeting-reserve" aria-hidden="true">
           <span className="greeting-part">{lead}</span>
-          {locale === "en" ? " " : <wbr />}
+          {locale === "en" ? " " : null}
           <span className="greeting-part">{rest}</span>
         </span>
         <span className="greeting-visual" aria-hidden="true">
@@ -105,7 +105,7 @@ export default function GreetingReveal({
             <span className="greeting-segment">{lead}</span>
             <span className="greeting-cursor greeting-cursor-lead" />
           </span>
-          {locale === "en" ? " " : <wbr />}
+          {locale === "en" ? " " : null}
           <span className="greeting-part greeting-part-rest">
             <span className="greeting-segment">{rest}</span>
             <span className="greeting-cursor greeting-cursor-rest" />

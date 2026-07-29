@@ -4,7 +4,6 @@ import {
   useEffect,
   useRef,
   useState,
-  type MouseEvent as ReactMouseEvent,
 } from "react";
 import {
   localePaths,
@@ -154,34 +153,11 @@ export function LanguageSwitch({
     return destination;
   };
 
-  const rememberLanguage = (
-    event: ReactMouseEvent<HTMLAnchorElement>,
-    nextLocale: PortfolioLocale,
-  ) => {
+  const rememberLanguage = (nextLocale: PortfolioLocale) => {
     try {
       window.localStorage.setItem("oliver-portfolio-language", nextLocale);
     } catch {
       // The preference is optional; route navigation must still work.
-    }
-
-    // Pointer-down captures the section before the click itself can cause a
-    // transient observer or scroll-state update. Keyboard activation has no
-    // pointer-down, so it deliberately resolves the section at activation.
-    const destination =
-      event.detail > 0
-        ? event.currentTarget.dataset.languageDestination ??
-          prepareLanguageLink(event.currentTarget, nextLocale)
-        : prepareLanguageLink(event.currentTarget, nextLocale);
-    event.currentTarget.href = destination;
-    const plainPrimaryClick =
-      event.button === 0 &&
-      !event.altKey &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.shiftKey;
-    if (plainPrimaryClick) {
-      event.preventDefault();
-      window.location.assign(destination);
     }
   };
 
@@ -199,7 +175,7 @@ export function LanguageSwitch({
             prepareLanguageLink(event.currentTarget, "zh");
           }
         }}
-        onClick={(event) => rememberLanguage(event, "zh")}
+        onClick={() => rememberLanguage("zh")}
       >
         中文
         {locale === "zh" && <span className="sr-only"> — {selectedLabel}</span>}
@@ -217,7 +193,7 @@ export function LanguageSwitch({
             prepareLanguageLink(event.currentTarget, "en");
           }
         }}
-        onClick={(event) => rememberLanguage(event, "en")}
+        onClick={() => rememberLanguage("en")}
       >
         English
         {locale === "en" && <span className="sr-only"> — {selectedLabel}</span>}
@@ -231,11 +207,13 @@ export function MobileMenu({
   menuLabel,
   closeLabel,
   activeHref,
+  onNavigate,
 }: {
   items: NavigationItem[];
   menuLabel: string;
   closeLabel: string;
   activeHref: string;
+  onNavigate: (href: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -372,6 +350,7 @@ export function MobileMenu({
                 aria-current={activeHref === item.href ? "location" : undefined}
                 onClick={(event) => {
                   event.preventDefault();
+                  onNavigate(item.href);
                   destinationRef.current = item.href;
                   closeMenu();
                 }}

@@ -12,6 +12,7 @@ const approvedPhotoNames = [
   "family-main",
   "family-origin",
   "family-playful",
+  "growth-rescue-motorcycle",
   "growth-supported",
   "hero-portrait",
   "portrait",
@@ -299,8 +300,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  if (pictures.length !== 13 || sources.length !== 13 || images.length !== 20) {
-    fail(`${route} must contain thirteen responsive photographs and seven local video posters`);
+  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 21) {
+    fail(`${route} must contain fourteen responsive photographs and seven local video posters`);
   }
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
@@ -355,8 +356,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 1) {
     fail(`${route} must eagerly load only the hero portrait`);
   }
-  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 19) {
-    fail(`${route} must lazy-load twelve below-fold photographs and seven video posters`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 20) {
+    fail(`${route} must lazy-load thirteen below-fold photographs and seven video posters`);
   }
 }
 
@@ -386,6 +387,7 @@ if (JSON.stringify(artifactVideoPosters) !== JSON.stringify(requiredVideoPosterF
 
 const privateBirthDate = process.env.OLIVER_BIRTH_DATE?.trim();
 let hasPrivacyEnhancedVideoEmbed = false;
+let hasMutedScrollAutoplayContract = false;
 const foundApprovedVideoIds = new Set();
 for (const relativePath of files) {
   if (privateBirthDate && relativePath.includes(privateBirthDate)) {
@@ -399,7 +401,7 @@ for (const relativePath of files) {
       fail(`photo derivative has an unexpected size: out/${relativePath}`);
     }
     for (const marker of [
-      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023",
+      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023", "1024",
     ]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`photo derivative contains private metadata or an original filename: out/${relativePath}`);
@@ -426,7 +428,7 @@ for (const relativePath of files) {
       fail(`social preview has an unexpected size: out/${relativePath}`);
     }
     for (const marker of [
-      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023",
+      "Exif", "GPS", "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023", "1024",
     ]) {
       if (bytes.includes(Buffer.from(marker))) {
         fail(`social preview contains private metadata or an original filename: out/${relativePath}`);
@@ -443,6 +445,9 @@ for (const relativePath of files) {
   if (!textExtensions.has(path.extname(relativePath).toLowerCase())) continue;
   const contents = await readFile(absolutePath, "utf8");
   if (contents.includes("youtube-nocookie.com/embed")) hasPrivacyEnhancedVideoEmbed = true;
+  if (/autoplay=1&mute=1&enablejsapi=1&playsinline=1/.test(contents)) {
+    hasMutedScrollAutoplayContract = true;
+  }
   for (const videoId of approvedVideoIds) {
     if (contents.includes(videoId)) foundApprovedVideoIds.add(videoId);
   }
@@ -496,7 +501,8 @@ const englishText = visibleText(routeHtml.english);
 const chineseText = visibleText(routeHtml.chinese);
 for (const expected of [
   "Oliver's learning journey",
-  "I'd love to share the things that brighten my days",
+  "Hello, I'm Oliver.",
+  "I'd love to share the things that brighten my days: books, cars and dogs, little challenges, and time exploring the world with my family.",
   "A recent portrait of Oliver at 19 months.",
   "Oliver's everyday world",
   "Reading together",
@@ -512,8 +518,8 @@ for (const expected of [
   "Step by step, growing a little each day",
   "Ten everyday moments",
   "Family & Care",
-  "Secure in love, brave to explore",
-  "Mum, Dad and the people who love Oliver fill his days with warmth",
+  "Secure in love, free to explore",
+  "Mum, Dad and the people who love Oliver fill his days with love, encouragement and a sense of safety",
   "At 13 months, Oliver looks towards the camera with a bright, curious gaze",
   "How we stay alongside him",
   "Growing alongside him",
@@ -521,15 +527,16 @@ for (const expected of [
   "Listening closely and following a request",
   "Recognising his body and family",
   "A gentle hello to the animals",
-  "A brave step into the water",
   "Little hands turning page after page",
+  "A brave step into the water",
   "Returning to music",
   "Matching shapes",
   "Pouring between cups",
   "Joining tidy-up time",
   "Waving Bye bye",
   "Matching the rescue motorcycle",
-  "Rescue motorcycle photograph to be added",
+  "During a visit to the fire station, Oliver held his much-loved toy motorcycle",
+  "A little motorcycle in his hand, a full-sized one behind him",
   "Clean up",
   "Bye bye",
   "This portfolio has been lovingly gathered by Oliver's parents. Please help us care for these memories",
@@ -539,7 +546,7 @@ for (const expected of [
 }
 for (const expected of [
   "昊熹的成長旅程",
-  "我想和你分享每天喜歡的事",
+  "我想和你分享每天喜歡的事：書本、車和小狗、生活裏的小挑戰，還有與家人一起探索世界的時光。",
   "昊熹19個月大時的一張近照。",
   "昊熹的日常小世界",
   "親子共讀",
@@ -555,8 +562,8 @@ for (const expected of [
   "一步步向前，一點點長大",
   "十個日常小片段",
   "家庭與陪伴",
-  "在愛裏安心，在陪伴中勇敢探索",
-  "爸爸媽媽和家人為昊熹築起一個有愛、正面而安全的日常",
+  "在愛裏安心，在陪伴中自在探索",
+  "爸爸媽媽和家人以愛、鼓勵和安全感陪伴昊熹",
   "13個月大的昊熹，帶着明亮好奇的目光望向鏡頭",
   "我們如何陪伴",
   "陪着他，一起長大",
@@ -564,14 +571,15 @@ for (const expected of [
   "細心聆聽，跟着做",
   "認識身體和家人",
   "輕輕走近小動物",
-  "勇敢走進水中",
   "小手翻過一頁頁書",
+  "勇敢走進水中",
   "再次走近音樂",
   "尋找躲起的物件",
   "把形狀放對位置",
   "倒進另一隻杯",
   "配對救護電單車",
-  "救護電單車相片稍後加入",
+  "參觀消防局時，昊熹拿着心愛的玩具電單車",
+  "手中的小電單車，與身後的大電單車",
   "一起 Clean up",
   "揮手說 Bye bye",
   "Clean up",
@@ -590,8 +598,8 @@ for (const removedCopy of [
   if ((englishText + chineseText).includes(removedCopy)) fail(`removed placeholder remains: ${removedCopy}`);
 }
 for (const [text, orderedTitles, route] of [
-  [routeHtml.english, ["Listening closely and following a request", "Recognising his body and family", "A gentle hello to the animals", "A brave step into the water", "Little hands turning page after page", "Returning to music"], "English"],
-  [routeHtml.chinese, ["細心聆聽，跟着做", "認識身體和家人", "輕輕走近小動物", "勇敢走進水中", "小手翻過一頁頁書", "再次走近音樂"], "Chinese"],
+  [routeHtml.english, ["Listening closely and following a request", "Recognising his body and family", "A gentle hello to the animals", "Little hands turning page after page", "A brave step into the water", "Returning to music"], "English"],
+  [routeHtml.chinese, ["細心聆聽，跟着做", "認識身體和家人", "輕輕走近小動物", "小手翻過一頁頁書", "勇敢走進水中", "再次走近音樂"], "Chinese"],
 ]) {
   let previousIndex = -1;
   for (const title of orderedTitles) {
@@ -605,11 +613,14 @@ for (const videoId of approvedVideoIds) {
 }
 if ((routeHtml.english.match(/<h1\b/gi) ?? []).length !== 1) fail("English page must contain one H1");
 if ((routeHtml.chinese.match(/<h1\b/gi) ?? []).length !== 1) fail("Chinese page must contain one H1");
-if (!/<span class="sr-only">“Hello, I(?:&#x27;|')m Oliver\.”<\/span>/.test(routeHtml.english)) {
+if (!/<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/.test(routeHtml.english)) {
   fail("English page lacks the approved accessible greeting");
 }
-if (!/<span class="sr-only">「你好，我是昊熹。」<\/span>/.test(routeHtml.chinese)) {
+if (!/<span class="sr-only">你好，我是昊熹。<\/span>/.test(routeHtml.chinese)) {
   fail("Chinese page lacks the approved accessible greeting");
+}
+if (/“Hello, I(?:&#x27;|')m Oliver\.”|「你好，我是昊熹。」/.test(routeHtml.english + routeHtml.chinese)) {
+  fail("hero greeting retains removed quotation marks");
 }
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.english)) fail("English visual greeting is not aria-hidden");
 if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail("Chinese visual greeting is not aria-hidden");
@@ -630,7 +641,7 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
     fail(`${route} page does not contain one ten-item growth path`);
   }
   if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 7) {
-    fail(`${route} page does not contain seven explicit click-to-load video controls`);
+    fail(`${route} page does not contain seven deferred poster controls`);
   }
   if (/<iframe\b|youtube-nocookie\.com\/embed/i.test(html)) {
     fail(`${route} page loads a YouTube player before visitor interaction`);
@@ -650,7 +661,17 @@ for (const clue of [
   if (!chineseText.includes(clue)) fail(`Chinese page lacks approved four-character learning clue: ${clue}`);
 }
 if (!hasPrivacyEnhancedVideoEmbed) {
-  fail("the click-to-load player does not use YouTube's privacy-enhanced embed host");
+  fail("the deferred player does not use YouTube's privacy-enhanced embed host");
+}
+for (const priority of [5, 10, 20, 30, 40, 50, 60]) {
+  for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
+    if ((html.match(new RegExp(`data-autoplay-priority="${priority}"`, "g")) ?? []).length !== 1) {
+      fail(`${route} page lacks the unique video autoplay priority ${priority}`);
+    }
+  }
+}
+if (!hasMutedScrollAutoplayContract) {
+  fail("the deferred player lacks muted, inline, JavaScript-controlled autoplay");
 }
 if (/\[[^\]]+\]/.test(englishText + chineseText)) {
   fail("bracketed editorial tokens remain in visitor-visible text");
@@ -665,6 +686,7 @@ requireApprovedPhotos(routeHtml.english, "English page", [
   ["Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
   ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
   ["One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.", "growth-supported", "1500"],
+  ["Nineteen-month-old Oliver holds a green-and-black toy motorcycle, with a full-sized yellow rescue motorcycle and part of an ambulance behind him.", "growth-rescue-motorcycle", "1500"],
   ["Fifteen-month-old Oliver is held close between Mum and Dad beneath flowering trees during a family outing.", "family-main", "800"],
   ["Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.", "family-origin", "1500"],
   ["Four-month-old Oliver sits in a cushioned baby seat while several people gently support him with their hands.", "family-care", "1500"],
@@ -680,6 +702,7 @@ requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
   ["昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
   ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
   ["1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。", "growth-supported", "1500"],
+  ["19個月大的昊熹手拿綠黑色玩具電單車，身後停着一輛真實的黃色救護電單車，旁邊可見部分救護車。", "growth-rescue-motorcycle", "1500"],
   ["15個月大的昊熹在花樹下依偎在爸爸媽媽中間，一家三口望向鏡頭。", "family-main", "800"],
   ["6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。", "family-origin", "1500"],
   ["4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正溫柔承托着他。", "family-care", "1500"],
