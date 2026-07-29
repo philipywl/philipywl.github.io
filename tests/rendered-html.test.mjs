@@ -138,9 +138,9 @@ function expectApprovedPhotos(html, locale) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  assert.equal(pictures.length, 15);
-  assert.equal(sources.length, 15);
-  assert.equal(images.length, 22);
+  assert.equal(pictures.length, 13);
+  assert.equal(sources.length, 13);
+  assert.equal(images.length, 20);
 
   const expected = locale === "en"
     ? [
@@ -153,8 +153,6 @@ function expectApprovedPhotos(html, locale) {
         ["Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
         ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
         ["One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.", "growth-supported", "1500"],
-        ["Oliver smiles broadly while holding both sides of a toddler swing.", "growth-swing", "1500"],
-        ["Oliver stands outdoors holding a yellow firefighter helmet.", "growth-firefighter", "1500"],
         ["Fifteen-month-old Oliver is held close between Mum and Dad beneath flowering trees during a family outing.", "family-main", "800"],
         ["Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.", "family-origin", "1500"],
         ["Four-month-old Oliver sits in a cushioned baby seat while several people gently support him with their hands.", "family-care", "1500"],
@@ -170,8 +168,6 @@ function expectApprovedPhotos(html, locale) {
         ["昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
         ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
         ["1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。", "growth-supported", "1500"],
-        ["昊熹坐在幼兒鞦韆上，雙手扶着兩旁，開懷地笑。", "growth-swing", "1500"],
-        ["昊熹站在戶外，雙手拿着一頂黃色消防頭盔。", "growth-firefighter", "1500"],
         ["15個月大的昊熹在花樹下依偎在爸爸媽媽中間，一家三口望向鏡頭。", "family-main", "800"],
         ["6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。", "family-origin", "1500"],
         ["4個月大的昊熹坐在軟墊嬰兒座椅上，身旁幾雙手正溫柔承托着他。", "family-care", "1500"],
@@ -214,7 +210,7 @@ function expectApprovedPhotos(html, locale) {
   }
 
   assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "eager").length, 1);
-  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 21);
+  assert.equal(images.filter((tag) => getAttribute(tag, "loading") === "lazy").length, 19);
   assert.doesNotMatch(photoSurface, /10(?:0\d|1\d)|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i);
   assert.doesNotMatch(html, /i\.ytimg\.com|img\.youtube\.com/);
 }
@@ -243,14 +239,13 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /glasses remind him of Dad, a bald head of Grandpa/);
   assert.match(text, /Welcome to Oliver's little world/);
   assert.match(text, /Step by step, growing a little each day/);
-  assert.match(text, /Everyday pages, little steps/);
-  assert.match(text, /Twelve everyday moments/);
+  assert.match(text, /Everyday Stories/);
+  assert.match(text, /Growth Milestones/);
+  assert.match(text, /Ten everyday moments/);
   assert.match(text, /Family & Care/);
-  assert.match(text, /Secure in love, free to explore/);
-  assert.match(text, /Oliver is growing up surrounded by Mum, Dad/);
-  assert.match(text, /Held by many loving hands/);
-  assert.match(text, /Where our story began/);
-  assert.match(text, /A quiet portrait from 13 months/);
+  assert.match(text, /Secure in love, brave to explore/);
+  assert.match(text, /Mum, Dad and the people who love Oliver fill his days with warmth/);
+  assert.match(text, /At 13 months, Oliver looks towards the camera with a bright, curious gaze/);
   assert.match(text, /How we stay alongside him/);
   assert.match(text, /Growing alongside him/);
   assert.match(text, /a child's growth begins with steady, sincere companionship at home/);
@@ -277,7 +272,9 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Pouring between cups/);
   assert.match(text, /Joining tidy-up time/);
   assert.match(text, /Waving Bye bye/);
-  assert.equal((html.match(/class="growth-milestone(?: |")/g) ?? []).length, 12);
+  assert.match(text, /Matching the rescue motorcycle/);
+  assert.match(text, /Rescue motorcycle photograph to be added/);
+  assert.equal((html.match(/class="growth-milestone(?: |")/g) ?? []).length, 10);
   assert.doesNotMatch(text, /Videos never play automatically/);
   assert.match(text, /中文 \| English/);
   assert.equal((html.match(/class="story-card/g) ?? []).length, 6);
@@ -321,14 +318,13 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /戴眼鏡的是爸爸，光頭的是公公/);
   assert.match(text, /歡迎走進昊熹的小世界/);
   assert.match(text, /一步步向前，一點點長大/);
-  assert.match(text, /日子一頁頁，腳步一點點/);
-  assert.match(text, /十二個日常小片段/);
+  assert.match(text, /生活點滴/);
+  assert.match(text, /成長里程/);
+  assert.match(text, /十個日常小片段/);
   assert.match(text, /家庭與陪伴/);
-  assert.match(text, /在愛裏安心，在陪伴中探索/);
-  assert.match(text, /昊熹在爸爸媽媽和家人的陪伴中長大/);
-  assert.match(text, /許多雙疼愛他的手/);
-  assert.match(text, /回到故事起點/);
-  assert.match(text, /13個月大時留下的一張安靜近照/);
+  assert.match(text, /在愛裏安心，在陪伴中勇敢探索/);
+  assert.match(text, /爸爸媽媽和家人為昊熹築起一個有愛、正面而安全的日常/);
+  assert.match(text, /13個月大的昊熹，帶着明亮好奇的目光望向鏡頭/);
   assert.match(text, /我們如何陪伴/);
   assert.match(text, /陪着他，一起長大/);
   assert.match(text, /孩子的成長始於家庭裏安穩而真誠的陪伴/);
@@ -354,7 +350,9 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /倒進另一隻杯/);
   assert.match(text, /一起 Clean up/);
   assert.match(text, /揮手說 Bye bye/);
-  assert.equal((html.match(/class="growth-milestone(?: |")/g) ?? []).length, 12);
+  assert.match(text, /配對救護電單車/);
+  assert.match(text, /救護電單車相片稍後加入/);
+  assert.equal((html.match(/class="growth-milestone(?: |")/g) ?? []).length, 10);
   assert.doesNotMatch(text, /影片不會自動播放/);
   assert.match(text, /中文 \| English/);
   assert.equal((html.match(/class="story-card/g) ?? []).length, 6);

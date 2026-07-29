@@ -255,12 +255,16 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
 
   assert.match(copy, /Oliver's everyday world/);
   assert.match(copy, /昊熹的日常小世界/);
-  assert.match(copy, /Everyday pages, little steps/);
-  assert.match(copy, /日子一頁頁，腳步一點點/);
+  assert.match(copy, /Everyday Stories/);
+  assert.match(copy, /生活點滴/);
+  assert.match(copy, /Growth Milestones/);
+  assert.match(copy, /成長里程/);
+  assert.match(copy, /Step by step, growing a little each day/);
+  assert.match(copy, /一步步向前，一點點長大/);
   assert.match(copy, /Family & Care/);
   assert.match(copy, /家庭與陪伴/);
-  assert.match(copy, /Secure in love, free to explore/);
-  assert.match(copy, /在愛裏安心，在陪伴中探索/);
+  assert.match(copy, /Secure in love, brave to explore/);
+  assert.match(copy, /在愛裏安心，在陪伴中勇敢探索/);
   assert.match(copy, /Oliver's learning journey/);
   assert.match(copy, /昊熹的成長旅程/);
   assert.match(copy, /Reading together/);
@@ -278,16 +282,11 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /glasses remind him of Dad, a bald head of Grandpa/);
   assert.match(copy, /戴眼鏡的是爸爸，光頭的是公公/);
   assert.doesNotMatch(copy, /fast learner|有很強記憶力|looks towards the teacher/i);
-  assert.match(copy, /Oliver is growing up surrounded by Mum, Dad/);
-  assert.match(copy, /昊熹在爸爸媽媽和家人的陪伴中長大/);
-  assert.match(copy, /A book together, every day/);
-  assert.match(copy, /每天共讀一頁/);
-  assert.match(copy, /Where our story began/);
-  assert.match(copy, /回到故事起點/);
-  assert.match(copy, /Held by many loving hands/);
-  assert.match(copy, /許多雙疼愛他的手/);
-  assert.match(copy, /A quiet portrait from 13 months/);
-  assert.match(copy, /13個月大時留下的一張安靜近照/);
+  assert.match(copy, /Mum, Dad and the people who love Oliver fill his days with warmth/);
+  assert.match(copy, /爸爸媽媽和家人為昊熹築起一個有愛、正面而安全的日常/);
+  assert.doesNotMatch(copy, /valuesTitle|valuesBody|vignettes/);
+  assert.match(copy, /At 13 months, Oliver looks towards the camera with a bright, curious gaze/);
+  assert.match(copy, /13個月大的昊熹，帶着明亮好奇的目光望向鏡頭/);
   assert.match(copy, /time: "10 months"/);
   assert.match(copy, /time: "14 months"/);
   assert.match(copy, /time: "16 months"/);
@@ -300,10 +299,10 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /陪着他，一起長大/);
   assert.match(copy, /a child's growth begins with steady, sincere companionship at home/);
   assert.match(copy, /孩子的成長始於家庭裏安穩而真誠的陪伴/);
-  assert.match(copy, /Twelve everyday moments/);
-  assert.match(copy, /十二個日常小片段/);
-  assert.match(copy, /Laughter held close/);
-  assert.match(copy, /笑聲留在身旁/);
+  assert.match(copy, /Ten everyday moments/);
+  assert.match(copy, /十個日常小片段/);
+  assert.match(copy, /Rescue motorcycle photograph to be added/);
+  assert.match(copy, /救護電單車相片稍後加入/);
   for (const title of [
     "Listening closely and following a request",
     "Recognising his body and family",
@@ -335,8 +334,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
     "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "再次走近",
     "細心觀察", "溫柔接觸",
   ]) assert.match(copy, new RegExp(`tags: \\[.*${clue}`));
-  assert.match(copy, /These six stories/);
-  assert.match(copy, /六個小片段/);
+  assert.match(copy, /Six everyday stories/);
+  assert.match(copy, /六個日常小片段/);
   assert.match(copy, /tried to climb onto the pool edge/);
   assert.match(copy, /A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach/);
   assert.match(copy, /every night before bed/);
@@ -375,8 +374,9 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(portfolio, /copy\.stories\.items\.map/);
   assert.doesNotMatch(portfolio, /plannedItems|planned-stories/);
   assert.match(portfolio, /copy\.growth\.milestones\.map/);
-  assert.match(portfolio, /copy\.family\.vignettes\.map/);
+  assert.doesNotMatch(portfolio, /copy\.family\.vignettes\.map|family-values-card|family-vignette/);
   assert.match(portfolio, /copy\.family\.photos\.map/);
+  assert.match(portfolio, /item\.placeholder/);
   assert.match(portfolio, /stories-section section-pad/);
   assert.doesNotMatch(portfolio, /future-growth-section|future-growth-list|recent-moments-grid/);
   assert.match(portfolio, /growth-milestone-list/);
@@ -478,7 +478,6 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(responsivePhoto, /"story-swimming":\s*\{ width: 1200, height: 800 \}/);
   assert.match(responsivePhoto, /"about-observing":\s*\{ width: 1200, height: 900 \}/);
   assert.match(responsivePhoto, /"story-animals":\s*\{ width: 1200, height: 800 \}/);
-  assert.match(responsivePhoto, /"growth-swing":\s*\{ width: 1200, height: 1500 \}/);
   assert.match(responsivePhoto, /"family-main":\s*\{ width: 1200, height: 800 \}/);
   assert.match(responsivePhoto, /"family-playful":\s*\{ width: 1200, height: 1500 \}/);
   assert.match(responsivePhoto, /"growth-supported":\s*\{ width: 1200, height: 1500 \}/);
@@ -502,8 +501,6 @@ test("ships only the approved reduced metadata-free photo derivatives", async ()
     "family-care",
     "family-main",
     "family-origin",
-    "growth-firefighter",
-    "growth-swing",
     "hero-portrait",
     "portrait",
     "story-animals",
@@ -596,7 +593,9 @@ test("implements immediate language routing and an accessible section-aware sele
   assert.match(controls, /event\.currentTarget\.href = destination/);
   assert.match(controls, /const plainPrimaryClick =[\s\S]*?event\.button === 0[\s\S]*?!event\.ctrlKey[\s\S]*?!event\.metaKey[\s\S]*?!event\.shiftKey/);
   assert.match(controls, /if \(plainPrimaryClick\)[\s\S]*?event\.preventDefault\(\)[\s\S]*?window\.location\.assign\(destination\)/);
-  assert.equal((controls.match(/onPointerDown=\{\(event\) => prepareLanguageLink/g) ?? []).length, 2);
+  assert.match(controls, /const capturePointerDestination = \(anchor: HTMLAnchorElement\)/);
+  assert.match(controls, /anchor\.getAttribute\("href"\) \|\| anchor\.href/);
+  assert.equal((controls.match(/onPointerDown=\{\(event\) => capturePointerDestination/g) ?? []).length, 2);
   assert.doesNotMatch(controls, /onFocus=/);
   assert.equal((controls.match(/event\.key === "Enter"/g) ?? []).length, 2);
   assert.equal((controls.match(/href=\{`\$\{localePaths\.(?:zh|en)\.home\}\$\{activeHref\}`\}/g) ?? []).length, 2);
@@ -645,9 +644,11 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
     read("app/globals.css"),
   ]);
 
-  for (const variant of ["rainbow", "tree", "balloons", "dog", "garden"]) {
+  for (const variant of ["tree", "balloons", "dog", "garden"]) {
     assert.match(portfolio, new RegExp(`MeadowDecor\\s+variant=["']${variant}["']`));
   }
+  assert.doesNotMatch(portfolio, /MeadowDecor\s+variant=["']rainbow["']/);
+  assert.doesNotMatch(decor, /["']rainbow["']|meadow-rainbow/);
   assert.match(decor, /aria-hidden="true"/);
   assert.match(decor, /IntersectionObserver/);
   assert.match(decor, /prefers-reduced-motion: reduce/);
@@ -655,8 +656,6 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
   assert.match(decor, /sessionStorage\.setItem\(dogSessionKey\(locale\), "seen"\)/);
   assert.match(decor, /oliver-meadow-dog-\$\{locale\}-v3/);
   for (const scenePart of [
-    "meadow-rainbow-cloud-left",
-    "meadow-rainbow-cloud-right",
     "meadow-tree-ground",
     "meadow-dog-hill-back",
     "meadow-dog-hill-front",
@@ -675,10 +674,9 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
   assert.match(css, /meadow-balloon-honey 4\.7s 180ms[^;]*forwards/);
   assert.match(css, /\.hero-copy\s*\{[\s\S]*?position:\s*relative[\s\S]*?z-index:\s*3/);
   assert.match(css, /\.hero-visual\s*\{[\s\S]*?z-index:\s*1[\s\S]*?overflow:\s*clip/);
-  assert.match(css, /\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?position:\s*absolute[\s\S]*?z-index:\s*0[\s\S]*?width:\s*190%[\s\S]*?aspect-ratio:\s*520 \/ 298/);
   assert.match(css, /\.hero-preview-media\s*\{[\s\S]*?z-index:\s*2/);
-  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*190%/);
-  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.hero-visual \.meadow-decor-rainbow\s*\{[\s\S]*?width:\s*190%/);
+  assert.doesNotMatch(css, /meadow-rainbow|meadow-decor-rainbow/);
+  assert.doesNotMatch(css, /\.hero-visual\s*\{[^}]*min-height:\s*5(?:00|40|60)px/);
   assert.doesNotMatch(css, /right:\s*-210px|31\.25vw - 440px/);
   assert.match(css, /\.meadow-decor-balloons\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
   assert.match(css, /\.meadow-decor-tree\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);

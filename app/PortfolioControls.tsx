@@ -154,6 +154,15 @@ export function LanguageSwitch({
     return destination;
   };
 
+  const capturePointerDestination = (anchor: HTMLAnchorElement) => {
+    // The rendered href already follows the currently visible section.
+    // Preserve it before browser automation or a touch browser can scroll a
+    // fixed header control into view ahead of the pointer event.
+    const destination = anchor.getAttribute("href") || anchor.href;
+    anchor.dataset.languageDestination = destination;
+    return destination;
+  };
+
   const rememberLanguage = (
     event: ReactMouseEvent<HTMLAnchorElement>,
     nextLocale: PortfolioLocale,
@@ -193,7 +202,7 @@ export function LanguageSwitch({
         aria-current={locale === "zh" ? "page" : undefined}
         hrefLang="zh-Hant-HK"
         lang="zh-Hant-HK"
-        onPointerDown={(event) => prepareLanguageLink(event.currentTarget, "zh")}
+        onPointerDown={(event) => capturePointerDestination(event.currentTarget)}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             prepareLanguageLink(event.currentTarget, "zh");
@@ -211,7 +220,7 @@ export function LanguageSwitch({
         aria-current={locale === "en" ? "page" : undefined}
         hrefLang="en-HK"
         lang="en-HK"
-        onPointerDown={(event) => prepareLanguageLink(event.currentTarget, "en")}
+        onPointerDown={(event) => capturePointerDestination(event.currentTarget)}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             prepareLanguageLink(event.currentTarget, "en");

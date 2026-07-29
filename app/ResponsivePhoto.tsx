@@ -27,9 +27,7 @@ const photoDimensions: Record<
   "about-observing": { width: 1200, height: 900 },
   "story-swimming": { width: 1200, height: 800 },
   "story-animals": { width: 1200, height: 800 },
-  "growth-firefighter": { width: 1200, height: 1500 },
   "growth-supported": { width: 1200, height: 1500 },
-  "growth-swing": { width: 1200, height: 1500 },
 };
 
 function srcSet(name: PortfolioPhotoName, extension: "avif" | "webp") {
