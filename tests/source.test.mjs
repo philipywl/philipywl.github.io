@@ -62,6 +62,24 @@ test("language changes follow an in-flight target, then the settled section", ()
     }),
     "",
   );
+  assert.equal(
+    resolveLanguageSection({
+      nearTop: false,
+      currentSectionId: "family",
+      activeHref: "#growth",
+      routeHash: "#family",
+    }),
+    "#family",
+  );
+  assert.equal(
+    resolveLanguageSection({
+      nearTop: false,
+      currentSectionId: "growth",
+      activeHref: "#growth",
+      routeHash: "#family",
+    }),
+    "#growth",
+  );
 });
 
 test("keeps Sites and GitHub Pages workflows separate", async () => {
@@ -263,10 +281,15 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /一步步向前，一點點長大/);
   assert.match(copy, /Family & Care/);
   assert.match(copy, /家庭與陪伴/);
-  assert.match(copy, /Secure in love, brave to explore/);
-  assert.match(copy, /在愛裏安心，在陪伴中勇敢探索/);
+  assert.match(copy, /Secure in love, free to explore/);
+  assert.match(copy, /在愛裏安心，在陪伴中自在探索/);
   assert.match(copy, /Oliver's learning journey/);
   assert.match(copy, /昊熹的成長旅程/);
+  assert.match(copy, /greeting: "Hello, I'm Oliver\."/);
+  assert.match(copy, /greeting: "你好，我是昊熹。"/);
+  assert.match(copy, /I'd love to share the things that brighten my days: books, cars and dogs, little challenges, and time exploring the world with my family\./);
+  assert.match(copy, /我想和你分享每天喜歡的事：書本、車和小狗、生活裏的小挑戰，還有與家人一起探索世界的時光。/);
+  assert.doesNotMatch(copy, /[“”]Hello, I'm Oliver\.|「你好，我是昊熹。」/);
   assert.match(copy, /Reading together/);
   assert.match(copy, /親子共讀/);
   assert.match(copy, /Cars and dogs/);
@@ -282,8 +305,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /glasses remind him of Dad, a bald head of Grandpa/);
   assert.match(copy, /戴眼鏡的是爸爸，光頭的是公公/);
   assert.doesNotMatch(copy, /fast learner|有很強記憶力|looks towards the teacher/i);
-  assert.match(copy, /Mum, Dad and the people who love Oliver fill his days with warmth/);
-  assert.match(copy, /爸爸媽媽和家人為昊熹築起一個有愛、正面而安全的日常/);
+  assert.match(copy, /Mum, Dad and the people who love Oliver fill his days with love, encouragement and a sense of safety/);
+  assert.match(copy, /爸爸媽媽和家人以愛、鼓勵和安全感陪伴昊熹/);
   assert.doesNotMatch(copy, /valuesTitle|valuesBody|vignettes/);
   assert.match(copy, /At 13 months, Oliver looks towards the camera with a bright, curious gaze/);
   assert.match(copy, /13個月大的昊熹，帶着明亮好奇的目光望向鏡頭/);
@@ -301,20 +324,24 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /孩子的成長始於家庭裏安穩而真誠的陪伴/);
   assert.match(copy, /Ten everyday moments/);
   assert.match(copy, /十個日常小片段/);
-  assert.match(copy, /Rescue motorcycle photograph to be added/);
-  assert.match(copy, /救護電單車相片稍後加入/);
+  assert.match(copy, /During a visit to the fire station, Oliver held his much-loved toy motorcycle/);
+  assert.match(copy, /參觀消防局時，昊熹拿着心愛的玩具電單車/);
+  assert.match(copy, /Nineteen-month-old Oliver holds a green-and-black toy motorcycle/);
+  assert.match(copy, /19個月大的昊熹手拿綠黑色玩具電單車/);
+  assert.match(copy, /A little motorcycle in his hand, a full-sized one behind him/);
+  assert.match(copy, /手中的小電單車，與身後的大電單車/);
   for (const title of [
     "Listening closely and following a request",
     "Recognising his body and family",
     "A gentle hello to the animals",
-    "A brave step into the water",
     "Little hands turning page after page",
+    "A brave step into the water",
     "Returning to music",
     "細心聆聽，跟着做",
     "認識身體和家人",
     "輕輕走近小動物",
-    "勇敢走進水中",
     "小手翻過一頁頁書",
+    "勇敢走進水中",
     "再次走近音樂",
   ]) assert.match(copy, new RegExp(title));
   assert.match(copy, /name: "hero-portrait"/);
@@ -366,6 +393,21 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
     "feeding-rabbits",
   ]) assert.equal(copy.split(`poster: "${poster}"`).length - 1, 2, poster);
 
+  for (const [poster, priority] of [
+    ["problem-solving", 5],
+    ["following-directions", 10],
+    ["body-and-family", 20],
+    ["feeding-rabbits", 30],
+    ["reading-pages", 40],
+    ["water-step", 50],
+    ["piano-keys", 60],
+  ]) {
+    const matches = copy.match(
+      new RegExp(`poster: "${poster}"[\\s\\S]{0,700}?autoplayPriority: ${priority}`, "g"),
+    ) ?? [];
+    assert.equal(matches.length, 2, `${poster} autoplay priority`);
+  }
+
   for (const id of ["top", "about", "stories", "growth", "family"]) {
     assert.match(portfolio, new RegExp(`id=["']${id}["']`));
   }
@@ -414,7 +456,7 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.doesNotMatch(portfolio, /<img\b|<video\b|<picture\b|<iframe\b/);
   assert.match(youtubeVideo, /https:\/\/www\.youtube-nocookie\.com\/embed\/\$\{videoId\}/);
   assert.match(youtubeVideo, /active \? \(/);
-  assert.match(youtubeVideo, /onClick=\{\(\) => setActive\(true\)\}/);
+  assert.match(youtubeVideo, /onClick=\{\(\) => requestManualPlayback\(videoId\)\}/);
   assert.match(youtubeVideo, /\{loadingLabel\}/);
   assert.match(youtubeVideo, /className="youtube-video-poster"/);
   assert.match(youtubeVideo, /\/media\/video\/\$\{poster\}-\$\{posterLarge\}\.webp/);
@@ -425,12 +467,34 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /loadingVideo: "正在載入影片……"/);
   assert.match(youtubeVideo, /loading="lazy"/);
   assert.match(youtubeVideo, /tabIndex=\{0\}/);
-  assert.match(youtubeVideo, /useLayoutEffect/);
-  assert.match(youtubeVideo, /iframeRef\.current\?\.focus\(\)/);
-  assert.doesNotMatch(youtubeVideo, /onLoad=\{\(\) => \{[\s\S]*?iframeRef\.current\?\.focus\(\)/);
+  assert.match(youtubeVideo, /const START_RATIO = 0\.65/);
+  assert.match(youtubeVideo, /const STOP_RATIO = 0\.35/);
+  assert.match(youtubeVideo, /const AUTOPLAY_DWELL_MS = 350/);
+  assert.match(youtubeVideo, /let activePlaybackKey: string \| null = null/);
+  assert.match(youtubeVideo, /a\.priority - b\.priority/);
+  assert.match(youtubeVideo, /const preferred = visibleCandidates\[0\]/);
+  assert.match(youtubeVideo, /candidate\.priority < entry\.priority/);
+  assert.match(youtubeVideo, /current\.activation === "auto"[\s\S]*?!current\.playing[\s\S]*?hasHigherPriorityBlocker\(current\)/);
+  assert.match(youtubeVideo, /next\.activate\(false\)/);
+  assert.match(youtubeVideo, /entry\.activate\(true\)/);
+  assert.match(youtubeVideo, /current\?\.pause\(\)[\s\S]*?activePlaybackKey = null/);
+  assert.match(youtubeVideo, /document\.visibilityState !== "visible"/);
+  assert.match(youtubeVideo, /document\.addEventListener\("visibilitychange", handleDocumentVisibility\)/);
+  assert.match(youtubeVideo, /window\.addEventListener\("pagehide", pauseActivePlayback\)/);
+  assert.match(youtubeVideo, /prefers-reduced-motion: reduce/);
+  assert.match(youtubeVideo, /connection\?\.saveData !== true/);
+  assert.match(youtubeVideo, /const autoStartAllowed = scrollAutoplayAllowed\(\)/);
+  assert.match(youtubeVideo, /if \(!autoStartAllowed\)[\s\S]*?current\?\.activation === "auto"[\s\S]*?return/);
+  assert.doesNotMatch(youtubeVideo, /!scrollAutoplayAllowed\(\) \|\| document\.visibilityState/);
+  assert.match(youtubeVideo, /entry\.suppressed = true/);
+  assert.match(youtubeVideo, /notifyUserPaused\(videoId\)/);
+  assert.match(youtubeVideo, /focusAfterLoadRef\.current = manual/);
+  assert.match(youtubeVideo, /if \(focusAfterLoadRef\.current\)[\s\S]*?iframeRef\.current\?\.focus\(\)/);
+  assert.doesNotMatch(youtubeVideo, /useLayoutEffect|onClick=\{\(\) => setActive\(true\)\}/);
   assert.match(youtubeVideo, /referrerPolicy="strict-origin-when-cross-origin"/);
   assert.match(youtubeVideo, /allowFullScreen/);
-  assert.doesNotMatch(youtubeVideo, /youtube\.com\/watch|openLabel|autoplay=1[^\n]*setActive\(true\)/);
+  assert.match(youtubeVideo, /autoplay=1&mute=1&enablejsapi=1&playsinline=1/);
+  assert.doesNotMatch(youtubeVideo, /youtube\.com\/watch|openLabel|\bautoPlay\b|\bloop\b/);
   assert.match(welcomeIntro, /sessionStorage\.getItem\(/);
   assert.match(welcomeIntro, /sessionStorage\.setItem\(/);
   assert.match(welcomeIntro, /prefers-reduced-motion: reduce/);
@@ -481,6 +545,7 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(responsivePhoto, /"family-main":\s*\{ width: 1200, height: 800 \}/);
   assert.match(responsivePhoto, /"family-playful":\s*\{ width: 1200, height: 1500 \}/);
   assert.match(responsivePhoto, /"growth-supported":\s*\{ width: 1200, height: 1500 \}/);
+  assert.match(responsivePhoto, /"growth-rescue-motorcycle":\s*\{ width: 1200, height: 1500 \}/);
   assert.match(responsivePhoto, /width=\{dimensions\.width\}/);
   assert.match(responsivePhoto, /height=\{dimensions\.height\}/);
   assert.match(responsivePhoto, /loading=\{priority \? "eager" : "lazy"\}/);
@@ -507,6 +572,7 @@ test("ships only the approved reduced metadata-free photo derivatives", async ()
     "story-swimming",
     "family-playful",
     "growth-supported",
+    "growth-rescue-motorcycle",
   ]) {
     for (const width of [480, 800, 1200]) {
       for (const extension of ["avif", "webp"]) expected.push(`${name}-${width}.${extension}`);
@@ -519,7 +585,7 @@ test("ships only the approved reduced metadata-free photo derivatives", async ()
     assert.ok(bytes.length > 1_000 && bytes.length < 250_000, file);
     assert.equal(bytes.includes(Buffer.from("Exif")), false, file);
     for (const originalName of [
-      "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023",
+      "1001", "1002", "1003", "1010", "1011", "1012", "1013", "1014", "1015", "1016", "1017", "1018", "1019", "1020", "1021", "1022", "1023", "1024",
     ]) assert.equal(bytes.includes(Buffer.from(originalName)), false, file);
     assert.equal(bytes.includes(Buffer.from("GPS")), false, file);
   }
@@ -589,17 +655,16 @@ test("implements immediate language routing and an accessible section-aware sele
   assert.match(controls, /sectionHashes\.includes\(window\.location\.hash\)/);
   assert.match(controls, /resolveLanguageSection/);
   assert.match(controls, /anchor\.dataset\.languageDestination = destination/);
-  assert.match(controls, /event\.detail > 0[\s\S]*?event\.currentTarget\.dataset\.languageDestination/);
-  assert.match(controls, /event\.currentTarget\.href = destination/);
-  assert.match(controls, /const plainPrimaryClick =[\s\S]*?event\.button === 0[\s\S]*?!event\.ctrlKey[\s\S]*?!event\.metaKey[\s\S]*?!event\.shiftKey/);
-  assert.match(controls, /if \(plainPrimaryClick\)[\s\S]*?event\.preventDefault\(\)[\s\S]*?window\.location\.assign\(destination\)/);
+  assert.doesNotMatch(controls, /window\.location\.assign\(destination\)/);
+  assert.doesNotMatch(controls, /event\.preventDefault\(\)[\s\S]*?window\.location\.assign/);
   assert.equal((controls.match(/onPointerDown=\{\(event\) => prepareLanguageLink/g) ?? []).length, 2);
   assert.doesNotMatch(controls, /onFocus=/);
   assert.equal((controls.match(/event\.key === "Enter"/g) ?? []).length, 2);
+  assert.equal((controls.match(/onClick=\{\(\) => rememberLanguage/g) ?? []).length, 2);
   assert.equal((controls.match(/href=\{`\$\{localePaths\.(?:zh|en)\.home\}\$\{activeHref\}`\}/g) ?? []).length, 2);
   assert.match(portfolio, /activeHref=\{activeHref\}/);
   assert.match(portfolio, /const settleActiveHref = \(href: string\)/);
-  assert.match(portfolio, /window\.setTimeout\(\(\) => \{[\s\S]*?setActiveHref\(href\)[\s\S]*?\}, 180\)/);
+  assert.match(portfolio, /window\.setTimeout\(\(\) => \{[\s\S]*?setActiveHref\(document\.documentElement\.dataset\.scrollTarget \|\| href\)[\s\S]*?\}, 180\)/);
   assert.match(controls, /dialog\.showModal\(\)/);
   assert.match(controls, /onCancel=/);
   assert.match(controls, /onKeyDown=[\s\S]*?event\.key === "Escape"[\s\S]*?closeMenu\(\)/);
@@ -628,6 +693,8 @@ test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct",
   assert.match(greeting, /addEventListener\("animationend", completeGreeting/);
   assert.match(greeting, /tabIndex=\{-1\}/);
   assert.doesNotMatch(greeting, /setInterval|autoPlay|\bloop\b/);
+  assert.match(css, /\.greeting-heading\s*\{[\s\S]*?white-space:\s*nowrap/);
+  assert.match(css, /\.greeting-reserve,[\s\S]*?\.greeting-visual\s*\{[\s\S]*?white-space:\s*nowrap/);
   assert.match(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*forwards/);
   assert.doesNotMatch(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*both/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
@@ -760,7 +827,7 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.desktop-nav[\s\S]*?display:\s*flex/);
   assert.match(css, /\.story-media-count-2\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.doesNotMatch(css, /\n\s{2}\.story-media-count-2\s*\{\s*grid-template-columns:\s*repeat\(2/);
-  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-3 \.story-media-count-2,[\s\S]*?\.story-card-4 \.story-media-count-2[\s\S]*?1\.65fr[\s\S]*?0\.65fr/);
+  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-3 \.story-media-count-2,[\s\S]*?\.story-card-5 \.story-media-count-2[\s\S]*?1\.65fr[\s\S]*?0\.65fr/);
   assert.match(css, /\.button:active|\.primary-button:active/);
   assert.match(css, /@media \(hover: hover\)/);
   assert.match(media, /className="preview-media-kind" aria-hidden="true"/);
@@ -768,7 +835,12 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(css, /\.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*4 \/ 5/);
   assert.match(css, /\.portfolio-photo-portrait \.portfolio-photo-frame,[\s\S]*?\.portfolio-photo-hero-portrait \.portfolio-photo-frame\s*\{[\s\S]*?aspect-ratio:\s*3 \/ 4/);
   assert.match(css, /\.portfolio-photo img\s*\{[\s\S]*?object-fit:\s*cover/);
-  assert.match(css, /\.family-media-grid > \*\s*\{[\s\S]*?grid-column:\s*1 \/ -1/);
+  assert.match(css, /\.family-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(css, /\.family-copy\s*\{[\s\S]*?max-width:\s*720px[\s\S]*?justify-self:\s*start/);
+  assert.match(css, /\.family-media-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.family-media-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)[\s\S]*?\.family-photo-main\s*\{[\s\S]*?grid-column:\s*1 \/ -1[\s\S]*?\.family-media-grid > \.family-photo-support:last-child\s*\{[\s\S]*?justify-self:\s*center/);
+  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.family-media-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)[\s\S]*?\.family-media-grid > \.family-photo-support:last-child\s*\{[\s\S]*?grid-column:\s*auto[\s\S]*?width:\s*100%/);
+  assert.doesNotMatch(css, /\.family-copy\s*\{[^}]*text-align:\s*center/);
 });
 
 test("keeps the Pages verifier aligned with the simplified public architecture", async () => {

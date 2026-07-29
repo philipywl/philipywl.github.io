@@ -18,10 +18,29 @@ export function resolveLanguageSection(state) {
   if (state.pendingSection) return state.pendingSection;
   if (state.nearTop) return "";
 
+  const currentSectionHash = state.currentSectionId
+    ? `#${state.currentSectionId}`
+    : "";
+
+  // A hash that agrees with either the reading line or the settled navigation
+  // state is the strongest evidence of the reader's intended section. This
+  // avoids carrying a briefly stale scroll-observer value across languages
+  // immediately after an anchor jump.
+  if (
+    state.routeHash &&
+    [
+      currentSectionHash,
+      state.activeHref,
+      state.activeLinkHash,
+    ].includes(state.routeHash)
+  ) {
+    return state.routeHash;
+  }
+
   return (
+    currentSectionHash ||
     state.activeHref ||
     state.activeLinkHash ||
-    (state.currentSectionId ? `#${state.currentSectionId}` : "") ||
     state.routeHash ||
     ""
   );
