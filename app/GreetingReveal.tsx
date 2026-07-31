@@ -25,6 +25,7 @@ export default function GreetingReveal({
   const playState = `${locale}-play`;
   const waitingState = `${locale}-waiting`;
   const completeState = `${locale}-complete`;
+  const preparingState = `${locale}-preparing`;
   const bootstrap = `(() => {
     const heading = document.getElementById(${JSON.stringify(id)});
     if (!heading) return;
@@ -32,6 +33,7 @@ export default function GreetingReveal({
     const play = ${JSON.stringify(playState)};
     const waiting = ${JSON.stringify(waitingState)};
     const complete = ${JSON.stringify(completeState)};
+    const visual = heading.querySelector(".greeting-visual");
     let seen = false;
     try { seen = window.sessionStorage.getItem(key) === "seen"; } catch {}
     const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -40,6 +42,7 @@ export default function GreetingReveal({
     }
     const welcomeWillPlay = window.__oliverWelcomeShouldPlay === true;
     heading.dataset.greetingState = seen || reduced ? complete : (welcomeWillPlay ? waiting : play);
+    if (visual instanceof HTMLElement) visual.style.visibility = "";
   })();`;
 
   useEffect(() => {
@@ -71,9 +74,15 @@ export default function GreetingReveal({
     };
 
     const waitingForWelcome = heading.dataset.greetingState === waitingState;
-    if (waitingForWelcome) {
+    const welcomeStillPlaying = (
+      window as typeof window & { __oliverWelcomeShouldPlay?: boolean }
+    ).__oliverWelcomeShouldPlay === true;
+    if (waitingForWelcome && welcomeStillPlaying) {
       window.addEventListener("oliver:welcome-complete", startGreeting, { once: true });
-    } else if (heading.dataset.greetingState === playState) {
+    } else if (
+      waitingForWelcome ||
+      heading.dataset.greetingState === playState
+    ) {
       startGreeting();
     }
 
@@ -90,17 +99,25 @@ export default function GreetingReveal({
         id={id}
         className="greeting-heading"
         data-greeting-locale={locale}
-        data-greeting-state="static"
+        data-greeting-state={preparingState}
         suppressHydrationWarning
         tabIndex={-1}
       >
         <span className="sr-only">{greeting}</span>
-        <span className="greeting-reserve" aria-hidden="true">
+        <span
+          className="greeting-reserve"
+          aria-hidden="true"
+          style={{ visibility: "hidden" }}
+        >
           <span className="greeting-part">{lead}</span>
           {locale === "en" ? " " : null}
           <span className="greeting-part">{rest}</span>
         </span>
-        <span className="greeting-visual" aria-hidden="true">
+        <span
+          className="greeting-visual"
+          aria-hidden="true"
+          style={{ visibility: "hidden" }}
+        >
           <span className="greeting-part greeting-part-lead">
             <span className="greeting-segment">{lead}</span>
             <span className="greeting-cursor greeting-cursor-lead" />
@@ -112,6 +129,16 @@ export default function GreetingReveal({
           </span>
         </span>
       </h1>
+      <noscript>
+        <style>{`
+          #${id}[data-greeting-state="${preparingState}"] .greeting-visual {
+            visibility: visible !important;
+          }
+          #${id}[data-greeting-state="${preparingState}"] .greeting-segment {
+            clip-path: none !important;
+          }
+        `}</style>
+      </noscript>
       <script dangerouslySetInnerHTML={{ __html: bootstrap }} />
     </>
   );

@@ -9,6 +9,7 @@ import {
 import type { PortfolioLocale } from "./portfolio-copy";
 
 export type MeadowDecorVariant =
+  | "hero-sky"
   | "tree"
   | "balloons"
   | "dog"
@@ -33,11 +34,11 @@ export default function MeadowDecor({
 }: MeadowDecorProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [motionState, setMotionState] = useState<MotionState>(
-    variant === "garden" ? "settled" : "idle",
+    variant === "garden" || variant === "hero-sky" ? "settled" : "idle",
   );
 
   useEffect(() => {
-    if (variant === "garden") return;
+    if (variant === "garden" || variant === "hero-sky") return;
 
     const root = rootRef.current;
     if (!root) return;
@@ -126,6 +127,22 @@ export default function MeadowDecor({
         <span className="meadow-flower meadow-flower-blue" />
         <span className="meadow-garden-sprout" />
         <span className="meadow-garden-butterfly" />
+      </div>
+    );
+  }
+
+  if (variant === "hero-sky") {
+    return (
+      <div
+        ref={rootRef}
+        className={classes}
+        data-meadow-state="settled"
+        aria-hidden="true"
+      >
+        <span className="meadow-hero-sun" />
+        <span className="meadow-hero-rainbow" />
+        <span className="meadow-hero-cloud meadow-hero-cloud-left" />
+        <span className="meadow-hero-cloud meadow-hero-cloud-right" />
       </div>
     );
   }

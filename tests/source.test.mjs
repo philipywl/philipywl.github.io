@@ -287,8 +287,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /昊熹的成長旅程/);
   assert.match(copy, /greeting: "Hello, I'm Oliver\."/);
   assert.match(copy, /greeting: "你好，我是昊熹。"/);
-  assert.match(copy, /I'd love to share the things that brighten my days: books, cars and dogs, little challenges, and time exploring the world with my family\./);
-  assert.match(copy, /我想和你分享每天喜歡的事：書本、車和小狗、生活裏的小挑戰，還有與家人一起探索世界的時光。/);
+  assert.match(copy, /I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family\./);
+  assert.match(copy, /我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。/);
   assert.doesNotMatch(copy, /[“”]Hello, I'm Oliver\.|「你好，我是昊熹。」/);
   assert.match(copy, /Reading together/);
   assert.match(copy, /親子共讀/);
@@ -298,6 +298,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /專注解難/);
   assert.match(copy, /Noticing and remembering/);
   assert.match(copy, /細心觀察/);
+  assert.match(copy, /title: "Reading together"[\s\S]*?title: "Cars and dogs"[\s\S]*?title: "Working things out"[\s\S]*?title: "Noticing and remembering"/);
+  assert.match(copy, /title: "親子共讀"[\s\S]*?title: "車和小狗"[\s\S]*?title: "專注解難"[\s\S]*?title: "細心觀察"/);
   assert.match(copy, /often chooses a book from the shelf/);
   assert.match(copy, /主動從書架拿起書本/);
   assert.match(copy, /vroom vroom/);
@@ -365,7 +367,7 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /六個日常小片段/);
   assert.match(copy, /tried to climb onto the pool edge/);
   assert.match(copy, /A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach/);
-  assert.match(copy, /every night before bed/);
+  assert.match(copy, /Mum and Dad read with Oliver every day/);
   assert.match(copy, /也試着自己爬上池邊/);
   assert.match(copy, /家中低矮的書架放着繪本、中英文圖書和點讀書/);
   assert.doesNotMatch(copy, /音樂天賦|冷靜平穩的性格|適時力|fast learner|有很強記憶力/i);
@@ -413,11 +415,13 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   }
   assert.doesNotMatch(portfolio, /privacy-notice|privacy-title|href=["']#privacy/);
   assert.match(portfolio, /className="footer-privacy">\{copy\.privacy\.body\}/);
-  assert.match(portfolio, /copy\.stories\.items\.map/);
+  assert.match(portfolio, /orderedStories\.map/);
+  assert.match(portfolio, /const orderedStories = \[\.\.\.copy\.stories\.items\]\.sort/);
   assert.doesNotMatch(portfolio, /plannedItems|planned-stories/);
   assert.match(portfolio, /copy\.growth\.milestones\.map/);
   assert.doesNotMatch(portfolio, /copy\.family\.vignettes\.map|family-values-card|family-vignette/);
-  assert.match(portfolio, /copy\.family\.photos\.map/);
+  assert.match(portfolio, /copy\.family\.photos/);
+  assert.match(portfolio, /\[familyMainPhoto, \.\.\.familySupportPhotos\]\.map/);
   assert.match(portfolio, /item\.placeholder/);
   assert.match(portfolio, /stories-section section-pad/);
   assert.doesNotMatch(portfolio, /future-growth-section|future-growth-list|recent-moments-grid/);
@@ -465,6 +469,10 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.doesNotMatch(youtubeVideo, /i\.ytimg\.com|img\.youtube\.com/);
   assert.match(copy, /loadingVideo: "Loading video…"/);
   assert.match(copy, /loadingVideo: "正在載入影片……"/);
+  assert.match(copy, /enableVideoSound: "Turn on video sound"/);
+  assert.match(copy, /disableVideoSound: "Turn off video sound"/);
+  assert.match(copy, /enableVideoSound: "開啟影片聲音"/);
+  assert.match(copy, /disableVideoSound: "關閉影片聲音"/);
   assert.match(youtubeVideo, /loading="lazy"/);
   assert.match(youtubeVideo, /tabIndex=\{0\}/);
   assert.match(youtubeVideo, /const START_RATIO = 0\.65/);
@@ -494,6 +502,21 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(youtubeVideo, /referrerPolicy="strict-origin-when-cross-origin"/);
   assert.match(youtubeVideo, /allowFullScreen/);
   assert.match(youtubeVideo, /autoplay=1&mute=1&enablejsapi=1&playsinline=1/);
+  assert.match(youtubeVideo, /VIDEO_SOUND_SESSION_KEY = "oliver-video-sound-v1"/);
+  assert.match(youtubeVideo, /sessionStorage\.getItem\(VIDEO_SOUND_SESSION_KEY\)/);
+  assert.match(youtubeVideo, /sessionStorage\.setItem\([\s\S]*?VIDEO_SOUND_SESSION_KEY/);
+  assert.doesNotMatch(youtubeVideo, /localStorage|document\.cookie/);
+  assert.match(youtubeVideo, /requestManualPlayback[\s\S]*?setVideoSoundEnabled\(true\)[\s\S]*?entry\.activate\(true\)/);
+  assert.match(youtubeVideo, /sendCommand\("setVolume", \[65\]\)/);
+  assert.match(youtubeVideo, /sendCommand\("unMute"\)/);
+  assert.match(youtubeVideo, /args: \["onAutoplayBlocked"\]/);
+  assert.match(youtubeVideo, /data\.event === "onAutoplayBlocked"[\s\S]*?setVideoSoundEnabled\(false\)[\s\S]*?sendCommand\("playVideo"\)/);
+  assert.match(youtubeVideo, /event\.origin !== "https:\/\/www\.youtube-nocookie\.com"[\s\S]*?event\.origin !== "https:\/\/www\.youtube\.com"/);
+  assert.match(youtubeVideo, /className="youtube-video-sound"/);
+  assert.match(youtubeVideo, /aria-pressed=\{soundEnabled\}/);
+  assert.match(youtubeVideo, /data-sound-enabled=\{soundEnabled \? "true" : "false"\}/);
+  assert.match(css, /\.youtube-video-sound\s*\{[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /\.youtube-video-sound:focus-visible\s*\{[\s\S]*?outline:\s*var\(--focus-ring\)/);
   assert.doesNotMatch(youtubeVideo, /youtube\.com\/watch|openLabel|\bautoPlay\b|\bloop\b/);
   assert.match(welcomeIntro, /sessionStorage\.getItem\(/);
   assert.match(welcomeIntro, /sessionStorage\.setItem\(/);
@@ -678,15 +701,21 @@ test("implements immediate language routing and an accessible section-aware sele
   assert.match(notFound, /aria-label="中文 \| English"/);
 });
 
-test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct", async () => {
+test("keeps the greeting flash-free, accessible, one-time, motion-safe, and cursor-correct", async () => {
   const [greeting, css] = await Promise.all([
     read("app/GreetingReveal.tsx"),
     read("app/globals.css"),
   ]);
 
   assert.match(greeting, /<span className="sr-only">\{greeting\}<\/span>/);
-  assert.match(greeting, /greeting-visual" aria-hidden="true"/);
+  assert.match(greeting, /className="greeting-visual"[\s\S]*?aria-hidden="true"[\s\S]*?style=\{\{ visibility: "hidden" \}\}/);
+  assert.match(greeting, /const visual = heading\.querySelector\("\.greeting-visual"\)/);
+  assert.match(greeting, /visual\.style\.visibility = ""/);
   assert.match(greeting, /greeting-reserve/);
+  assert.match(greeting, /data-greeting-state=\{preparingState\}/);
+  assert.doesNotMatch(greeting, /data-greeting-state="static"/);
+  assert.match(greeting, /<noscript>[\s\S]*?<style>/);
+  assert.match(greeting, /welcomeStillPlaying[\s\S]*?waitingForWelcome \|\|[\s\S]*?heading\.dataset\.greetingState === playState/);
   assert.match(greeting, /sessionStorage\.getItem\(key\)/);
   assert.match(greeting, /sessionStorage\.setItem\(key, "seen"\)/);
   assert.match(greeting, /prefers-reduced-motion: reduce/);
@@ -695,6 +724,7 @@ test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct",
   assert.doesNotMatch(greeting, /setInterval|autoPlay|\bloop\b/);
   assert.match(css, /\.greeting-heading\s*\{[\s\S]*?white-space:\s*nowrap/);
   assert.match(css, /\.greeting-reserve,[\s\S]*?\.greeting-visual\s*\{[\s\S]*?white-space:\s*nowrap/);
+  assert.match(css, /data-greeting-state\$="-preparing"[\s\S]*?data-greeting-state\$="-waiting"[\s\S]*?visibility:\s*hidden/);
   assert.match(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*forwards/);
   assert.doesNotMatch(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*both/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
@@ -704,6 +734,28 @@ test("keeps the greeting accessible, one-time, motion-safe, and cursor-correct",
   assert.match(css, /\.greeting-heading \.greeting-cursor[\s\S]*?display:\s*none !important/);
 });
 
+test("adds one restrained, session-scoped portrait hello without layout shift", async () => {
+  const [portfolio, portraitMotion, css] = await Promise.all([
+    read("app/OliverPortfolio.tsx"),
+    read("app/HeroPortraitMotion.tsx"),
+    read("app/globals.css"),
+  ]);
+
+  assert.match(portfolio, /<HeroPortraitMotion locale=\{locale\}>[\s\S]*?<ResponsivePhoto/);
+  assert.match(portraitMotion, /oliver-portrait-\$\{locale\}-v1/);
+  assert.match(portraitMotion, /sessionStorage\.getItem\(sessionKey\)/);
+  assert.match(portraitMotion, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
+  assert.match(portraitMotion, /prefers-reduced-motion: reduce/);
+  assert.match(portraitMotion, /addEventListener\(welcomeCompleteEvent, handleWelcomeComplete/);
+  assert.match(portraitMotion, /data-portrait-motion="waiting"/);
+  assert.doesNotMatch(portraitMotion, /setInterval|\bloop\b/);
+  assert.match(css, /data-portrait-motion="play"[\s\S]*?\.portfolio-photo-frame\s*\{[\s\S]*?animation:\s*hero-portrait-hello 820ms/);
+  assert.match(css, /@keyframes hero-portrait-hello[\s\S]*?transform:\s*scale\(1\.018\)[\s\S]*?transform:\s*scale\(0\.996\)/);
+  assert.doesNotMatch(css, /hero-portrait-hello[^;}]*\binfinite\b/i);
+  assert.match(css, /prefers-reduced-motion: reduce[\s\S]*?data-portrait-motion="play"[\s\S]*?animation:\s*none !important/);
+  assert.match(css, /@media print[\s\S]*?\.hero-preview-media \.portfolio-photo-frame[\s\S]*?animation:\s*none !important/);
+});
+
 test("adds lively Sunlit Meadow decoration without accessibility or motion debt", async () => {
   const [portfolio, decor, css] = await Promise.all([
     read("app/OliverPortfolio.tsx"),
@@ -711,11 +763,12 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
     read("app/globals.css"),
   ]);
 
-  for (const variant of ["tree", "balloons", "dog", "garden"]) {
+  for (const variant of ["hero-sky", "tree", "balloons", "dog", "garden"]) {
     assert.match(portfolio, new RegExp(`MeadowDecor\\s+variant=["']${variant}["']`));
   }
-  assert.doesNotMatch(portfolio, /MeadowDecor\s+variant=["']rainbow["']/);
-  assert.doesNotMatch(decor, /["']rainbow["']|meadow-rainbow/);
+  assert.match(decor, /meadow-hero-rainbow/);
+  assert.match(decor, /meadow-hero-sun/);
+  assert.match(decor, /meadow-hero-cloud/);
   assert.match(decor, /aria-hidden="true"/);
   assert.match(decor, /IntersectionObserver/);
   assert.match(decor, /prefers-reduced-motion: reduce/);
@@ -742,7 +795,10 @@ test("adds lively Sunlit Meadow decoration without accessibility or motion debt"
   assert.match(css, /\.hero-copy\s*\{[\s\S]*?position:\s*relative[\s\S]*?z-index:\s*3/);
   assert.match(css, /\.hero-visual\s*\{[\s\S]*?z-index:\s*1[\s\S]*?overflow:\s*clip/);
   assert.match(css, /\.hero-preview-media\s*\{[\s\S]*?z-index:\s*2/);
-  assert.doesNotMatch(css, /meadow-rainbow|meadow-decor-rainbow/);
+  assert.match(css, /\.meadow-hero-rainbow::before[\s\S]*?radial-gradient/);
+  assert.match(css, /\.meadow-hero-sun\s*\{[\s\S]*?background:\s*var\(--sun\)/);
+  assert.match(css, /\.meadow-hero-cloud\s*\{[\s\S]*?background:\s*rgb\(255 255 255 \/ 92%\)/);
+  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.meadow-decor-hero-sky\.meadow-hero-sky[\s\S]*?grid-column:\s*1[\s\S]*?grid-row:\s*1/);
   assert.doesNotMatch(css, /\.hero-visual\s*\{[^}]*min-height:\s*5(?:00|40|60)px/);
   assert.doesNotMatch(css, /right:\s*-210px|31\.25vw - 440px/);
   assert.match(css, /\.meadow-decor-balloons\s*\{[\s\S]*?overflow:\s*visible[\s\S]*?contain:\s*layout/);
@@ -827,7 +883,8 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.desktop-nav[\s\S]*?display:\s*flex/);
   assert.match(css, /\.story-media-count-2\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.doesNotMatch(css, /\n\s{2}\.story-media-count-2\s*\{\s*grid-template-columns:\s*repeat\(2/);
-  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-3 \.story-media-count-2,[\s\S]*?\.story-card-5 \.story-media-count-2[\s\S]*?1\.65fr[\s\S]*?0\.65fr/);
+  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.stories-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)[\s\S]*?\.story-card\s*\{[\s\S]*?grid-template-columns:\s*minmax\(360px, 0\.9fr\) minmax\(0, 1\.1fr\)/);
+  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-3 \.story-media-count-2,[\s\S]*?\.story-card-5 \.story-media-count-2[\s\S]*?1\.05fr[\s\S]*?0\.95fr/);
   assert.match(css, /\.button:active|\.primary-button:active/);
   assert.match(css, /@media \(hover: hover\)/);
   assert.match(media, /className="preview-media-kind" aria-hidden="true"/);
@@ -838,8 +895,10 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(css, /\.family-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.match(css, /\.family-copy\s*\{[\s\S]*?max-width:\s*720px[\s\S]*?justify-self:\s*start/);
   assert.match(css, /\.family-media-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
-  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.family-media-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)[\s\S]*?\.family-photo-main\s*\{[\s\S]*?grid-column:\s*1 \/ -1[\s\S]*?\.family-media-grid > \.family-photo-support:last-child\s*\{[\s\S]*?justify-self:\s*center/);
-  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.family-media-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)[\s\S]*?\.family-media-grid > \.family-photo-support:last-child\s*\{[\s\S]*?grid-column:\s*auto[\s\S]*?width:\s*100%/);
+  assert.match(portfolio, /className="family-photo family-photo-inline"/);
+  assert.match(portfolio, /familyMainPhoto, \.\.\.familySupportPhotos/);
+  assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.family-media-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)[\s\S]*?\.family-photo-main\s*\{[\s\S]*?grid-column:\s*1 \/ -1/);
+  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.family-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(280px, 0\.72fr\) minmax\(0, 1\.28fr\)[\s\S]*?\.family-photo-inline\s*\{[\s\S]*?width:\s*min\(100%, 350px\)[\s\S]*?\.family-photo-main\s*\{[\s\S]*?width:\s*min\(100%, 640px\)/);
   assert.doesNotMatch(css, /\.family-copy\s*\{[^}]*text-align:\s*center/);
 });
 

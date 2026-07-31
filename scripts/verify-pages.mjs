@@ -388,6 +388,8 @@ if (JSON.stringify(artifactVideoPosters) !== JSON.stringify(requiredVideoPosterF
 const privateBirthDate = process.env.OLIVER_BIRTH_DATE?.trim();
 let hasPrivacyEnhancedVideoEmbed = false;
 let hasMutedScrollAutoplayContract = false;
+let hasSessionSoundPreference = false;
+let hasAutoplayBlockedFallback = false;
 const foundApprovedVideoIds = new Set();
 for (const relativePath of files) {
   if (privateBirthDate && relativePath.includes(privateBirthDate)) {
@@ -448,6 +450,8 @@ for (const relativePath of files) {
   if (/autoplay=1&mute=1&enablejsapi=1&playsinline=1/.test(contents)) {
     hasMutedScrollAutoplayContract = true;
   }
+  if (contents.includes("oliver-video-sound-v1")) hasSessionSoundPreference = true;
+  if (contents.includes("onAutoplayBlocked")) hasAutoplayBlockedFallback = true;
   for (const videoId of approvedVideoIds) {
     if (contents.includes(videoId)) foundApprovedVideoIds.add(videoId);
   }
@@ -502,7 +506,7 @@ const chineseText = visibleText(routeHtml.chinese);
 for (const expected of [
   "Oliver's learning journey",
   "Hello, I'm Oliver.",
-  "I'd love to share the things that brighten my days: books, cars and dogs, little challenges, and time exploring the world with my family.",
+  "I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family.",
   "A recent portrait of Oliver at 19 months.",
   "Oliver's everyday world",
   "Reading together",
@@ -546,7 +550,7 @@ for (const expected of [
 }
 for (const expected of [
   "昊熹的成長旅程",
-  "我想和你分享每天喜歡的事：書本、車和小狗、生活裏的小挑戰，還有與家人一起探索世界的時光。",
+  "我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。",
   "昊熹19個月大時的一張近照。",
   "昊熹的日常小世界",
   "親子共讀",
@@ -598,8 +602,8 @@ for (const removedCopy of [
   if ((englishText + chineseText).includes(removedCopy)) fail(`removed placeholder remains: ${removedCopy}`);
 }
 for (const [text, orderedTitles, route] of [
-  [routeHtml.english, ["Listening closely and following a request", "Recognising his body and family", "A gentle hello to the animals", "Little hands turning page after page", "A brave step into the water", "Returning to music"], "English"],
-  [routeHtml.chinese, ["細心聆聽，跟着做", "認識身體和家人", "輕輕走近小動物", "小手翻過一頁頁書", "勇敢走進水中", "再次走近音樂"], "Chinese"],
+  [routeHtml.english, ["Listening closely and following a request", "Little hands turning page after page", "A brave step into the water", "Returning to music", "A gentle hello to the animals", "Recognising his body and family"], "English"],
+  [routeHtml.chinese, ["細心聆聽，跟着做", "小手翻過一頁頁書", "勇敢走進水中", "再次走近音樂", "輕輕走近小動物", "認識身體和家人"], "Chinese"],
 ]) {
   let previousIndex = -1;
   for (const title of orderedTitles) {
@@ -618,6 +622,12 @@ if (!/<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/.test(routeHt
 }
 if (!/<span class="sr-only">你好，我是昊熹。<\/span>/.test(routeHtml.chinese)) {
   fail("Chinese page lacks the approved accessible greeting");
+}
+if (!/id="hero-title"[^>]*data-greeting-state="en-preparing"/.test(routeHtml.english)) {
+  fail("English greeting is not protected from a completed-text first-paint flash");
+}
+if (!/id="hero-title"[^>]*data-greeting-state="zh-preparing"/.test(routeHtml.chinese)) {
+  fail("Chinese greeting is not protected from a completed-text first-paint flash");
 }
 if (/“Hello, I(?:&#x27;|')m Oliver\.”|「你好，我是昊熹。」/.test(routeHtml.english + routeHtml.chinese)) {
   fail("hero greeting retains removed quotation marks");
@@ -673,12 +683,15 @@ for (const priority of [5, 10, 20, 30, 40, 50, 60]) {
 if (!hasMutedScrollAutoplayContract) {
   fail("the deferred player lacks muted, inline, JavaScript-controlled autoplay");
 }
+if (!hasSessionSoundPreference || !hasAutoplayBlockedFallback) {
+  fail("the deferred player lacks its session sound choice or blocked-autoplay fallback");
+}
 if (/\[[^\]]+\]/.test(englishText + chineseText)) {
   fail("bracketed editorial tokens remain in visitor-visible text");
 }
 requireApprovedPhotos(routeHtml.english, "English page", [
   ["Nineteen-month-old Oliver sits facing the camera in a studio portrait, wearing a white shirt and tan trousers.", "hero-portrait", "1600"],
-  ["Nineteen-month-old Oliver sits inside a large green play car and points towards one of its wheels.", "about-world", "1500"],
+  ["Nineteen-month-old Oliver sits inside a large green play car, taking in its wheels and controls.", "about-world", "1500"],
   ["Twelve-month-old Oliver sits close to Dad as they look at a board book together and Dad points to the page.", "about-reading", "1200"],
   ["Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.", "about-car", "1200"],
   ["Eighteen-month-old Oliver stands in front of a group of colourful cartoon figures, raising one arm to point towards them.", "about-observing", "900"],
@@ -694,7 +707,7 @@ requireApprovedPhotos(routeHtml.english, "English page", [
 ]);
 requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
   ["19個月大的昊熹穿着白色襯衣和淺棕色長褲，坐在柔和的紫灰色背景前，正面望向鏡頭。", "hero-portrait", "1600"],
-  ["19個月大的昊熹坐在一架大型綠色玩具車裏，伸手指向車輪。", "about-world", "1500"],
+  ["19個月大的昊熹坐在一架大型綠色玩具車裏，細看身邊的車輪和裝置。", "about-world", "1500"],
   ["12個月大的昊熹依偎在爸爸身旁一起看圖書，爸爸正指着書頁。", "about-reading", "1200"],
   ["17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。", "about-car", "1200"],
   ["18個月大的昊熹站在一組色彩繽紛的卡通人物佈景前，舉起一隻手指向人物。", "about-observing", "900"],
@@ -757,6 +770,15 @@ if (!/greeting-cursor-rest[^}]*animation:[^;]*forwards/i.test(css)) {
 }
 if (/animation:[^;}]*\bboth\b/i.test(css)) {
   fail("completed entrance animations must not retain their compositor fill effects");
+}
+if (
+  !/hero-portrait-hello\s+(?:820ms|\.82s)/.test(css) ||
+  /hero-portrait-hello[^;}]*\binfinite\b/i.test(css)
+) {
+  fail("the hero portrait lacks its restrained one-time hello animation");
+}
+if (!/\.youtube-video-sound[^}]*min-height:\s*44px/i.test(css)) {
+  fail("the video sound control lacks its accessible target size");
 }
 
 console.log(`GitHub Pages artifact verified: ${files.length} files in ${outputRoot}`);

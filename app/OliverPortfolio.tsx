@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import GreetingReveal from "./GreetingReveal";
+import HeroPortraitMotion from "./HeroPortraitMotion";
 import MeadowDecor from "./MeadowDecor";
 import PreviewMedia from "./PreviewMedia";
 import ResponsivePhoto from "./ResponsivePhoto";
@@ -21,6 +22,14 @@ import {
 
 const mediaTones = ["sky", "honey", "peach", "teal"] as const;
 const sectionIds = ["about", "stories", "growth", "family"] as const;
+const storyVideoOrder = [
+  "1Fxx4dzHCFo",
+  "kgPKylmVI7s",
+  "BxMkQkxApBg",
+  "2RE83LVmTVk",
+  "rcpBdZzHJAk",
+  "FW24LCUNS_w",
+] as const;
 
 export default function OliverPortfolio({
   initialLocale,
@@ -37,6 +46,22 @@ export default function OliverPortfolio({
     { href: "#growth", label: copy.nav.growth },
     { href: "#family", label: copy.nav.family },
   ];
+  const [familyMainPhoto, familyInlinePhoto, ...familySupportPhotos] =
+    copy.family.photos;
+  const orderedStories = [...copy.stories.items].sort((left, right) => {
+    const firstVideoId = (story: (typeof copy.stories.items)[number]) =>
+      story.media.find((media) => media.kind === "video")?.videoId ?? "";
+    const leftPosition = storyVideoOrder.indexOf(
+      firstVideoId(left) as (typeof storyVideoOrder)[number],
+    );
+    const rightPosition = storyVideoOrder.indexOf(
+      firstVideoId(right) as (typeof storyVideoOrder)[number],
+    );
+    return (
+      (leftPosition < 0 ? Number.MAX_SAFE_INTEGER : leftPosition) -
+      (rightPosition < 0 ? Number.MAX_SAFE_INTEGER : rightPosition)
+    );
+  });
   const [activeHref, setActiveHref] = useState("");
   const focusMain = () => {
     window.requestAnimationFrame(() => {
@@ -176,6 +201,11 @@ export default function OliverPortfolio({
       <main id="main-content" tabIndex={-1}>
         <section className="hero section-pad" aria-labelledby="hero-title">
           <div className="page-grid hero-grid">
+            <MeadowDecor
+              variant="hero-sky"
+              locale={locale}
+              className="meadow-hero-sky"
+            />
             <div className="hero-copy">
               <p className="eyebrow">{copy.hero.eyebrow}</p>
               <GreetingReveal
@@ -199,7 +229,7 @@ export default function OliverPortfolio({
               )}
             </div>
 
-            <div className="hero-visual">
+            <HeroPortraitMotion locale={locale}>
               <ResponsivePhoto
                 name={copy.hero.portrait.name}
                 alt={copy.hero.portrait.alt}
@@ -208,7 +238,7 @@ export default function OliverPortfolio({
                 priority
                 className="hero-preview-media"
               />
-            </div>
+            </HeroPortraitMotion>
           </div>
         </section>
 
@@ -242,6 +272,8 @@ export default function OliverPortfolio({
                         ratio={field.media.ratio}
                         playLabel={copy.controls.playVideo}
                         loadingLabel={copy.controls.loadingVideo}
+                        enableSoundLabel={copy.controls.enableVideoSound}
+                        disableSoundLabel={copy.controls.disableVideoSound}
                         autoplayPriority={field.media.autoplayPriority}
                       />
                     </div>
@@ -287,9 +319,9 @@ export default function OliverPortfolio({
           </div>
 
           <div className="page-grid stories-grid">
-            {copy.stories.items.map((story, storyIndex) => (
+            {orderedStories.map((story, storyIndex) => (
               <article
-                className={`story-card story-card-${storyIndex + 1} ${storyIndex === 0 ? "story-card-featured" : ""} ${storyIndex === copy.stories.items.length - 1 ? "story-card-closing" : ""}`.trim()}
+                className={`story-card story-card-${storyIndex + 1} ${storyIndex === 0 ? "story-card-featured" : ""} ${storyIndex === orderedStories.length - 1 ? "story-card-closing" : ""}`.trim()}
                 key={story.title}
               >
                 <div className={`story-media-grid story-media-count-${story.media.length}`}>
@@ -304,7 +336,9 @@ export default function OliverPortfolio({
                         ratio={media.ratio}
                         playLabel={copy.controls.playVideo}
                         loadingLabel={copy.controls.loadingVideo}
-                        autoplayPriority={media.autoplayPriority}
+                        enableSoundLabel={copy.controls.enableVideoSound}
+                        disableSoundLabel={copy.controls.disableVideoSound}
+                        autoplayPriority={(storyIndex + 1) * 10}
                       />
                     ) : (
                       <ResponsivePhoto
@@ -438,18 +472,25 @@ export default function OliverPortfolio({
               <p className="eyebrow">{copy.family.eyebrow}</p>
               <h2 id="family-title" tabIndex={-1}>{copy.family.title}</h2>
               <p>{copy.family.intro}</p>
+              <ResponsivePhoto
+                name={familyInlinePhoto.name}
+                alt={familyInlinePhoto.alt}
+                caption={familyInlinePhoto.caption}
+                sizes="(min-width: 60rem) 350px, (min-width: 48rem) 520px, calc(100vw - 40px)"
+                className="family-photo family-photo-inline"
+              />
             </div>
 
             <div className="family-media-grid">
-              {copy.family.photos.map((photo, index) => (
+              {[familyMainPhoto, ...familySupportPhotos].map((photo, index) => (
                 <ResponsivePhoto
                   key={photo.name}
                   name={photo.name}
                   alt={photo.alt}
                   caption={photo.caption}
                   sizes={index === 0
-                    ? "(min-width: 60rem) 920px, (min-width: 48rem) calc(100vw - 64px), calc(100vw - 40px)"
-                    : "(min-width: 60rem) 360px, (min-width: 48rem) calc((100vw - 88px) / 2), calc(100vw - 40px)"}
+                    ? "(min-width: 60rem) 640px, (min-width: 48rem) 660px, calc(100vw - 40px)"
+                    : "(min-width: 60rem) 300px, (min-width: 48rem) calc((100vw - 88px) / 2), calc(100vw - 40px)"}
                   className={`family-photo ${index === 0 ? "family-photo-main" : "family-photo-support"}`}
                 />
               ))}

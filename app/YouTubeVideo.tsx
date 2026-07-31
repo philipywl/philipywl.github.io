@@ -10,6 +10,8 @@ type YouTubeVideoProps = {
   ratio: "video" | "portrait-video";
   playLabel: string;
   loadingLabel: string;
+  enableSoundLabel: string;
+  disableSoundLabel: string;
   autoplayPriority: number;
 };
 
@@ -26,6 +28,7 @@ type PlaybackEntry = {
   activate: (manual: boolean) => void;
   play: () => void;
   pause: () => void;
+  setSound: (enabled: boolean) => void;
   hasFocus: () => boolean;
 };
 
@@ -33,10 +36,41 @@ const START_RATIO = 0.65;
 const STOP_RATIO = 0.35;
 const AUTOPLAY_DWELL_MS = 350;
 const playbackEntries = new Map<string, PlaybackEntry>();
+const VIDEO_SOUND_SESSION_KEY = "oliver-video-sound-v1";
+const videoSoundListeners = new Set<() => void>();
 let activePlaybackKey: string | null = null;
 let playbackObserver: IntersectionObserver | null = null;
 let evaluationTimer = 0;
 let visibilityListenersInstalled = false;
+let videoSoundEnabled = false;
+let videoSoundPreferenceLoaded = false;
+
+function loadVideoSoundPreference() {
+  if (videoSoundPreferenceLoaded || typeof window === "undefined") return;
+  videoSoundPreferenceLoaded = true;
+  try {
+    videoSoundEnabled =
+      window.sessionStorage.getItem(VIDEO_SOUND_SESSION_KEY) === "on";
+  } catch {
+    videoSoundEnabled = false;
+  }
+}
+
+function setVideoSoundEnabled(enabled: boolean) {
+  videoSoundEnabled = enabled;
+  if (typeof window !== "undefined") {
+    try {
+      window.sessionStorage.setItem(
+        VIDEO_SOUND_SESSION_KEY,
+        enabled ? "on" : "off",
+      );
+    } catch {
+      // The sound choice stays active in memory when storage is unavailable.
+    }
+  }
+  playbackEntries.forEach((entry) => entry.setSound(enabled));
+  videoSoundListeners.forEach((listener) => listener());
+}
 
 function scrollAutoplayAllowed() {
   if (
@@ -281,6 +315,9 @@ function requestManualPlayback(key: string) {
     current.playing = false;
     current.activation = null;
   }
+  // A direct press on a video is the visitor gesture browsers require before
+  // audible playback. Carry that choice to subsequent videos in this tab.
+  setVideoSoundEnabled(true);
   entry.ended = false;
   entry.suppressed = false;
   entry.playing = false;
@@ -334,6 +371,55 @@ function notifyPlaybackEnded(key: string) {
   schedulePlaybackEvaluation();
 }
 
+function VideoSoundIcon({ enabled }: { enabled: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+    >
+      <path
+        d="M4 9.25v5.5h3.25L12 18.5v-13L7.25 9.25H4Z"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+      {enabled ? (
+        <>
+          <path
+            d="M15 9.1a4 4 0 0 1 0 5.8"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="1.8"
+          />
+          <path
+            d="M17.7 6.6a7.5 7.5 0 0 1 0 10.8"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="1.8"
+          />
+        </>
+      ) : (
+        <>
+          <path
+            d="m16 10 4 4m0-4-4 4"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeWidth="1.8"
+          />
+        </>
+      )}
+    </svg>
+  );
+}
+
 export default function YouTubeVideo({
   videoId,
   poster,
@@ -342,6 +428,8 @@ export default function YouTubeVideo({
   ratio,
   playLabel,
   loadingLabel,
+  enableSoundLabel,
+  disableSoundLabel,
   autoplayPriority,
 }: YouTubeVideoProps) {
   const [active, setActive] = useState(false);
@@ -349,27 +437,38 @@ export default function YouTubeVideo({
   const [playbackState, setPlaybackState] = useState<
     "poster" | "loading" | "playing" | "paused" | "ended"
   >("poster");
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const figureRef = useRef<HTMLElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const focusAfterLoadRef = useRef(false);
   const coordinatorPauseUntilRef = useRef(0);
+  const autoplayFallbackUsedRef = useRef(false);
   const landscape = ratio === "video";
   const posterSmall = landscape ? 320 : 240;
   const posterLarge = landscape ? 480 : 405;
   const posterWidth = landscape ? 480 : 405;
   const posterHeight = landscape ? 270 : 720;
 
-  const sendCommand = useCallback((func: string) => {
+  const sendCommand = useCallback((func: string, args: unknown[] = []) => {
     iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ event: "command", func, args: [] }),
+      JSON.stringify({ event: "command", func, args }),
       "https://www.youtube-nocookie.com",
     );
   }, []);
 
-  const play = useCallback(() => {
-    sendCommand("mute");
-    sendCommand("playVideo");
+  const applySound = useCallback((enabled: boolean) => {
+    if (enabled) {
+      sendCommand("setVolume", [65]);
+      sendCommand("unMute");
+    } else {
+      sendCommand("mute");
+    }
   }, [sendCommand]);
+
+  const play = useCallback(() => {
+    applySound(videoSoundEnabled);
+    sendCommand("playVideo");
+  }, [applySound, sendCommand]);
 
   const pause = useCallback(() => {
     coordinatorPauseUntilRef.current = Date.now() + 1200;
@@ -381,8 +480,19 @@ export default function YouTubeVideo({
 
   const activate = useCallback((manual: boolean) => {
     focusAfterLoadRef.current = manual;
+    autoplayFallbackUsedRef.current = false;
     setPlaybackState("loading");
     setActive(true);
+  }, []);
+
+  useEffect(() => {
+    const syncSoundState = () => setSoundEnabled(videoSoundEnabled);
+    loadVideoSoundPreference();
+    syncSoundState();
+    videoSoundListeners.add(syncSoundState);
+    return () => {
+      videoSoundListeners.delete(syncSoundState);
+    };
   }, []);
 
   useEffect(() => {
@@ -401,13 +511,20 @@ export default function YouTubeVideo({
       activate,
       play,
       pause,
+      setSound: applySound,
       hasFocus: () => element.contains(document.activeElement),
     });
-  }, [activate, autoplayPriority, pause, play, videoId]);
+  }, [activate, applySound, autoplayPriority, pause, play, videoId]);
 
   useEffect(() => {
     const handlePlayerMessage = (event: MessageEvent) => {
       if (event.source !== iframeRef.current?.contentWindow) return;
+      if (
+        event.origin !== "https://www.youtube-nocookie.com" &&
+        event.origin !== "https://www.youtube.com"
+      ) {
+        return;
+      }
       let data: unknown = event.data;
       if (typeof data === "string") {
         try {
@@ -419,18 +536,28 @@ export default function YouTubeVideo({
       if (
         typeof data !== "object" ||
         data === null ||
-        !("event" in data) ||
-        !("info" in data) ||
-        data.event !== "onStateChange"
+        !("event" in data)
       ) {
         return;
       }
+
+      if (data.event === "onAutoplayBlocked") {
+        if (autoplayFallbackUsedRef.current) return;
+        autoplayFallbackUsedRef.current = true;
+        setVideoSoundEnabled(false);
+        applySound(false);
+        sendCommand("playVideo");
+        return;
+      }
+
+      if (data.event !== "onStateChange" || !("info" in data)) return;
 
       const state = Number(data.info);
       if (state === 0) {
         setPlaybackState("ended");
         notifyPlaybackEnded(videoId);
       } else if (state === 1) {
+        autoplayFallbackUsedRef.current = false;
         coordinatorPauseUntilRef.current = 0;
         setPlaybackState("playing");
         notifyPlaybackPlaying(videoId);
@@ -444,7 +571,7 @@ export default function YouTubeVideo({
     };
     window.addEventListener("message", handlePlayerMessage);
     return () => window.removeEventListener("message", handlePlayerMessage);
-  }, [videoId]);
+  }, [applySound, sendCommand, videoId]);
 
   const handleIframeLoad = () => {
     setLoaded(true);
@@ -457,6 +584,14 @@ export default function YouTubeVideo({
         event: "command",
         func: "addEventListener",
         args: ["onStateChange"],
+      }),
+      "https://www.youtube-nocookie.com",
+    );
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({
+        event: "command",
+        func: "addEventListener",
+        args: ["onAutoplayBlocked"],
       }),
       "https://www.youtube-nocookie.com",
     );
@@ -479,6 +614,7 @@ export default function YouTubeVideo({
       data-video-id={videoId}
       data-autoplay-priority={autoplayPriority}
       data-playback-state={playbackState}
+      data-sound-enabled={soundEnabled ? "true" : "false"}
     >
       <div className="youtube-video-frame">
         {active ? (
@@ -499,6 +635,20 @@ export default function YouTubeVideo({
                 {loadingLabel}
               </span>
             )}
+            <button
+              className="youtube-video-sound"
+              type="button"
+              aria-pressed={soundEnabled}
+              aria-label={
+                soundEnabled ? disableSoundLabel : enableSoundLabel
+              }
+              onClick={() => setVideoSoundEnabled(!videoSoundEnabled)}
+            >
+              <VideoSoundIcon enabled={soundEnabled} />
+              <span>
+                {soundEnabled ? disableSoundLabel : enableSoundLabel}
+              </span>
+            </button>
           </>
         ) : (
           <button
