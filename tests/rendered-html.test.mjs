@@ -145,7 +145,7 @@ function expectApprovedPhotos(html, locale) {
   const expected = locale === "en"
     ? [
         ["Nineteen-month-old Oliver sits facing the camera in a studio portrait, wearing a white shirt and tan trousers.", "hero-portrait", "1600"],
-        ["Nineteen-month-old Oliver sits inside a large green play car and points towards one of its wheels.", "about-world", "1500"],
+        ["Nineteen-month-old Oliver sits inside a large green play car, taking in its wheels and controls.", "about-world", "1500"],
         ["Twelve-month-old Oliver sits close to Dad as they look at a board book together and Dad points to the page.", "about-reading", "1200"],
         ["Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.", "about-car", "1200"],
         ["Eighteen-month-old Oliver stands in front of a group of colourful cartoon figures, raising one arm to point towards them.", "about-observing", "900"],
@@ -161,7 +161,7 @@ function expectApprovedPhotos(html, locale) {
       ]
     : [
         ["19個月大的昊熹穿着白色襯衣和淺棕色長褲，坐在柔和的紫灰色背景前，正面望向鏡頭。", "hero-portrait", "1600"],
-        ["19個月大的昊熹坐在一架大型綠色玩具車裏，伸手指向車輪。", "about-world", "1500"],
+        ["19個月大的昊熹坐在一架大型綠色玩具車裏，細看身邊的車輪和裝置。", "about-world", "1500"],
         ["12個月大的昊熹依偎在爸爸身旁一起看圖書，爸爸正指着書頁。", "about-reading", "1200"],
         ["17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。", "about-car", "1200"],
         ["18個月大的昊熹站在一組色彩繽紛的卡通人物佈景前，舉起一隻手指向人物。", "about-observing", "900"],
@@ -231,7 +231,7 @@ test("renders the refined English public homepage", async () => {
   assert.match(html, /name="description" content="A warm collection of everyday moments, lovingly gathered by Oliver(?:&#x27;|')s parents,/i);
   assert.match(text, /Oliver's learning journey/);
   assert.match(text, /Hello, I'm Oliver\./);
-  assert.match(text, /I'd love to share the things that brighten my days: books, cars and dogs, little challenges, and time exploring the world with my family\./);
+  assert.match(text, /I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family\./);
   assert.doesNotMatch(text, /“Hello, I'm Oliver\.”/);
   assert.match(text, /Oliver's everyday world/);
   assert.match(text, /Reading together/);
@@ -263,12 +263,12 @@ test("renders the refined English public homepage", async () => {
   ]) assert.match(text, new RegExp(title));
   assert.match(text, /tried to climb onto the pool edge/);
   assert.match(text, /A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach/);
-  assert.match(text, /every night before bed/);
-  assert.ok(text.indexOf("Listening closely and following a request") < text.indexOf("Recognising his body and family"));
-  assert.ok(text.indexOf("Recognising his body and family") < text.indexOf("A gentle hello to the animals"));
-  assert.ok(text.indexOf("A gentle hello to the animals") < text.indexOf("Little hands turning page after page"));
+  assert.match(text, /Mum and Dad read with Oliver every day/);
+  assert.ok(text.indexOf("Listening closely and following a request") < text.indexOf("Little hands turning page after page"));
   assert.ok(text.indexOf("Little hands turning page after page") < text.indexOf("A brave step into the water"));
   assert.ok(text.indexOf("A brave step into the water") < text.indexOf("Returning to music"));
+  assert.ok(text.indexOf("Returning to music") < text.indexOf("A gentle hello to the animals"));
+  assert.ok(text.indexOf("A gentle hello to the animals") < text.indexOf("Recognising his body and family"));
   assert.match(text, /A recent portrait of Oliver at 19 months/);
   assert.doesNotMatch(text, /problem-solving moment to be added|noticing moment to be added/i);
   assert.match(text, /Looking for what disappeared/);
@@ -288,6 +288,7 @@ test("renders the refined English public homepage", async () => {
   assert.equal((html.match(/youtube\.com\/watch\?v=/g) ?? []).length, 0);
   assert.doesNotMatch(html, /<iframe\b|youtube-nocookie\.com\/embed/i);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
+  assert.match(html, /id="hero-title"[^>]*data-greeting-state="en-preparing"/);
   assert.match(html, /<span class="sr-only">[^<]*Hello, I(?:'|&#x27;)m Oliver\.[^<]*<\/span>/);
   assert.match(html, /class="greeting-visual" aria-hidden="true"/);
   assert.doesNotMatch(html, /class="(?:button primary-button|hero-text-link)"[^>]*href="#(?:stories|about)"/);
@@ -313,7 +314,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(html, /name="description" content="爸爸媽媽用心收集一個個日常片段/);
   assert.match(text, /昊熹的成長旅程/);
   assert.match(text, /你好，\s*我是昊熹。/);
-  assert.match(text, /我想和你分享每天喜歡的事：書本、車和小狗、生活裏的小挑戰，還有與家人一起探索世界的時光。/);
+  assert.match(text, /我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。/);
   assert.doesNotMatch(text, /「你好，我是昊熹。」/);
   assert.match(text, /昊熹的日常小世界/);
   assert.match(text, /親子共讀/);
@@ -345,11 +346,11 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   ]) assert.match(text, new RegExp(title));
   assert.match(text, /也試着自己爬上池邊/);
   assert.match(text, /家中低矮的書架放着繪本、中英文圖書和點讀書/);
-  assert.ok(text.lastIndexOf("細心聆聽，跟着做") < text.lastIndexOf("認識身體和家人"));
-  assert.ok(text.lastIndexOf("認識身體和家人") < text.lastIndexOf("輕輕走近小動物"));
-  assert.ok(text.lastIndexOf("輕輕走近小動物") < text.lastIndexOf("小手翻過一頁頁書"));
+  assert.ok(text.lastIndexOf("細心聆聽，跟着做") < text.lastIndexOf("小手翻過一頁頁書"));
   assert.ok(text.lastIndexOf("小手翻過一頁頁書") < text.lastIndexOf("勇敢走進水中"));
   assert.ok(text.lastIndexOf("勇敢走進水中") < text.lastIndexOf("再次走近音樂"));
+  assert.ok(text.lastIndexOf("再次走近音樂") < text.lastIndexOf("輕輕走近小動物"));
+  assert.ok(text.lastIndexOf("輕輕走近小動物") < text.lastIndexOf("認識身體和家人"));
   assert.match(text, /昊熹19個月大時的一張近照/);
   assert.doesNotMatch(text, /解難小片段稍後加入|觀察小片段稍後加入/);
   assert.match(text, /尋找躲起的物件/);
@@ -369,6 +370,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.equal((html.match(/youtube\.com\/watch\?v=/g) ?? []).length, 0);
   assert.doesNotMatch(html, /<iframe\b|youtube-nocookie\.com\/embed/i);
   assert.equal((html.match(/<h1\b/gi) ?? []).length, 1);
+  assert.match(html, /id="hero-title"[^>]*data-greeting-state="zh-preparing"/);
   assert.match(html, /<span class="sr-only">[^<]*你好，我是昊熹。[^<]*<\/span>/);
   assert.doesNotMatch(html, /class="(?:button primary-button|hero-text-link)"[^>]*href="#(?:stories|about)"/);
   assert.doesNotMatch(html, /href="\/zh-hant\/summary\/"/);
@@ -424,13 +426,14 @@ test("keeps the bilingual custom 404 safe", async () => {
 });
 
 test("keeps placeholders absent, photographs responsive, videos deferred, and motion source safe", async () => {
-  const [portfolio, controls, media, responsivePhoto, youtubeVideo, greeting, welcomeIntro, css] = await Promise.all([
+  const [portfolio, controls, media, responsivePhoto, youtubeVideo, greeting, heroPortraitMotion, welcomeIntro, css] = await Promise.all([
     readFile(new URL("../app/OliverPortfolio.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/PortfolioControls.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/PreviewMedia.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/ResponsivePhoto.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/YouTubeVideo.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/GreetingReveal.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/HeroPortraitMotion.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/WelcomeIntro.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
@@ -455,6 +458,14 @@ test("keeps placeholders absent, photographs responsive, videos deferred, and mo
   assert.match(youtubeVideo, /alt=""/);
   assert.doesNotMatch(youtubeVideo, /i\.ytimg\.com|img\.youtube\.com/);
   assert.match(youtubeVideo, /autoplay=1&mute=1&enablejsapi=1&playsinline=1/);
+  assert.match(youtubeVideo, /VIDEO_SOUND_SESSION_KEY = "oliver-video-sound-v1"/);
+  assert.match(youtubeVideo, /sessionStorage\.getItem\(VIDEO_SOUND_SESSION_KEY\)/);
+  assert.match(youtubeVideo, /requestManualPlayback[\s\S]*?setVideoSoundEnabled\(true\)[\s\S]*?entry\.activate\(true\)/);
+  assert.match(youtubeVideo, /sendCommand\("setVolume", \[65\]\)/);
+  assert.match(youtubeVideo, /sendCommand\("unMute"\)/);
+  assert.match(youtubeVideo, /args: \["onAutoplayBlocked"\]/);
+  assert.match(youtubeVideo, /aria-pressed=\{soundEnabled\}/);
+  assert.match(css, /\.youtube-video-sound\s*\{[\s\S]*?min-height:\s*44px/);
   assert.match(youtubeVideo, /const START_RATIO = 0\.65/);
   assert.match(youtubeVideo, /const STOP_RATIO = 0\.35/);
   assert.match(youtubeVideo, /const AUTOPLAY_DWELL_MS = 350/);
@@ -477,6 +488,15 @@ test("keeps placeholders absent, photographs responsive, videos deferred, and mo
   assert.match(youtubeVideo, /if \(focusAfterLoadRef\.current\)[\s\S]*?iframeRef\.current\?\.focus\(\)/);
   assert.doesNotMatch(youtubeVideo, /<video\b|\bautoPlay\b|\bloop\b|useLayoutEffect|onClick=\{\(\) => setActive\(true\)\}/);
   assert.match(greeting, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
+  assert.match(greeting, /data-greeting-state=\{preparingState\}/);
+  assert.match(greeting, /className="greeting-visual"[\s\S]*?style=\{\{ visibility: "hidden" \}\}/);
+  assert.match(greeting, /visual\.style\.visibility = ""/);
+  assert.match(greeting, /<noscript>[\s\S]*?<style>/);
+  assert.doesNotMatch(greeting, /data-greeting-state="static"/);
+  assert.match(css, /data-greeting-state\$="-preparing"[\s\S]*?visibility:\s*hidden/);
+  assert.match(heroPortraitMotion, /oliver-portrait-\$\{locale\}-v1/);
+  assert.match(heroPortraitMotion, /data-portrait-motion="waiting"/);
+  assert.match(css, /animation:\s*hero-portrait-hello 820ms/);
   assert.match(welcomeIntro, /sessionStorage\.getItem/);
   assert.match(welcomeIntro, /sessionStorage\.setItem/);
   assert.match(welcomeIntro, /prefers-reduced-motion: reduce/);
@@ -522,6 +542,8 @@ test("keeps placeholders absent, photographs responsive, videos deferred, and mo
   assert.match(css, /@media print[\s\S]*?\.no-print[\s\S]*?display:\s*none !important/);
   assert.match(css, /\.family-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.match(css, /@media \(min-width: 48rem\)[\s\S]*?\.family-media-grid\s*\{[\s\S]*?repeat\(2, minmax\(0, 1fr\)\)[\s\S]*?\.family-photo-main\s*\{[\s\S]*?grid-column:\s*1 \/ -1/);
-  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.family-media-grid\s*\{[\s\S]*?repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(portfolio, /className="family-photo family-photo-inline"/);
+  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.family-grid\s*\{[\s\S]*?minmax\(280px, 0\.72fr\) minmax\(0, 1\.28fr\)/);
+  assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.stories-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-3 \.story-media-count-2,[\s\S]*?\.story-card-5 \.story-media-count-2/);
 });

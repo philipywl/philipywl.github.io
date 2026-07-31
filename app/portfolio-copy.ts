@@ -94,6 +94,8 @@ type PortfolioCopy = {
     closeMenu: string;
     playVideo: string;
     loadingVideo: string;
+    enableVideoSound: string;
+    disableVideoSound: string;
   };
   welcome: {
     message: string;
@@ -172,6 +174,8 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       closeMenu: "Close menu",
       playVideo: "Play video",
       loadingVideo: "Loading video…",
+      enableVideoSound: "Turn on video sound",
+      disableVideoSound: "Turn off video sound",
     },
     welcome: {
       message: "Welcome to Oliver's little world.",
@@ -182,7 +186,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingLead: "Hello,",
       greetingRest: "I'm Oliver.",
       intro:
-        "I'd love to share the things that brighten my days: books, cars and dogs, little challenges, and time exploring the world with my family.",
+        "I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family.",
       ageLabel: "Oliver's current age",
       portrait: {
         name: "hero-portrait",
@@ -194,22 +198,32 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "Meet Oliver",
       title: "Oliver's everyday world",
       intro:
-        "“My little world is full of things that invite me to stop and explore: different books, passing dogs, fast-moving cars, and places or toys with a little challenge.” In the familiar rhythm of everyday life, the love and presence of family give Oliver room to discover small and interesting things around him.",
+        "Oliver's everyday world is full of things that invite him to pause, look closely and try: a book, a car, a passing dog, or a toy that makes him want to have another go. With familiar family close by, he explores at his own pace and gradually connects one small discovery with another.",
       mainPhoto: {
         name: "about-world",
-        alt: "Nineteen-month-old Oliver sits inside a large green play car and points towards one of its wheels.",
+        alt: "Nineteen-month-old Oliver sits inside a large green play car, taking in its wheels and controls.",
         caption:
-          "At 19 months, Oliver notices a familiar wheel and points towards it during a family day out.",
+          "At 19 months, Oliver sits in a large play car and takes in the wheels and controls around him.",
       },
       fields: [
         {
           title: "Reading together",
           body:
-            "Oliver often chooses a book from the shelf and invites someone in the family to read with him. Mum and Dad also share a book with him every night before bed. During story time at playgroup, he listens closely to the teacher and follows each turn of the page. Books are both a warm family ritual and a little world he chooses to enter.",
+            "Oliver often chooses a book from the shelf and invites someone in the family to read with him. Mum and Dad also share a book with him every day. During story time at playgroup, he listens closely to the teacher and follows each turn of the page. Books are both a warm family ritual and a little world he chooses to enter.",
           media: {
             name: "about-reading",
             alt: "Twelve-month-old Oliver sits close to Dad as they look at a board book together and Dad points to the page.",
             caption: "A quiet page shared with Dad at 12 months.",
+          },
+        },
+        {
+          title: "Cars and dogs",
+          body:
+            "A passing car brings a cheerful “vroom vroom”; a dog brings a pointing finger and a bright “woof woof.” When Oliver plays with toy cars, he sends them along imagined routes and into little scenes of his own.",
+          media: {
+            name: "about-car",
+            alt: "Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.",
+            caption: "A happy moment behind the wheel at 17 months.",
           },
         },
         {
@@ -238,23 +252,13 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               "At 18 months, Oliver noticed familiar features in the cartoon figures and connected them with members of his family.",
           },
         },
-        {
-          title: "Cars and dogs",
-          body:
-            "A passing car brings a cheerful “vroom vroom”; a dog brings a pointing finger and a bright “woof woof.” When Oliver plays with toy cars, he sends them along imagined routes and into little scenes of his own.",
-          media: {
-            name: "about-car",
-            alt: "Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.",
-            caption: "A happy moment behind the wheel at 17 months.",
-          },
-        },
       ],
     },
     stories: {
       eyebrow: "Everyday Stories",
       title: "Little experiences, each revealing more of Oliver",
       intro:
-        "Six everyday stories reveal different sides of Oliver: listening closely and following a request, recognising familiar people and body parts, approaching animals with a gentle hand, turning page after page, stepping bravely into the water and returning to music. Each is a real experience, quietly showing more of the child he is becoming.",
+        "Six everyday stories reveal different sides of Oliver: listening closely and following a request, turning page after page, stepping bravely into the water, returning to music, approaching animals with a gentle hand, and recognising familiar people and body parts. Each is a real experience, quietly showing more of the child he is becoming.",
       whatHappened: "What happened",
       noticed: "What we noticed",
       support: "How we stay alongside him",
@@ -313,7 +317,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           title: "A gentle hello to the animals",
           age: "15–17 months",
           observation:
-            "Mum and Dad took Oliver to Kadoorie Farm to see the animals. When he met an owl at close range, he reached out for a gentle touch. During another farm visit, he offered food to a rabbit and later began saying “rabbit” when he saw one.",
+            "Mum and Dad took Oliver to Kadoorie Farm to see the animals. When he met an owl at close range, he reached out for a gentle touch. During another farm visit, he offered food to a rabbit and stayed close for a gentle interaction.",
           support:
             "Mum and Dad continue offering calm, closely supervised encounters with nature—looking first, then moving closer at a pace that respects both Oliver and the animal.",
           reflection:
@@ -346,7 +350,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           observation:
             "Oliver opened a book by himself and, at his own pace, looked closely at pictures of cars, bees and more. After finishing one page, he turned to the next by himself.",
           support:
-            "A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach. Mum and Dad read with Oliver every night before bed, while also leaving quiet moments for him to explore books by himself.",
+            "A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach. Mum and Dad read with Oliver every day, while also leaving quiet moments for him to explore books by himself.",
           reflection:
             "Mum and Dad treasure the way he chooses a book and looks through it with care; each page shared together is gradually becoming a little journey he can open for himself.",
           tags: ["Independent Book Exploration", "Focused Book Time"],
@@ -513,7 +517,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "Family & Care",
       title: "Secure in love, free to explore",
       intro:
-        "Mum, Dad and the people who love Oliver fill his days with love, encouragement and a sense of safety, giving him room to try and explore at his own pace. They read, play and step outdoors together; with familiar company close by, he discovers a little more of the wider world each day.",
+        "Mum, Dad and the people who love Oliver fill his days with love, encouragement and a sense of safety, giving him room to try and explore at his own pace. They read together every day, and also play and step outdoors together; with familiar company close by, he discovers a little more of the wider world.",
       photos: [
         {
           name: "family-main",
@@ -545,7 +549,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "From Oliver's parents",
       title: "Growing alongside him",
       reflection:
-        "We believe a child's growth begins with steady, sincere companionship at home. Each day, we share a book, play together, step outdoors and patiently give Oliver room to try everyday things for himself. With safety as the boundary and encouragement beside him, we listen as he expresses himself and help him learn to care for those around him.",
+        "We believe a child's growth begins with steady, sincere companionship at home. Each day, we share a book. We also play together, step outdoors and patiently give Oliver room to try everyday things for himself. With safety as the boundary and encouragement beside him, we listen as he expresses himself and help him learn to care for those around him.",
       hope:
         "We hope Oliver will grow up healthy and happy, held by love and trust, keeping his curiosity as he gradually becomes kind, confident and empathetic. Through every step, Mum and Dad will stay beside him, learning and growing with him too.",
     },
@@ -574,6 +578,8 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       closeMenu: "關閉選單",
       playVideo: "播放影片",
       loadingVideo: "正在載入影片……",
+      enableVideoSound: "開啟影片聲音",
+      disableVideoSound: "關閉影片聲音",
     },
     welcome: {
       message: "歡迎走進昊熹的小世界。",
@@ -584,7 +590,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingLead: "你好，",
       greetingRest: "我是昊熹。",
       intro:
-        "我想和你分享每天喜歡的事：書本、車和小狗、生活裏的小挑戰，還有與家人一起探索世界的時光。",
+        "我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。",
       ageLabel: "昊熹現在的年齡",
       portrait: {
         name: "hero-portrait",
@@ -596,21 +602,31 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "認識昊熹",
       title: "昊熹的日常小世界",
       intro:
-        "「我的小世界裏，總有好多有趣的事等我發現：不同的書本、路過的小狗、飛馳的車，還有讓我想再試一次的玩具。」在熟悉的日常裏，家人的愛與陪伴，讓昊熹安心地發現身邊每件細小而有趣的事。",
+        "昊熹的日常小世界裏，總有許多值得停下來看看、伸手試試的事：一本書、一輛車、路過的小狗，還有讓他想再試一次的玩具。在熟悉的日常與家人的陪伴中，他安心地探索，也慢慢把一個個小發現連在一起。",
       mainPhoto: {
         name: "about-world",
-        alt: "19個月大的昊熹坐在一架大型綠色玩具車裏，伸手指向車輪。",
-        caption: "19個月大，一家人外出時，昊熹看見熟悉的車輪，便伸手指一指。",
+        alt: "19個月大的昊熹坐在一架大型綠色玩具車裏，細看身邊的車輪和裝置。",
+        caption: "19個月大，一家人外出時，昊熹坐進喜歡的大車裏，細看身邊的車輪和裝置。",
       },
       fields: [
         {
           title: "親子共讀",
           body:
-            "昊熹常常主動從書架拿起書本，邀請家人一起閱讀；爸爸媽媽也會每天在睡前陪他共讀。在幼兒遊戲班的故事時間，他會專心聆聽老師說故事，翻頁時，目光也隨着故事走。書本既是一家人熟悉的溫暖日常，也是他會主動走進的小天地。",
+            "昊熹常常主動從書架拿起書本，邀請家人一起閱讀；爸爸媽媽也會每天陪他共讀。在幼兒遊戲班的故事時間，他會專心聆聽老師說故事，翻頁時，目光也隨着故事走。書本既是一家人熟悉的溫暖日常，也是他會主動走進的小天地。",
           media: {
             name: "about-reading",
             alt: "12個月大的昊熹依偎在爸爸身旁一起看圖書，爸爸正指着書頁。",
             caption: "12個月大，和爸爸靜靜分享一頁書。",
+          },
+        },
+        {
+          title: "車和小狗",
+          body:
+            "車一出現，昊熹便會開心地說「嗚嗚」；小狗經過，他則會指着牠說「汪汪」。玩玩具車時，他會讓小車走上想像中的路線，一幕一幕延伸自己的小故事。",
+          media: {
+            name: "about-car",
+            alt: "17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。",
+            caption: "17個月大，和喜歡的車留下一個開心時刻。",
           },
         },
         {
@@ -637,23 +653,13 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             caption: "18個月大，昊熹留意卡通人物的外貌特徵，也把它們與熟悉的家人連繫起來。",
           },
         },
-        {
-          title: "車和小狗",
-          body:
-            "車一出現，昊熹便會開心地說「嗚嗚」；小狗經過，他則會指着牠說「汪汪」。玩玩具車時，他會讓小車走上想像中的路線，一幕一幕延伸自己的小故事。",
-          media: {
-            name: "about-car",
-            alt: "17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。",
-            caption: "17個月大，和喜歡的車留下一個開心時刻。",
-          },
-        },
       ],
     },
     stories: {
       eyebrow: "生活點滴",
       title: "一點點的體驗，看見獨一無二的你",
       intro:
-        "六個日常小片段，讓我們看見昊熹不同的面向：細心聆聽並跟從指示、認出身體部位和家人、輕輕親近小動物、自己翻過一頁頁書、勇敢走進水中，也一次次走近音樂。每一段都是真實的經歷，也讓獨一無二的他慢慢被看見。",
+        "六個日常小片段，讓我們看見昊熹不同的面向：細心聆聽並跟從指示、自己翻過一頁頁書、勇敢走進水中、一次次走近音樂、輕輕親近小動物，也認出熟悉的身體部位和家人。每一段都是真實的經歷，也讓獨一無二的他慢慢被看見。",
       whatHappened: "當時的小故事",
       noticed: "這一刻，我們看見……",
       support: "我們如何陪伴",
@@ -708,7 +714,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           title: "輕輕走近小動物",
           age: "15至17個月大",
           observation:
-            "15個月大時，爸爸媽媽帶昊熹到嘉道理農場看小動物，他近距離觀察貓頭鷹，也輕輕伸出小手；17個月大時，在另一次農場活動中，他主動把食物遞給小兔，也和牠輕輕互動。後來看到小兔，他也會說「兔兔」。",
+            "15個月大時，爸爸媽媽帶昊熹到嘉道理農場看小動物，他近距離觀察貓頭鷹，也輕輕伸出小手；17個月大時，在另一次農場活動中，他主動把食物遞給小兔，也留在牠身旁輕輕互動。",
           support:
             "爸爸媽媽會繼續帶他在安全、尊重動物的情況下親近自然：先觀察，再按昊熹和動物的反應慢慢靠近。",
           reflection:
@@ -739,7 +745,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           observation:
             "昊熹自己翻開書本，按自己的步伐細看書中的車、蜜蜂等圖畫；看完一頁，再自行翻到下一頁。",
           support:
-            "家中低矮的書架放着繪本、中英文圖書和點讀書，讓昊熹隨時拿到。爸爸媽媽每晚睡前陪他閱讀，也留一點安靜的時間，讓他自己走進書本的世界。",
+            "家中低矮的書架放着繪本、中英文圖書和點讀書，讓昊熹隨時拿到。爸爸媽媽每天陪他閱讀，也留一點安靜的時間，讓他自己走進書本的世界。",
           reflection:
             "爸爸媽媽很珍惜他主動拿起書本、專心翻看的模樣；一起讀過的每一頁，也慢慢成為他能自己展開的小旅程。",
           tags: ["自主翻閱", "專注閱讀"],
@@ -888,7 +894,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "家庭與陪伴",
       title: "在愛裏安心，在陪伴中自在探索",
       intro:
-        "爸爸媽媽和家人以愛、鼓勵和安全感陪伴昊熹，讓他安心，也有空間按自己的步伐嘗試和探索。大家每天一起讀書、一起玩，也一起走到戶外；在熟悉的陪伴中，他一點點認識更大的世界。",
+        "爸爸媽媽和家人以愛、鼓勵和安全感陪伴昊熹，讓他安心，也有空間按自己的步伐嘗試和探索。大家每天一起讀書，也會一起玩、一起走到戶外；在熟悉的陪伴中，他一點點認識更大的世界。",
       photos: [
         {
           name: "family-main",
@@ -915,7 +921,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
     closing: {
       eyebrow: "爸爸媽媽的話",
       title: "陪着他，一起長大",
-      reflection: "我們相信，孩子的成長始於家庭裏安穩而真誠的陪伴。每天一起讀一本書、玩一會兒、走到戶外看看，也在生活小事裏耐心地給昊熹空間自己嘗試。我們以安全為界、以鼓勵作陪，細心聽他表達，也陪他學着關心身邊的人。",
+      reflection: "我們相信，孩子的成長始於家庭裏安穩而真誠的陪伴。每天一起讀一本書，也會一起玩、走到戶外看看；在生活小事裏，我們耐心地給昊熹空間自己嘗試。我們以安全為界、以鼓勵作陪，細心聽他表達，也陪他學着關心身邊的人。",
       hope: "我們盼望昊熹在愛與信任中健康快樂地長大，保持好奇心，慢慢成為善良、自信、有同理心的人。每一步，爸爸媽媽都願意陪着他，一起學習、一起成長。",
     },
     privacy: {

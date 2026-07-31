@@ -27,6 +27,7 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
     window.__oliverWelcomeShouldPlay = shouldPlay;
     root.dataset.welcomeState = shouldPlay ? "play" : "hidden";
     if (shouldPlay) {
+      document.body.classList.add("welcome-open");
       try { window.sessionStorage.setItem(${JSON.stringify(sessionKey)}, "seen"); } catch {}
       window.__oliverWelcomeFailOpenTimer = window.setTimeout(() => {
         const current = document.getElementById("welcome-intro");
