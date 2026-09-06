@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { access, readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { stripTypeScriptTypes } from "node:module";
 import path from "node:path";
 import test from "node:test";
 import { resolveLanguageSection } from "../app/section-navigation.mjs";
@@ -11,6 +12,54 @@ const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 async function read(relativePath) {
   return readFile(path.join(projectRoot, relativePath), "utf8");
 }
+
+test("keeps every bilingual story's parent observation natural, present, and evidence-led", async () => {
+  const source = await read("app/portfolio-copy.ts");
+  const { portfolioCopy } = await import(
+    `data:text/javascript,${encodeURIComponent(stripTypeScriptTypes(source))}`
+  );
+
+  for (const [locale, copy] of Object.entries(portfolioCopy)) {
+    assert.equal(copy.stories.items.length, 7, locale);
+    assert.equal(copy.growth.milestones.length, 10, locale);
+    assert.equal(copy.growth.milestonesIntro, "", locale);
+    for (const story of copy.stories.items) {
+      assert.ok(story.reflection.trim().length > 0, `${locale}: ${story.title} parent observation`);
+      assert.equal(story.tags.length, 2, `${locale}: ${story.title} learning clues`);
+      if (locale === "zh") {
+        for (const tag of story.tags) assert.equal([...tag].length, 4, tag);
+      }
+    }
+    const videos = [
+      ...copy.about.fields.map((field) => field.media),
+      ...copy.stories.items.flatMap((story) => story.media),
+    ].filter((media) => media.kind === "video");
+    assert.equal(videos.length, 8);
+    for (const video of videos) {
+      assert.ok(video.title.length <= (locale === "zh" ? 25 : 50), video.title);
+      assert.notEqual(video.title, video.caption);
+    }
+  }
+
+  assert.match(portfolioCopy.zh.stories.items[1].reflection, /看見昊熹自己推好椅子、準備吃飯/);
+  assert.match(portfolioCopy.en.stories.items[1].reflection, /happy to see Oliver bring his own chair/);
+  assert.match(portfolioCopy.zh.growth.milestones[2].moment, /站在爸爸媽媽中間/);
+  assert.match(portfolioCopy.en.growth.milestones[2].moment, /stands between Mum and Dad/);
+  assert.match(portfolioCopy.zh.stories.items[6].tags.join(), /主動參與/);
+
+  for (const retired of [
+    "小椅子慢慢靠近餐桌", "參與日常的一小步", "以安全為界", "溫暖的連結",
+    "能自己展開的小旅程", "兩雙熟悉的手", "一歲生日時", "疼愛昊熹的手",
+    "quiet hello to the natural world", "journey he can open for himself",
+    "With safety as the boundary", "On his first birthday", "This September swimming moment joins",
+  ]) assert.equal(source.includes(retired), false, retired);
+
+  const portfolio = await read("app/OliverPortfolio.tsx");
+  assert.match(portfolio, /copy\.growth\.milestonesIntro &&/);
+  assert.match(portfolio, /story\.reflection &&/);
+  assert.match(portfolio, /<div className="parent-reflection">/);
+  assert.doesNotMatch(portfolio, /<blockquote className="parent-reflection">/);
+});
 
 async function collectSourceFiles(directory) {
   const absoluteDirectory = path.join(projectRoot, directory);
@@ -234,9 +283,9 @@ test("defines accurate public metadata, review robots, alternates, and icons", a
     read("app/(chinese)/layout.tsx"),
   ]);
 
-  assert.match(metadata, /Oliver YEUNG \| A Little Learning Journey/);
-  assert.match(metadata, /lovingly gathered by Oliver's parents/);
-  assert.match(metadata, /爸爸媽媽用心收集一個個日常片段/);
+  assert.match(metadata, /Oliver YEUNG \| A Learning Journey/);
+  assert.match(metadata, /Everyday moments gathered by Oliver's parents/);
+  assert.match(metadata, /爸爸媽媽用心記下昊熹的日常/);
   for (const directive of ["index: false", "follow: false", "noarchive: true", "nosnippet: true", "noimageindex: true"]) {
     assert.match(metadata, new RegExp(directive.replace(" ", "\\s*")));
   }
@@ -301,37 +350,37 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /title: "Reading together"[\s\S]*?title: "Cars and dogs"[\s\S]*?title: "Working things out"[\s\S]*?title: "Noticing and remembering"/);
   assert.match(copy, /title: "親子共讀"[\s\S]*?title: "車和小狗"[\s\S]*?title: "專注解難"[\s\S]*?title: "細心觀察"/);
   assert.match(copy, /often chooses a book from the shelf/);
-  assert.match(copy, /主動從書架拿起書本/);
+  assert.match(copy, /主動從書架拿書/);
   assert.match(copy, /vroom vroom/);
-  assert.match(copy, /車一出現.*說「嗚嗚」/);
-  assert.match(copy, /glasses remind him of Dad, a bald head of Grandpa/);
-  assert.match(copy, /戴眼鏡的是爸爸，光頭的是公公/);
+  assert.match(copy, /看到車.*說「嗚嗚」/);
+  assert.match(copy, /glasses make him think of Dad, a bald head of Grandpa/);
+  assert.match(copy, /戴眼鏡的像爸爸，光頭的像公公/);
   assert.doesNotMatch(copy, /fast learner|有很強記憶力|looks towards the teacher/i);
-  assert.match(copy, /Mum, Dad and the people who love Oliver fill his days with love, encouragement and a sense of safety/);
-  assert.match(copy, /爸爸媽媽和家人以愛、鼓勵和安全感陪伴昊熹/);
+  assert.match(copy, /Reading, playing and heading outdoors are familiar parts of Oliver's family life/);
+  assert.match(copy, /一起看書、玩耍、到戶外走走，是昊熹和家人熟悉的日常/);
   assert.doesNotMatch(copy, /valuesTitle|valuesBody|vignettes/);
-  assert.match(copy, /At 13 months, Oliver looks towards the camera with a bright, curious gaze/);
-  assert.match(copy, /13個月大的昊熹，帶着明亮好奇的目光望向鏡頭/);
+  assert.match(copy, /Oliver at 13 months/);
+  assert.match(copy, /昊熹13個月大時的照片/);
   assert.match(copy, /time: "10 months"/);
   assert.match(copy, /time: "14 months"/);
   assert.match(copy, /time: "16 months"/);
   assert.match(copy, /time: "10個月大"/);
   assert.match(copy, /time: "14個月大"/);
   assert.match(copy, /time: "16個月大"/);
-  assert.match(copy, /How we stay alongside him/);
+  assert.match(copy, /How we support him/);
   assert.match(copy, /我們如何陪伴/);
   assert.match(copy, /Growing alongside him/);
   assert.match(copy, /陪着他，一起長大/);
-  assert.match(copy, /a child's growth begins with steady, sincere companionship at home/);
-  assert.match(copy, /孩子的成長始於家庭裏安穩而真誠的陪伴/);
+  assert.match(copy, /We treasure the time we spend reading and playing with Oliver each day/);
+  assert.match(copy, /我們珍惜每天陪昊熹讀書、玩耍的時間/);
   assert.match(copy, /Ten everyday moments/);
   assert.match(copy, /十個日常小片段/);
-  assert.match(copy, /During a visit to the fire station, Oliver held his much-loved toy motorcycle/);
-  assert.match(copy, /參觀消防局時，昊熹拿着心愛的玩具電單車/);
+  assert.match(copy, /At the fire station, Oliver spots a rescue motorcycle and holds up his toy motorcycle/);
+  assert.match(copy, /參觀消防局時，昊熹看見救護電單車，便舉起手中的玩具電單車/);
   assert.match(copy, /Nineteen-month-old Oliver holds a green-and-black toy motorcycle/);
   assert.match(copy, /19個月大的昊熹手拿綠黑色玩具電單車/);
-  assert.match(copy, /A little motorcycle in his hand, a full-sized one behind him/);
-  assert.match(copy, /手中的小電單車，與身後的大電單車/);
+  assert.match(copy, /Oliver holds up his toy motorcycle, with a full-sized rescue motorcycle behind him/);
+  assert.match(copy, /昊熹舉起玩具電單車，身後停着一輛救護電單車/);
   for (const title of [
     "Listening and lending a hand",
     "Bringing his chair to the table",
@@ -349,9 +398,9 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
     "再次走近音樂",
   ]) assert.match(copy, new RegExp(title));
   assert.match(copy, /name: "hero-portrait"/);
-  assert.match(copy, /A recent portrait|looks calmly towards the camera/);
-  assert.match(copy, /昊熹19個月大時的一張近照/);
-  assert.match(copy, /With a problem-solving toy in front of him/);
+  assert.match(copy, /Oliver at 19 months/);
+  assert.match(copy, /昊熹19個月大時的照片/);
+  assert.match(copy, /Oliver looks closely at the problem-solving toy/);
   assert.match(copy, /玩解難玩具時/);
   assert.match(copy, /Welcome to Oliver's little world/);
   assert.match(copy, /歡迎走進昊熹的小世界/);
@@ -362,15 +411,15 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.doesNotMatch(copy, /Videos never play automatically|影片不會自動播放/);
   for (const clue of [
     "聆聽回應", "合作參與", "生活參與", "動作協調", "認識身體", "認出家人", "自主翻閱",
-    "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "再次走近",
+    "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "主動參與",
     "細心觀察", "溫柔接觸",
   ]) assert.match(copy, new RegExp(`tags: \\[.*${clue}`));
-  assert.match(copy, /From helping with the laundry and bringing his chair to the table/);
-  assert.match(copy, /從幫忙掛衣服、把小椅子推到餐桌旁/);
-  assert.match(copy, /This September swimming moment joins an earlier photograph/);
-  assert.match(copy, /A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach/);
-  assert.match(copy, /Mum and Dad read with Oliver every day/);
-  assert.match(copy, /這段九月的游泳紀錄，和較早前在泳池裏微笑的相片/);
+  assert.match(copy, /Handing over clothes hangers, bringing his chair to the table/);
+  assert.match(copy, /幫忙遞衣架、推好自己的椅子/);
+  assert.match(copy, /Oliver swims in the pool with an adult close beside him/);
+  assert.match(copy, /Picture books, Chinese and English books, and books used with a reading pen are kept on low shelves within Oliver's reach/);
+  assert.match(copy, /Mum and Dad read with him every day/);
+  assert.match(copy, /昊熹在泳池裏游泳，大人在身旁照顧着他/);
   assert.doesNotMatch(copy, /Listening closely and following a request|細心聆聽，跟着做|tried to climb onto the pool edge|也試着自己爬上池邊|1Fxx4dzHCFo|BxMkQkxApBg/);
   assert.match(copy, /家中低矮的書架放着繪本、中英文圖書和點讀書/);
   assert.doesNotMatch(copy, /音樂天賦|冷靜平穩的性格|適時力|fast learner|有很強記憶力/i);

@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 
 export const SITE_ORIGIN = "https://oliveryeung.com";
 
-export const ENGLISH_TITLE = "Oliver YEUNG | A Little Learning Journey";
+export const ENGLISH_TITLE = "Oliver YEUNG | A Learning Journey";
 export const ENGLISH_DESCRIPTION =
-  "A warm collection of everyday moments, lovingly gathered by Oliver's parents, showing how he explores, connects and grows at his own pace.";
+  "Everyday moments gathered by Oliver's parents, sharing how he plays, learns and grows with his family.";
 
 export const CHINESE_TITLE = "昊熹｜成長旅程";
 export const CHINESE_DESCRIPTION =
-  "爸爸媽媽用心收集一個個日常片段，記下昊熹如何探索、與人互動，也在愛與陪伴中按自己的步伐慢慢成長。";
+  "爸爸媽媽用心記下昊熹的日常，和你分享他怎樣玩耍、學習，也在家人的陪伴中成長。";
 
 export const reviewRobots: Metadata["robots"] = {
   index: false,

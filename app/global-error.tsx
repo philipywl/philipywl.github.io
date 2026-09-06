@@ -8,7 +8,7 @@ export default function GlobalError({ reset }: { reset: () => void }) {
           <div className="not-found-card">
             <span className="route-seed-mark" aria-hidden="true" />
             <p className="eyebrow">Oliver YEUNG</p>
-            <h1>This page needs a moment</h1>
+            <h1>This page couldn&apos;t be displayed.</h1>
             <p lang="zh-Hant-HK">頁面暫時未能顯示。</p>
             <p className="not-found-copy">
               Please try again, or choose a language to return to Oliver&apos;s learning journey.<br />
