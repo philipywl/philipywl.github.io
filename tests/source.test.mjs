@@ -333,13 +333,15 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /A little motorcycle in his hand, a full-sized one behind him/);
   assert.match(copy, /手中的小電單車，與身後的大電單車/);
   for (const title of [
-    "Listening closely and following a request",
+    "Listening and lending a hand",
+    "Bringing his chair to the table",
     "Recognising his body and family",
     "A gentle hello to the animals",
     "Little hands turning page after page",
     "A brave step into the water",
     "Returning to music",
-    "細心聆聽，跟着做",
+    "聽懂指令，幫忙做家務",
+    "推好椅子，準備開飯",
     "認識身體和家人",
     "輕輕走近小動物",
     "小手翻過一頁頁書",
@@ -359,16 +361,17 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /「Bye bye」/);
   assert.doesNotMatch(copy, /Videos never play automatically|影片不會自動播放/);
   for (const clue of [
-    "聆聽回應", "日常參與", "認識身體", "認出家人", "自主翻閱",
+    "聆聽回應", "合作參與", "生活參與", "動作協調", "認識身體", "認出家人", "自主翻閱",
     "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "再次走近",
     "細心觀察", "溫柔接觸",
   ]) assert.match(copy, new RegExp(`tags: \\[.*${clue}`));
-  assert.match(copy, /Six everyday stories/);
-  assert.match(copy, /六個日常小片段/);
-  assert.match(copy, /tried to climb onto the pool edge/);
+  assert.match(copy, /From helping with the laundry and bringing his chair to the table/);
+  assert.match(copy, /從幫忙掛衣服、把小椅子推到餐桌旁/);
+  assert.match(copy, /This September swimming moment joins an earlier photograph/);
   assert.match(copy, /A low shelf keeps picture books, Chinese and English books and reading-pen books within easy reach/);
   assert.match(copy, /Mum and Dad read with Oliver every day/);
-  assert.match(copy, /也試着自己爬上池邊/);
+  assert.match(copy, /這段九月的游泳紀錄，和較早前在泳池裏微笑的相片/);
+  assert.doesNotMatch(copy, /Listening closely and following a request|細心聆聽，跟着做|tried to climb onto the pool edge|也試着自己爬上池邊|1Fxx4dzHCFo|BxMkQkxApBg/);
   assert.match(copy, /家中低矮的書架放着繪本、中英文圖書和點讀書/);
   assert.doesNotMatch(copy, /音樂天賦|冷靜平穩的性格|適時力|fast learner|有很強記憶力/i);
   assert.doesNotMatch(copy, /Stories taking shape|故事正在成形|A learning story to come|Family & Home/);
@@ -378,31 +381,34 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   for (const videoId of [
     "2RE83LVmTVk",
     "FW24LCUNS_w",
-    "BxMkQkxApBg",
+    "vWXWUHqovGc",
     "9QrYnWYsVUQ",
-    "1Fxx4dzHCFo",
+    "gfiAoI900Vc",
+    "IYiabpo7nuI",
     "kgPKylmVI7s",
     "rcpBdZzHJAk",
   ]) assert.equal(copy.split(videoId).length - 1, 2, videoId);
 
   for (const poster of [
     "problem-solving",
-    "following-directions",
+    "helping-laundry",
+    "ready-for-lunch",
     "body-and-family",
     "reading-pages",
-    "water-step",
+    "swimming-september",
     "piano-keys",
     "feeding-rabbits",
   ]) assert.equal(copy.split(`poster: "${poster}"`).length - 1, 2, poster);
 
   for (const [poster, priority] of [
     ["problem-solving", 5],
-    ["following-directions", 10],
-    ["body-and-family", 20],
-    ["feeding-rabbits", 30],
-    ["reading-pages", 40],
-    ["water-step", 50],
-    ["piano-keys", 60],
+    ["helping-laundry", 10],
+    ["ready-for-lunch", 20],
+    ["reading-pages", 30],
+    ["swimming-september", 40],
+    ["piano-keys", 50],
+    ["feeding-rabbits", 60],
+    ["body-and-family", 70],
   ]) {
     const matches = copy.match(
       new RegExp(`poster: "${poster}"[\\s\\S]{0,700}?autoplayPriority: ${priority}`, "g"),
@@ -618,14 +624,13 @@ test("ships only approved local metadata-free video posters", async () => {
   const posterDirectory = path.join(projectRoot, "public", "media", "video");
   const files = (await readdir(posterDirectory)).sort();
   const expected = [
-    ...["problem-solving"].flatMap((name) => [320, 480].map((width) => `${name}-${width}.webp`)),
+    ...["problem-solving", "helping-laundry", "swimming-september"].flatMap((name) => [320, 480].map((width) => `${name}-${width}.webp`)),
     ...[
       "body-and-family",
       "feeding-rabbits",
-      "following-directions",
+      "ready-for-lunch",
       "piano-keys",
       "reading-pages",
-      "water-step",
     ].flatMap((name) => [240, 405].map((width) => `${name}-${width}.webp`)),
   ].sort();
 
@@ -635,8 +640,8 @@ test("ships only approved local metadata-free video posters", async () => {
     assert.ok(bytes.length > 1_000 && bytes.length < 150_000, file);
     for (const marker of [
       "Exif", "GPS", "XMP", "youtube", "youtu.be",
-      "9QrYnWYsVUQ", "1Fxx4dzHCFo", "FW24LCUNS_w", "kgPKylmVI7s",
-      "BxMkQkxApBg", "2RE83LVmTVk", "rcpBdZzHJAk",
+      "9QrYnWYsVUQ", "gfiAoI900Vc", "IYiabpo7nuI", "FW24LCUNS_w", "kgPKylmVI7s",
+      "vWXWUHqovGc", "2RE83LVmTVk", "rcpBdZzHJAk",
     ]) {
       assert.equal(bytes.includes(Buffer.from(marker)), false, `${file}: ${marker}`);
     }
@@ -884,7 +889,8 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(css, /\.story-media-count-2\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.doesNotMatch(css, /\n\s{2}\.story-media-count-2\s*\{\s*grid-template-columns:\s*repeat\(2/);
   assert.match(css, /@media \(min-width: 60rem\)[\s\S]*?\.stories-grid\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)[\s\S]*?\.story-card\s*\{[\s\S]*?grid-template-columns:\s*minmax\(360px, 0\.9fr\) minmax\(0, 1\.1fr\)/);
-  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-3 \.story-media-count-2,[\s\S]*?\.story-card-5 \.story-media-count-2[\s\S]*?1\.05fr[\s\S]*?0\.95fr/);
+  assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-multi-media \.story-media-count-2[\s\S]*?1\.05fr[\s\S]*?0\.95fr/);
+  assert.doesNotMatch(css, /\.story-card-\d/);
   assert.match(css, /\.button:active|\.primary-button:active/);
   assert.match(css, /@media \(hover: hover\)/);
   assert.match(media, /className="preview-media-kind" aria-hidden="true"/);

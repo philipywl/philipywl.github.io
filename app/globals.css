@@ -1189,6 +1189,12 @@ html:has(body.welcome-open) {
   aspect-ratio: 16 / 9;
 }
 
+.youtube-video-square-video .youtube-video-frame {
+  width: min(100%, 480px);
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+
 .youtube-video-portrait-video .youtube-video-frame {
   width: min(100%, 340px);
   aspect-ratio: 9 / 16;
@@ -3395,18 +3401,15 @@ html:has(body.welcome-open) {
     padding: 16px 0 16px 16px;
   }
 
-  .story-card-3,
-  .story-card-5 {
+  .story-card-multi-media {
     display: block;
   }
 
-  .story-card-3 .story-media-grid,
-  .story-card-5 .story-media-grid {
+  .story-card-multi-media .story-media-grid {
     padding: 16px 16px 0;
   }
 
-  .story-card-3 .youtube-video-portrait-video .youtube-video-frame,
-  .story-card-5 .youtube-video-portrait-video .youtube-video-frame {
+  .story-card-multi-media .youtube-video-portrait-video .youtube-video-frame {
     width: min(100%, 405px);
   }
 
@@ -3448,8 +3451,7 @@ html:has(body.welcome-open) {
 }
 
 @media (min-width: 72rem) {
-  .story-card-3 .story-media-count-2,
-  .story-card-5 .story-media-count-2 {
+  .story-card-multi-media .story-media-count-2 {
     grid-template-columns: minmax(0, 1.05fr) minmax(240px, 0.95fr);
     align-items: center;
   }

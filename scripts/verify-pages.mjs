@@ -22,18 +22,20 @@ const approvedPhotoNames = [
 const approvedVideoIds = [
   "2RE83LVmTVk",
   "FW24LCUNS_w",
-  "BxMkQkxApBg",
+  "vWXWUHqovGc",
   "9QrYnWYsVUQ",
-  "1Fxx4dzHCFo",
+  "gfiAoI900Vc",
+  "IYiabpo7nuI",
   "kgPKylmVI7s",
   "rcpBdZzHJAk",
 ];
 const approvedVideoPosters = [
   { name: "problem-solving", widths: [320, 480], width: "480", height: "270" },
-  { name: "following-directions", widths: [240, 405], width: "405", height: "720" },
+  { name: "helping-laundry", widths: [320, 480], width: "480", height: "480" },
+  { name: "ready-for-lunch", widths: [240, 405], width: "405", height: "720" },
   { name: "body-and-family", widths: [240, 405], width: "405", height: "720" },
   { name: "reading-pages", widths: [240, 405], width: "405", height: "720" },
-  { name: "water-step", widths: [240, 405], width: "405", height: "720" },
+  { name: "swimming-september", widths: [320, 480], width: "480", height: "270" },
   { name: "piano-keys", widths: [240, 405], width: "405", height: "720" },
   { name: "feeding-rabbits", widths: [240, 405], width: "405", height: "720" },
 ];
@@ -129,6 +131,7 @@ const forbiddenText = [
   ["Vinext image endpoint", /\/_vinext\/image\b/i],
   ["Vinext or Cloudflare worker runtime", /vinext\/server\/app-router-entry|cloudflare:workers|WorkerEntrypoint/i],
   ["standard YouTube embed host", /https:\/\/(?:www\.)?youtube\.com\/embed\//i],
+  ["retired video or poster", /1Fxx4dzHCFo|BxMkQkxApBg|following-directions|water-step/],
   ["server-only age configuration", /OLIVER_BIRTH_DATE|Required server-only age configuration/i],
   ["private key", /-----BEGIN (?:EC |OPENSSH |RSA )?PRIVATE KEY-----/i],
   ["GitHub credential", /\b(?:github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{20,})\b/],
@@ -300,8 +303,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 21) {
-    fail(`${route} must contain fourteen responsive photographs and seven local video posters`);
+  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 22) {
+    fail(`${route} must contain fourteen responsive photographs and eight local video posters`);
   }
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
@@ -356,8 +359,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 1) {
     fail(`${route} must eagerly load only the hero portrait`);
   }
-  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 20) {
-    fail(`${route} must lazy-load thirteen below-fold photographs and seven video posters`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 21) {
+    fail(`${route} must lazy-load thirteen below-fold photographs and eight video posters`);
   }
 }
 
@@ -528,7 +531,8 @@ for (const expected of [
   "How we stay alongside him",
   "Growing alongside him",
   "a child's growth begins with steady, sincere companionship at home",
-  "Listening closely and following a request",
+  "Listening and lending a hand",
+  "Bringing his chair to the table",
   "Recognising his body and family",
   "A gentle hello to the animals",
   "Little hands turning page after page",
@@ -572,7 +576,8 @@ for (const expected of [
   "我們如何陪伴",
   "陪着他，一起長大",
   "孩子的成長始於家庭裏安穩而真誠的陪伴",
-  "細心聆聽，跟着做",
+  "聽懂指令，幫忙做家務",
+  "推好椅子，準備開飯",
   "認識身體和家人",
   "輕輕走近小動物",
   "小手翻過一頁頁書",
@@ -598,12 +603,16 @@ for (const removedCopy of [
   "A noticing moment to be added",
   "解難小片段稍後加入",
   "觀察小片段稍後加入",
+  "Listening closely and following a request",
+  "細心聆聽，跟着做",
+  "tried to climb onto the pool edge",
+  "也試着自己爬上池邊",
 ]) {
-  if ((englishText + chineseText).includes(removedCopy)) fail(`removed placeholder remains: ${removedCopy}`);
+  if ((englishText + chineseText).includes(removedCopy)) fail(`removed copy remains: ${removedCopy}`);
 }
 for (const [text, orderedTitles, route] of [
-  [routeHtml.english, ["Listening closely and following a request", "Little hands turning page after page", "A brave step into the water", "Returning to music", "A gentle hello to the animals", "Recognising his body and family"], "English"],
-  [routeHtml.chinese, ["細心聆聽，跟着做", "小手翻過一頁頁書", "勇敢走進水中", "再次走近音樂", "輕輕走近小動物", "認識身體和家人"], "Chinese"],
+  [routeHtml.english, ["Listening and lending a hand", "Bringing his chair to the table", "Little hands turning page after page", "A brave step into the water", "Returning to music", "A gentle hello to the animals", "Recognising his body and family"], "English"],
+  [routeHtml.chinese, ["聽懂指令，幫忙做家務", "推好椅子，準備開飯", "小手翻過一頁頁書", "勇敢走進水中", "再次走近音樂", "輕輕走近小動物", "認識身體和家人"], "Chinese"],
 ]) {
   let previousIndex = -1;
   for (const title of orderedTitles) {
@@ -614,6 +623,36 @@ for (const [text, orderedTitles, route] of [
 }
 for (const videoId of approvedVideoIds) {
   if (!foundApprovedVideoIds.has(videoId)) fail(`approved deferred YouTube video is missing: ${videoId}`);
+}
+for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
+  const figures = html.match(/<figure\b[^>]*>/gi) ?? [];
+  const videoIds = figures.map((tag) => getAttribute(tag, "data-video-id")).filter(Boolean);
+  if (JSON.stringify([...videoIds].sort()) !== JSON.stringify([...approvedVideoIds].sort())) {
+    fail(`${route} does not contain exactly the approved videos`);
+  }
+  for (const [videoId, ratio, priority] of [
+    ["gfiAoI900Vc", "square-video", "10"],
+    ["IYiabpo7nuI", "portrait-video", "20"],
+    ["vWXWUHqovGc", "video", "40"],
+  ]) {
+    const figure = figures.find((tag) => getAttribute(tag, "data-video-id") === videoId);
+    if (getAttribute(figure ?? "", "class") !== `youtube-video youtube-video-${ratio}` ||
+        getAttribute(figure ?? "", "data-autoplay-priority") !== priority) {
+      fail(`${route} has an incorrect video aspect ratio or playback order: ${videoId}`);
+    }
+  }
+}
+for (const [html, title, age] of [
+  [routeHtml.english, "Listening and lending a hand", "21 months"],
+  [routeHtml.english, "Bringing his chair to the table", "20 months"],
+  [routeHtml.english, "A brave step into the water", "19–21 months"],
+  [routeHtml.chinese, "聽懂指令，幫忙做家務", "21個月大"],
+  [routeHtml.chinese, "推好椅子，準備開飯", "20個月大"],
+  [routeHtml.chinese, "勇敢走進水中", "19至21個月大"],
+]) {
+  if (!new RegExp(`<h3>${title}</h3>\\s*<p class="story-age">${age}</p>`).test(html)) {
+    fail(`historical story age is incorrect: ${title}`);
+  }
 }
 if ((routeHtml.english.match(/<h1\b/gi) ?? []).length !== 1) fail("English page must contain one H1");
 if ((routeHtml.chinese.match(/<h1\b/gi) ?? []).length !== 1) fail("Chinese page must contain one H1");
@@ -644,14 +683,14 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
   if (!/class="footer-privacy"/.test(html)) fail(`${route} page lacks the inline footer privacy note`);
 }
 for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
-  if ((html.match(/class="story-card/g) ?? []).length !== 6) {
-    fail(`${route} page does not contain the six approved everyday stories`);
+  if ((html.match(/class="story-card/g) ?? []).length !== 7) {
+    fail(`${route} page does not contain the seven approved everyday stories`);
   }
   if ((html.match(/class="growth-milestone(?: |")/g) ?? []).length !== 10) {
     fail(`${route} page does not contain one ten-item growth path`);
   }
-  if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 7) {
-    fail(`${route} page does not contain seven deferred poster controls`);
+  if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 8) {
+    fail(`${route} page does not contain eight deferred poster controls`);
   }
   if (/<iframe\b|youtube-nocookie\.com\/embed/i.test(html)) {
     fail(`${route} page loads a YouTube player before visitor interaction`);
@@ -664,7 +703,7 @@ for (const [route, html] of Object.entries({ english: routeHtml.english, chinese
   }
 }
 for (const clue of [
-  "聆聽回應", "日常參與", "認識身體", "認出家人", "自主翻閱",
+  "聆聽回應", "合作參與", "生活參與", "動作協調", "認識身體", "認出家人", "自主翻閱",
   "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "再次走近",
   "細心觀察", "溫柔接觸",
 ]) {
@@ -673,7 +712,7 @@ for (const clue of [
 if (!hasPrivacyEnhancedVideoEmbed) {
   fail("the deferred player does not use YouTube's privacy-enhanced embed host");
 }
-for (const priority of [5, 10, 20, 30, 40, 50, 60]) {
+for (const priority of [5, 10, 20, 30, 40, 50, 60, 70]) {
   for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
     if ((html.match(new RegExp(`data-autoplay-priority="${priority}"`, "g")) ?? []).length !== 1) {
       fail(`${route} page lacks the unique video autoplay priority ${priority}`);
