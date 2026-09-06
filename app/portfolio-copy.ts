@@ -95,6 +95,9 @@ type PortfolioCopy = {
     closeMenu: string;
     playVideo: string;
     loadingVideo: string;
+    unavailableVideo: string;
+    retryVideo: string;
+    enableVideoScript: string;
     enableVideoSound: string;
     disableVideoSound: string;
   };
@@ -175,6 +178,9 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       closeMenu: "Close menu",
       playVideo: "Play video",
       loadingVideo: "Loading video…",
+      unavailableVideo: "This video could not play. Please try again.",
+      retryVideo: "Try again",
+      enableVideoScript: "Enable JavaScript to play this video.",
       enableVideoSound: "Turn on video sound",
       disableVideoSound: "Turn off video sound",
     },
@@ -187,7 +193,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingLead: "Hello,",
       greetingRest: "I'm Oliver.",
       intro:
-        "I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family.",
+        "I'd love to share little moments and small challenges from my everyday life, and the time I spend exploring the world with my family.",
       ageLabel: "Oliver's current age",
       portrait: {
         name: "hero-portrait",
@@ -199,18 +205,18 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "Meet Oliver",
       title: "Oliver's everyday world",
       intro:
-        "Oliver likes books, cars and watching dogs go by. When a toy catches his interest, he stops to look and try it out. Mum and Dad enjoy discovering everyday things with him.",
+        "Oliver likes books, cars and watching dogs go by. When a toy catches his interest, he stops to look and try it out. Mum and Dad share these everyday discoveries with him.",
       mainPhoto: {
         name: "about-world",
         alt: "Nineteen-month-old Oliver inside a large green play car, looking towards the camera with one hand resting on its side.",
         caption:
-          "A photo with a big play car during a family outing, at 19 months.",
+          "Nineteen-month-old Oliver with a big play car on a family outing.",
       },
       fields: [
         {
           title: "Reading together",
           body:
-            "Oliver often chooses a book from the shelf and invites someone in the family to read with him. Mum and Dad read with him every day, and he listens closely to the teacher during story time at playgroup. We treasure these times spent reading and talking together.",
+            "Oliver often chooses a book from the shelf and invites someone in the family to read with him. Mum and Dad read with him every day, and he listens closely to the teacher during story time at playgroup. We treasure our time spent reading and talking together.",
           media: {
             name: "about-reading",
             alt: "Twelve-month-old Oliver sits close to Dad as they look at a board book together and Dad points to the page.",
@@ -230,7 +236,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           title: "Working things out",
           body:
-            "Oliver looks closely at the problem-solving toy, then tries moving its parts with both hands. If one way does not work, he tries another. Seeing his delight when he opens the latch makes us smile too.",
+            "Oliver looks closely at the problem-solving toy, then tries moving its parts with both hands. If one way does not work, he tries another. When he opens the latch, we are just as happy as he is.",
           media: {
             kind: "video",
             videoId: "9QrYnWYsVUQ",
@@ -273,7 +279,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "As the family's domestic helper hangs the laundry, Oliver responds to her request by handing her clothes hangers.",
           support:
             "His family uses short, clear phrases and gives Oliver time to understand and respond.",
-          reflection: "We were happy to see Oliver lend a hand.",
+          reflection: "We are pleased to see Oliver watch what the adults do and join in to help. We praise his efforts and encourage him to keep trying.",
           tags: ["Listening & Responding", "Taking Part Together"],
           media: [
             {
@@ -296,7 +302,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "It is nearly lunchtime. Oliver pushes his own chair to the table, ready for lunch.",
           support:
             "Mum and Dad give Oliver time to try things for himself, making sure he is safe, offering encouragement and helping when needed.",
-          reflection: "We were happy to see Oliver bring his own chair to the table, ready for lunch.",
+          reflection: "When it is safe, we give Oliver time and space to try things for himself instead of rushing to do them for him. We are proud to see him bring his own chair to the table, ready for lunch.",
           tags: ["Everyday Participation", "Coordinated Movement"],
           media: [
             {
@@ -373,7 +379,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "Picture books, Chinese and English books, and books used with a reading pen are kept on low shelves within Oliver's reach. Mum and Dad read with him every day and also give him time to choose books and look through them on his own.",
           reflection:
-            "We love reading together and seeing him look through books on his own. We hope reading will remain something he enjoys.",
+            "We enjoy seeing Oliver concentrate as he looks through a book. Reading is his favourite activity, and we give him quiet time to enjoy it.",
           tags: ["Independent Book Exploration", "Focused Book Time"],
           media: [
             {
@@ -429,7 +435,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "Mum and Dad will keep sharing musical games with Oliver, listening to sounds and exploring rhythm together.",
           reflection:
-            "We enjoy seeing him return to the piano and would like to spend a little longer playing with him.",
+            "Seeing Oliver enjoy exploring piano keys and sounds makes us want to share more music with him, giving him time to explore rhythm and express himself. We hope these relaxed experiences help him discover more of his interests and strengths.",
           tags: ["Exploring Sounds", "Choosing to Take Part"],
           media: [
             {
@@ -598,6 +604,9 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       closeMenu: "關閉選單",
       playVideo: "播放影片",
       loadingVideo: "正在載入影片……",
+      unavailableVideo: "影片暫時未能播放，請再試一次。",
+      retryVideo: "再試一次",
+      enableVideoScript: "請啟用 JavaScript 以播放影片。",
       enableVideoSound: "開啟影片聲音",
       disableVideoSound: "關閉影片聲音",
     },
@@ -610,7 +619,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       greetingLead: "你好，",
       greetingRest: "我是昊熹。",
       intro:
-        "我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。",
+        "我想和你分享我的生活點滴和小挑戰，還有與家人一起探索世界的時光。",
       ageLabel: "昊熹現在的年齡",
       portrait: {
         name: "hero-portrait",
@@ -622,17 +631,17 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "認識昊熹",
       title: "昊熹的日常小世界",
       intro:
-        "昊熹喜歡看書、玩車，也會留意路過的小狗。遇到有趣的玩具，他會停下來看看、伸手試試。爸爸媽媽陪着他，一起發現日常裏有趣的事。",
+        "昊熹喜歡看書、玩車，也會留意路過的小狗。遇到有趣的玩具，他會停下來看看、伸手試試。爸爸媽媽陪着他，一起發現日常中的小趣事。",
       mainPhoto: {
         name: "about-world",
         alt: "19個月大的昊熹在大型綠色玩具車裏，一隻手扶着車身，望向鏡頭。",
-        caption: "19個月大，一家人外出時，昊熹和大車拍張照。",
+        caption: "19個月大，一家人外出時，昊熹和大車的合照。",
       },
       fields: [
         {
           title: "親子共讀",
           body:
-            "昊熹常常主動從書架拿書，邀請家人一起看。爸爸媽媽每天都會陪他閱讀；到了幼兒遊戲班，他也會專心聆聽老師說故事。我們很珍惜這些一起看書、一起說說話的時間。",
+            "昊熹常常主動從書架拿書，邀請家人一起看。爸爸媽媽每天都會陪他閱讀；到了幼兒遊戲班，他也會專心聆聽老師說故事。我們很珍惜這些一起閱讀、一起聊天的時間。",
           media: {
             name: "about-reading",
             alt: "12個月大的昊熹依偎在爸爸身旁一起看圖書，爸爸正指着書頁。",
@@ -652,7 +661,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           title: "專注解難",
           body:
-            "玩解難玩具時，昊熹會先仔細看看，再用雙手試試。遇到打不開的地方，他會換個方法再試；成功解開扣鎖時，他開心的樣子讓我們也忍不住笑起來。",
+            "玩解難玩具時，昊熹會先仔細看看，再用雙手試試。遇到打不開的地方，他會換個方法再試；成功解開扣鎖時，我們也和他一樣開心。",
           media: {
             kind: "video",
             videoId: "9QrYnWYsVUQ",
@@ -693,7 +702,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "姐姐掛衣服時，昊熹聽懂她的指示，把衣架遞給她，幫忙做家務。",
           support:
             "家人用簡短、清楚的話和昊熹溝通，說完後等一等，給他時間理解和回應。",
-          reflection: "昊熹也能幫上忙了，我們很開心。",
+          reflection: "看見昊熹留意大人怎樣做，也跟着幫忙，我們很欣慰。我們會肯定他的用心，鼓勵他繼續嘗試。",
           tags: ["聆聽回應", "合作參與"],
           media: [
             {
@@ -714,7 +723,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "快到午餐時間了，昊熹把自己的小椅子推到餐桌旁，準備吃飯。",
           support:
             "只要安全，爸爸媽媽便給昊熹時間自己試試，在旁鼓勵，並在需要時幫忙。",
-          reflection: "看見昊熹自己推好椅子、準備吃飯，我們很高興。",
+          reflection: "在安全的環境裏，我們給昊熹時間和空間自己試試，不急着代他完成。看見他自己推好椅子，為吃飯作準備，我們很為他驕傲。",
           tags: ["生活參與", "動作協調"],
           media: [
             {
@@ -773,7 +782,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               videoId: "rcpBdZzHJAk",
               poster: "feeding-rabbits",
               title: "昊熹把食物遞給小兔",
-              caption: "家庭外出時，昊熹把食物遞給小兔。",
+              caption: "和家人外出時，昊熹把食物遞給小兔。",
               ratio: "portrait-video",
               autoplayPriority: 60,
             },
@@ -787,7 +796,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "家中低矮的書架放着繪本、中英文圖書和點讀書，讓昊熹隨時拿到。爸爸媽媽每天陪他閱讀，也給他時間自己選書、慢慢翻看。",
           reflection:
-            "我們喜歡陪他讀書，也珍惜他自己專心翻看的時候。希望閱讀一直是他喜歡的事。",
+            "看見昊熹專心翻書，我們很開心。閱讀是他最喜歡的活動，我們會留給他安靜的時間，讓他好好享受。",
           tags: ["自主翻閱", "專注閱讀"],
           media: [
             {
@@ -809,7 +818,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "大人會留意昊熹的反應，在安全照顧下鼓勵他嘗試，不急着催促他。",
           reflection:
-            "我們希望他在安心的陪伴下，慢慢熟習水中的感覺，享受游泳。",
+            "我們希望他在安心的陪伴下，逐漸適應水中的感覺，享受游泳。",
           tags: ["水中探索", "願意嘗試"],
           media: [
             {
@@ -838,7 +847,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "爸爸媽媽會繼續陪昊熹玩音樂遊戲，一起聽聽聲音、感受節奏。",
           reflection:
-            "我們喜歡看他又走到鋼琴旁，也想多陪他玩一會兒。",
+            "看到昊熹喜歡探索琴鍵和聲音，我們也想多陪他接觸音樂，感受節奏、嘗試表達自己。希望這些輕鬆的體驗，能讓他發現更多興趣和長處。",
           tags: ["音樂探索", "主動參與"],
           media: [
             {

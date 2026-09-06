@@ -120,6 +120,7 @@ h2,
 h3,
 h4 {
   color: var(--ink);
+  overflow-wrap: anywhere;
   font-family: var(--font-sans);
   font-weight: 600;
   letter-spacing: -0.025em;
@@ -746,7 +747,7 @@ html:has(body.welcome-open) {
   margin-bottom: 18px;
   overflow: visible;
   text-wrap: nowrap;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .greeting-heading[data-greeting-locale="en"] {
@@ -760,7 +761,7 @@ html:has(body.welcome-open) {
 .greeting-reserve,
 .greeting-visual {
   display: block;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .greeting-reserve {
@@ -780,11 +781,14 @@ html:has(body.welcome-open) {
 
 .greeting-part {
   display: inline-block;
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
 }
 
 .greeting-segment {
   display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .greeting-cursor {
@@ -1186,8 +1190,38 @@ html:has(body.welcome-open) {
 }
 
 .youtube-video-video .youtube-video-frame {
+  width: 100%;
+  max-width: 100%;
   aspect-ratio: 16 / 9;
+  min-height: 202px;
 }
+
+.youtube-video-recovery {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  text-align: center;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.youtube-video-recovery p { margin: 0; }
+.youtube-video-recovery button {
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: white;
+  color: inherit;
+  cursor: pointer;
+}
+
+.youtube-video-trigger:disabled { cursor: default; }
 
 .youtube-video-square-video .youtube-video-frame {
   width: min(100%, 480px);
@@ -2464,6 +2498,7 @@ html:has(body.welcome-open) {
 
 .about-field {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
   padding: 14px;
   border: 1px solid var(--border);
@@ -2483,6 +2518,7 @@ html:has(body.welcome-open) {
 .about-field-placeholder,
 .about-field-video {
   width: 100%;
+  min-width: 0;
 }
 
 .about-field-photo .portfolio-photo-frame,
@@ -3257,18 +3293,17 @@ html:has(body.welcome-open) {
   }
 
   .about-grid {
-    grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
     gap: 40px;
   }
 
   .about-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
   }
 
   .growth-milestone-list > li {
-    --timeline-line-x: 105px;
+    --timeline-line-x: calc(5.375rem + 19px);
 
-    grid-template-columns: 86px 24px minmax(0, 1fr);
+    grid-template-columns: 5.375rem 24px minmax(0, 1fr);
     grid-template-rows: auto;
     column-gap: 10px;
     row-gap: 0;
@@ -3329,6 +3364,14 @@ html:has(body.welcome-open) {
 }
 
 @media (min-width: 60rem) {
+  .about-grid {
+    grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+  }
+
+  .about-preview-media {
+    position: sticky;
+    top: calc(var(--header-height) + 24px);
+  }
   .section-pad {
     padding-block: 96px;
   }

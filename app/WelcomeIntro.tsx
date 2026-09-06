@@ -27,6 +27,7 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
     window.__oliverWelcomeShouldPlay = shouldPlay;
     root.dataset.welcomeState = shouldPlay ? "play" : "hidden";
     if (shouldPlay) {
+      root.dataset.welcomeDeadline = String(Date.now() + ${welcomeDurationMs});
       document.body.classList.add("welcome-open");
       try { window.sessionStorage.setItem(${JSON.stringify(sessionKey)}, "seen"); } catch {}
       window.__oliverWelcomeFailOpenTimer = window.setTimeout(() => {
@@ -99,6 +100,7 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
     const root = rootRef.current;
     const welcomeWindow = window as typeof window & {
       __oliverWelcomeShouldPlay?: boolean;
+      __oliverWelcomeFailOpenTimer?: number;
     };
     const shouldPlay =
       welcomeWindow.__oliverWelcomeShouldPlay === true &&
@@ -106,6 +108,17 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
 
     if (!root || !shouldPlay) {
       window.dispatchEvent(new Event(completeEvent));
+      return;
+    }
+
+    // Hydration must not restart the clock or outlive the visible animation.
+    const remainingMs = Math.max(0, Number(root.dataset.welcomeDeadline) - Date.now());
+    if (welcomeWindow.__oliverWelcomeFailOpenTimer) {
+      window.clearTimeout(welcomeWindow.__oliverWelcomeFailOpenTimer);
+      delete welcomeWindow.__oliverWelcomeFailOpenTimer;
+    }
+    if (!Number.isFinite(remainingMs) || remainingMs === 0) {
+      completeWelcome(false);
       return;
     }
 
@@ -140,9 +153,19 @@ export default function WelcomeIntro({ message }: WelcomeIntroProps) {
       if (closedRef.current) return;
       closedRef.current = true;
       completeWelcome(false);
-    }, welcomeDurationMs);
+    }, remainingMs);
+
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onMotionPreferenceChange = () => {
+      if (!motionPreference.matches) return;
+      closedRef.current = true;
+      window.clearTimeout(completionTimer);
+      completeWelcome(false);
+    };
+    motionPreference.addEventListener("change", onMotionPreferenceChange);
 
     return () => {
+      motionPreference.removeEventListener("change", onMotionPreferenceChange);
       releaseFocusIsolation();
       window.clearTimeout(completionTimer);
       window.clearTimeout(exitTimerRef.current);

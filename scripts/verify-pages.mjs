@@ -509,7 +509,7 @@ const chineseText = visibleText(routeHtml.chinese);
 for (const expected of [
   "Oliver's learning journey",
   "Hello, I'm Oliver.",
-  "I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family.",
+  "I'd love to share little moments and small challenges from my everyday life, and the time I spend exploring the world with my family.",
   "Oliver at 19 months.",
   "Oliver's everyday world",
   "Reading together",
@@ -554,7 +554,7 @@ for (const expected of [
 }
 for (const expected of [
   "昊熹的成長旅程",
-  "我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。",
+  "我想和你分享我的生活點滴和小挑戰，還有與家人一起探索世界的時光。",
   "昊熹19個月大時的照片。",
   "昊熹的日常小世界",
   "親子共讀",
@@ -623,7 +623,7 @@ for (const [text, orderedTitles, route] of [
 ]) {
   let previousIndex = -1;
   for (const title of orderedTitles) {
-    const currentIndex = text.indexOf(`<h3>${title}</h3>`);
+    const currentIndex = text.search(new RegExp(`<h3\\b[^>]*>${title}</h3>`));
     if (currentIndex <= previousIndex) fail(`${route} learning stories are out of order at: ${title}`);
     previousIndex = currentIndex;
   }
@@ -661,7 +661,7 @@ for (const [html, title, age] of [
   [routeHtml.chinese, "推好椅子，準備開飯", "20個月大"],
   [routeHtml.chinese, "勇敢走進水中", "19至21個月大"],
 ]) {
-  if (!new RegExp(`<h3>${title}</h3>\\s*<p class="story-age">${age}</p>`).test(html)) {
+  if (!new RegExp(`<h3\\b[^>]*>${title}</h3>\\s*<p class="story-age">${age}</p>`).test(html)) {
     fail(`historical story age is incorrect: ${title}`);
   }
 }
