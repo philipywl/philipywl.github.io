@@ -249,7 +249,8 @@ export function MobileMenu({
     }
 
     window.requestAnimationFrame(() => {
-      triggerRef.current?.focus();
+      if (triggerRef.current?.getClientRects().length) triggerRef.current?.focus();
+      else document.querySelector<HTMLElement>(".desktop-nav a")?.focus({ preventScroll: true });
     });
   };
 
@@ -269,7 +270,17 @@ export function MobileMenu({
   };
 
   useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 72rem)");
+    const closeHiddenDialog = () => {
+      if (!desktop.matches || !dialogRef.current?.open) return;
+      dialogRef.current.close();
+      document.body.style.overflow = previousOverflowRef.current;
+      setOpen(false);
+      document.querySelector<HTMLElement>(".desktop-nav a")?.focus({ preventScroll: true });
+    };
+    desktop.addEventListener("change", closeHiddenDialog);
     return () => {
+      desktop.removeEventListener("change", closeHiddenDialog);
       document.body.style.overflow = previousOverflowRef.current;
     };
   }, []);

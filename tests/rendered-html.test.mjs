@@ -240,7 +240,7 @@ test("renders the refined English public homepage", async () => {
   assert.match(html, /name="description" content="Everyday moments gathered by Oliver(?:&#x27;|')s parents,/i);
   assert.match(text, /Oliver's learning journey/);
   assert.match(text, /Hello, I'm Oliver\./);
-  assert.match(text, /I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family\./);
+  assert.match(text, /I'd love to share little moments and small challenges from my everyday life, and the time I spend exploring the world with my family\./);
   assert.doesNotMatch(text, /“Hello, I'm Oliver\.”/);
   assert.match(text, /Oliver's everyday world/);
   assert.match(text, /Reading together/);
@@ -273,9 +273,9 @@ test("renders the refined English public homepage", async () => {
   ]) assert.match(text, new RegExp(title));
   assert.match(text, /Oliver swims in the pool with an adult close beside him/);
   assert.doesNotMatch(text, /Listening closely and following a request|tried to climb onto the pool edge/);
-  assert.match(html, /<h3>Listening and lending a hand<\/h3>\s*<p class="story-age">21 months<\/p>/);
-  assert.match(html, /<h3>Bringing his chair to the table<\/h3>\s*<p class="story-age">20 months<\/p>/);
-  assert.match(html, /<h3>A brave step into the water<\/h3>\s*<p class="story-age">19–21 months<\/p>/);
+  assert.match(html, /<h3\b[^>]*>Listening and lending a hand<\/h3>\s*<p class="story-age">21 months<\/p>/);
+  assert.match(html, /<h3\b[^>]*>Bringing his chair to the table<\/h3>\s*<p class="story-age">20 months<\/p>/);
+  assert.match(html, /<h3\b[^>]*>A brave step into the water<\/h3>\s*<p class="story-age">19–21 months<\/p>/);
   assert.match(text, /Picture books, Chinese and English books, and books used with a reading pen are kept on low shelves within Oliver's reach/);
   assert.match(text, /Mum and Dad read with him every day/);
   assert.ok(text.indexOf("Listening and lending a hand") < text.indexOf("Bringing his chair to the table"));
@@ -330,7 +330,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(html, /name="description" content="爸爸媽媽用心記下昊熹的日常/);
   assert.match(text, /昊熹的成長旅程/);
   assert.match(text, /你好，\s*我是昊熹。/);
-  assert.match(text, /我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。/);
+  assert.match(text, /我想和你分享我的生活點滴和小挑戰，還有與家人一起探索世界的時光。/);
   assert.doesNotMatch(text, /「你好，我是昊熹。」/);
   assert.match(text, /昊熹的日常小世界/);
   assert.match(text, /親子共讀/);
@@ -363,9 +363,9 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   ]) assert.match(text, new RegExp(title));
   assert.match(text, /昊熹在泳池裏游泳，大人在身旁照顧着他/);
   assert.doesNotMatch(text, /細心聆聽，跟着做|也試着自己爬上池邊/);
-  assert.match(html, /<h3>聽懂指令，幫忙做家務<\/h3>\s*<p class="story-age">21個月大<\/p>/);
-  assert.match(html, /<h3>推好椅子，準備開飯<\/h3>\s*<p class="story-age">20個月大<\/p>/);
-  assert.match(html, /<h3>勇敢走進水中<\/h3>\s*<p class="story-age">19至21個月大<\/p>/);
+  assert.match(html, /<h3\b[^>]*>聽懂指令，幫忙做家務<\/h3>\s*<p class="story-age">21個月大<\/p>/);
+  assert.match(html, /<h3\b[^>]*>推好椅子，準備開飯<\/h3>\s*<p class="story-age">20個月大<\/p>/);
+  assert.match(html, /<h3\b[^>]*>勇敢走進水中<\/h3>\s*<p class="story-age">19至21個月大<\/p>/);
   assert.match(text, /家中低矮的書架放着繪本、中英文圖書和點讀書/);
   assert.ok(text.lastIndexOf("聽懂指令，幫忙做家務") < text.lastIndexOf("推好椅子，準備開飯"));
   assert.ok(text.lastIndexOf("推好椅子，準備開飯") < text.lastIndexOf("小手翻過一頁頁書"));
@@ -508,12 +508,12 @@ test("keeps placeholders absent, photographs responsive, videos deferred, and mo
   assert.match(youtubeVideo, /entry\.suppressed = true/);
   assert.match(youtubeVideo, /notifyUserPaused\(videoId\)/);
   assert.match(youtubeVideo, /focusAfterLoadRef\.current = manual/);
-  assert.match(youtubeVideo, /if \(focusAfterLoadRef\.current\)[\s\S]*?iframeRef\.current\?\.focus\(\)/);
+  assert.match(youtubeVideo, /if \(active && focusAfterLoadRef\.current\)[\s\S]*?iframeRef\.current\?\.focus\(\{ preventScroll: true \}\)/);
   assert.doesNotMatch(youtubeVideo, /<video\b|\bautoPlay\b|\bloop\b|useLayoutEffect|onClick=\{\(\) => setActive\(true\)\}/);
   assert.match(greeting, /sessionStorage\.setItem\(sessionKey, "seen"\)/);
   assert.match(greeting, /data-greeting-state=\{preparingState\}/);
-  assert.match(greeting, /className="greeting-visual"[\s\S]*?style=\{\{ visibility: "hidden" \}\}/);
-  assert.match(greeting, /visual\.style\.visibility = ""/);
+  assert.match(greeting, /className="greeting-visual"\s+aria-hidden="true"\s*>/);
+  assert.doesNotMatch(greeting, /visual\.style\.visibility/);
   assert.match(greeting, /<noscript>[\s\S]*?<style>/);
   assert.doesNotMatch(greeting, /data-greeting-state="static"/);
   assert.match(css, /data-greeting-state\$="-preparing"[\s\S]*?visibility:\s*hidden/);
@@ -540,7 +540,7 @@ test("keeps placeholders absent, photographs responsive, videos deferred, and mo
   assert.match(css, /\.welcome-message\s*\{[\s\S]*?animation:\s*welcome-message 3\.2s/);
   assert.match(welcomeIntro, /const welcomeDurationMs = 3200/);
   assert.match(welcomeIntro, /const completionTimer = window\.setTimeout\(\(\) => \{/);
-  assert.match(welcomeIntro, /\}, welcomeDurationMs\);/);
+  assert.match(welcomeIntro, /\}, remainingMs\);/);
   assert.match(welcomeIntro, /__oliverWelcomeFailOpenTimer/);
   assert.match(welcomeIntro, /window\.__oliverWelcomeShouldPlay = false/);
   assert.match(welcomeIntro, /welcomeWindow\.__oliverWelcomeShouldPlay === true &&[\s\S]*?root\?\.dataset\.welcomeState === "play"/);

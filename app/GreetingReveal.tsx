@@ -33,7 +33,6 @@ export default function GreetingReveal({
     const play = ${JSON.stringify(playState)};
     const waiting = ${JSON.stringify(waitingState)};
     const complete = ${JSON.stringify(completeState)};
-    const visual = heading.querySelector(".greeting-visual");
     let seen = false;
     try { seen = window.sessionStorage.getItem(key) === "seen"; } catch {}
     const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -42,7 +41,15 @@ export default function GreetingReveal({
     }
     const welcomeWillPlay = window.__oliverWelcomeShouldPlay === true;
     heading.dataset.greetingState = seen || reduced ? complete : (welcomeWillPlay ? waiting : play);
-    if (visual instanceof HTMLElement) visual.style.visibility = "";
+    // Inline scripts can still finish the reveal if the client bundle fails.
+    if (heading.dataset.greetingState === waiting) {
+      window.addEventListener("oliver:welcome-complete", () => {
+        if (heading.dataset.greetingState !== waiting) return;
+        heading.dataset.greetingState = play;
+        try { window.sessionStorage.setItem(key, "seen"); } catch {}
+        window.setTimeout(() => { heading.dataset.greetingState = complete; }, ${greetingFallbackDurations[locale]});
+      }, { once: true });
+    }
   })();`;
 
   useEffect(() => {
@@ -116,7 +123,6 @@ export default function GreetingReveal({
         <span
           className="greeting-visual"
           aria-hidden="true"
-          style={{ visibility: "hidden" }}
         >
           <span className="greeting-part greeting-part-lead">
             <span className="greeting-segment">{lead}</span>

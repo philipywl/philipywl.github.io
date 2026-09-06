@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 type YouTubeVideoProps = {
   videoId: string;
@@ -10,6 +10,9 @@ type YouTubeVideoProps = {
   ratio: "video" | "portrait-video" | "square-video";
   playLabel: string;
   loadingLabel: string;
+  unavailableLabel: string;
+  retryLabel: string;
+  enableScriptLabel: string;
   enableSoundLabel: string;
   disableSoundLabel: string;
   autoplayPriority: number;
@@ -35,6 +38,9 @@ type PlaybackEntry = {
 const START_RATIO = 0.65;
 const STOP_RATIO = 0.35;
 const AUTOPLAY_DWELL_MS = 350;
+const subscribeToHydration = () => () => {};
+const clientHydrated = () => true;
+const serverHydrated = () => false;
 const playbackEntries = new Map<string, PlaybackEntry>();
 const VIDEO_SOUND_SESSION_KEY = "oliver-video-sound-v1";
 const videoSoundListeners = new Set<() => void>();
@@ -247,8 +253,14 @@ function ensurePlaybackObserver() {
         const entry = playbackEntries.get(key);
         if (!entry) return;
 
-        entry.intersectionRatio = observerEntry.isIntersecting
-          ? observerEntry.intersectionRatio
+        // A portrait video may be taller than a landscape phone viewport.
+        // Measure the visible share of the space that can actually be shown.
+        const availableHeight = Math.min(
+          observerEntry.boundingClientRect.height,
+          observerEntry.rootBounds?.height ?? window.innerHeight,
+        );
+        entry.intersectionRatio = observerEntry.isIntersecting && availableHeight > 0
+          ? observerEntry.intersectionRect.height / availableHeight
           : 0;
         if (entry.intersectionRatio >= START_RATIO) {
           entry.eligibleSince ??= now;
@@ -260,7 +272,7 @@ function ensurePlaybackObserver() {
     },
     {
       rootMargin: "-5% 0px -10% 0px",
-      threshold: [0, STOP_RATIO, START_RATIO, 1],
+      threshold: Array.from({ length: 21 }, (_, index) => index / 20),
     },
   );
 
@@ -274,11 +286,13 @@ function ensurePlaybackObserver() {
 function registerPlayback(entry: PlaybackEntry) {
   ensurePlaybackObserver();
   playbackEntries.set(entry.key, entry);
-  playbackObserver?.observe(entry.element);
+  const viewport = entry.element.querySelector<HTMLElement>(".youtube-video-frame") ?? entry.element;
+  viewport.dataset.videoId = entry.key;
+  playbackObserver?.observe(viewport);
   schedulePlaybackEvaluation();
 
   return () => {
-    playbackObserver?.unobserve(entry.element);
+    playbackObserver?.unobserve(viewport);
     playbackEntries.delete(entry.key);
     if (activePlaybackKey === entry.key) {
       entry.pause();
@@ -327,15 +341,37 @@ function requestManualPlayback(key: string) {
   entry.play();
 }
 
+function canPlayNow(entry: PlaybackEntry) {
+  return document.visibilityState === "visible" && entry.intersectionRatio >= STOP_RATIO;
+}
+
+function rejectLatePlayback(entry: PlaybackEntry) {
+  entry.pause();
+  entry.playing = false;
+  entry.activation = null;
+  if (activePlaybackKey === entry.key) activePlaybackKey = null;
+  schedulePlaybackEvaluation();
+}
+
+function ownsVisiblePlayback(key: string) {
+  const entry = playbackEntries.get(key);
+  if (!entry) return false;
+  if (activePlaybackKey === key && canPlayNow(entry)) return true;
+  rejectLatePlayback(entry);
+  return false;
+}
+
 function notifyPlaybackReady(key: string) {
-  if (activePlaybackKey === key) {
-    playbackEntries.get(key)?.play();
-  }
+  if (ownsVisiblePlayback(key)) playbackEntries.get(key)?.play();
 }
 
 function notifyPlaybackPlaying(key: string) {
   const entry = playbackEntries.get(key);
-  if (!entry) return;
+  if (!entry) return false;
+  if (!canPlayNow(entry) || (activePlaybackKey !== key && !entry.hasFocus())) {
+    rejectLatePlayback(entry);
+    return false;
+  }
   const current = activePlaybackKey
     ? playbackEntries.get(activePlaybackKey)
     : undefined;
@@ -349,11 +385,12 @@ function notifyPlaybackPlaying(key: string) {
   entry.playing = true;
   entry.activation ??= "manual";
   activePlaybackKey = key;
+  return true;
 }
 
 function notifyUserPaused(key: string) {
   const entry = playbackEntries.get(key);
-  if (!entry) return;
+  if (!entry || activePlaybackKey !== key) return;
   entry.suppressed = true;
   entry.playing = false;
   entry.activation = "manual";
@@ -369,6 +406,13 @@ function notifyPlaybackEnded(key: string) {
   entry.activation = null;
   if (activePlaybackKey === key) activePlaybackKey = null;
   schedulePlaybackEvaluation();
+}
+
+function notifyPlaybackUnavailable(key: string) {
+  const entry = playbackEntries.get(key);
+  if (!entry) return;
+  entry.suppressed = true;
+  rejectLatePlayback(entry);
 }
 
 function VideoSoundIcon({ enabled }: { enabled: boolean }) {
@@ -428,18 +472,24 @@ export default function YouTubeVideo({
   ratio,
   playLabel,
   loadingLabel,
+  unavailableLabel,
+  retryLabel,
+  enableScriptLabel,
   enableSoundLabel,
   disableSoundLabel,
   autoplayPriority,
 }: YouTubeVideoProps) {
   const [active, setActive] = useState(false);
+  const interactive = useSyncExternalStore(subscribeToHydration, clientHydrated, serverHydrated);
   const [loaded, setLoaded] = useState(false);
   const [playbackState, setPlaybackState] = useState<
-    "poster" | "loading" | "playing" | "paused" | "ended"
+    "poster" | "loading" | "playing" | "paused" | "ended" | "error"
   >("poster");
   const [soundEnabled, setSoundEnabled] = useState(false);
   const figureRef = useRef<HTMLElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const retryRef = useRef<HTMLButtonElement>(null);
+  const focusRecoveryRef = useRef(false);
   const focusAfterLoadRef = useRef(false);
   const coordinatorPauseUntilRef = useRef(0);
   const autoplayFallbackUsedRef = useRef(false);
@@ -484,6 +534,35 @@ export default function YouTubeVideo({
     setPlaybackState("loading");
     setActive(true);
   }, []);
+
+  const markUnavailable = useCallback(() => {
+    focusRecoveryRef.current = figureRef.current?.contains(document.activeElement) ?? false;
+    notifyPlaybackUnavailable(videoId);
+    setPlaybackState("error");
+    setLoaded(false);
+    setActive(false);
+  }, [videoId]);
+
+  useEffect(() => {
+    if (playbackState === "error" && focusRecoveryRef.current) {
+      retryRef.current?.focus({ preventScroll: true });
+      focusRecoveryRef.current = false;
+    }
+  }, [playbackState]);
+
+  useEffect(() => {
+    if (!active || loaded) return;
+    const timer = window.setTimeout(markUnavailable, 15000);
+    return () => window.clearTimeout(timer);
+  }, [active, loaded, markUnavailable]);
+
+  useEffect(() => {
+    // Move keyboard focus at activation, never seconds later after loading.
+    if (active && focusAfterLoadRef.current) {
+      iframeRef.current?.focus({ preventScroll: true });
+      focusAfterLoadRef.current = false;
+    }
+  }, [active]);
 
   useEffect(() => {
     const syncSoundState = () => setSoundEnabled(videoSoundEnabled);
@@ -542,11 +621,26 @@ export default function YouTubeVideo({
       }
 
       if (data.event === "onAutoplayBlocked") {
-        if (autoplayFallbackUsedRef.current) return;
+        if (!ownsVisiblePlayback(videoId)) return;
+        if (autoplayFallbackUsedRef.current) {
+          markUnavailable();
+          return;
+        }
         autoplayFallbackUsedRef.current = true;
         setVideoSoundEnabled(false);
         applySound(false);
         sendCommand("playVideo");
+        return;
+      }
+
+      if (data.event === "onError") {
+        markUnavailable();
+        return;
+      }
+
+      if (data.event === "onReady") {
+        setLoaded(true);
+        notifyPlaybackReady(videoId);
         return;
       }
 
@@ -557,10 +651,10 @@ export default function YouTubeVideo({
         setPlaybackState("ended");
         notifyPlaybackEnded(videoId);
       } else if (state === 1) {
+        setLoaded(true);
         autoplayFallbackUsedRef.current = false;
         coordinatorPauseUntilRef.current = 0;
-        setPlaybackState("playing");
-        notifyPlaybackPlaying(videoId);
+        setPlaybackState(notifyPlaybackPlaying(videoId) ? "playing" : "paused");
       } else if (state === 2) {
         setPlaybackState("paused");
         if (Date.now() > coordinatorPauseUntilRef.current) {
@@ -571,10 +665,9 @@ export default function YouTubeVideo({
     };
     window.addEventListener("message", handlePlayerMessage);
     return () => window.removeEventListener("message", handlePlayerMessage);
-  }, [applySound, sendCommand, videoId]);
+  }, [applySound, markUnavailable, sendCommand, videoId]);
 
   const handleIframeLoad = () => {
-    setLoaded(true);
     iframeRef.current?.contentWindow?.postMessage(
       JSON.stringify({ event: "listening", id: videoId }),
       "https://www.youtube-nocookie.com",
@@ -595,11 +688,8 @@ export default function YouTubeVideo({
       }),
       "https://www.youtube-nocookie.com",
     );
-    notifyPlaybackReady(videoId);
-    if (focusAfterLoadRef.current) {
-      iframeRef.current?.focus();
-      focusAfterLoadRef.current = false;
-    }
+    sendCommand("addEventListener", ["onError"]);
+    sendCommand("addEventListener", ["onReady"]);
   };
 
   const origin =
@@ -650,10 +740,18 @@ export default function YouTubeVideo({
               </span>
             </button>
           </>
+        ) : playbackState === "error" ? (
+          <div className="youtube-video-recovery">
+            <p role="status">{unavailableLabel}</p>
+            <button ref={retryRef} type="button" aria-label={`${retryLabel}: ${title}`} onClick={() => requestManualPlayback(videoId)}>
+              {retryLabel}
+            </button>
+          </div>
         ) : (
           <button
             className="youtube-video-trigger"
             type="button"
+            disabled={!interactive}
             onClick={() => requestManualPlayback(videoId)}
             aria-label={`${playLabel}: ${title}`}
           >
@@ -682,8 +780,12 @@ export default function YouTubeVideo({
             <span className="youtube-video-trigger-label">{playLabel}</span>
           </button>
         )}
+        <noscript>
+          <style>{`.youtube-video-play, .youtube-video-trigger-label { display: none !important; }`}</style>
+        </noscript>
       </div>
       <figcaption>{caption}</figcaption>
+      <noscript><p className="video-script-note">{enableScriptLabel}</p></noscript>
     </figure>
   );
 }

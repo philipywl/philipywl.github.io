@@ -199,6 +199,18 @@ export default function OliverPortfolio({
         </div>
       </header>
 
+      <noscript>
+        <style>{`
+          .mobile-menu { display: none !important; }
+          @media (max-width: 71.999rem) {
+            .site-header { position: relative; }
+            .desktop-nav { display: flex; flex-wrap: wrap; grid-column: 1 / -1; grid-row: 2; gap: 4px 12px; padding-bottom: 8px; }
+            .desktop-nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); }
+            .header-actions { grid-column: 2; grid-row: 1; }
+          }
+        `}</style>
+      </noscript>
+
       <main id="main-content" tabIndex={-1}>
         <section className="hero section-pad" aria-labelledby="hero-title">
           <div className="page-grid hero-grid">
@@ -257,7 +269,7 @@ export default function OliverPortfolio({
               name={copy.about.mainPhoto.name}
               alt={copy.about.mainPhoto.alt}
               caption={copy.about.mainPhoto.caption}
-              sizes="(min-width: 60rem) 360px, (min-width: 48rem) 34vw, calc(100vw - 40px)"
+              sizes="(min-width: 30rem) 360px, calc(100vw - 40px)"
               className="about-preview-media"
             />
             <div className="about-fields">
@@ -273,6 +285,9 @@ export default function OliverPortfolio({
                         ratio={field.media.ratio}
                         playLabel={copy.controls.playVideo}
                         loadingLabel={copy.controls.loadingVideo}
+                        unavailableLabel={copy.controls.unavailableVideo}
+                        retryLabel={copy.controls.retryVideo}
+                        enableScriptLabel={copy.controls.enableVideoScript}
                         enableSoundLabel={copy.controls.enableVideoSound}
                         disableSoundLabel={copy.controls.disableVideoSound}
                         autoplayPriority={field.media.autoplayPriority}
@@ -322,6 +337,7 @@ export default function OliverPortfolio({
           <div className="page-grid stories-grid">
             {orderedStories.map((story, storyIndex) => (
               <article
+                aria-labelledby={`story-${storyIndex + 1}-title`}
                 className={`story-card story-card-${storyIndex + 1} ${story.media.length > 1 ? "story-card-multi-media" : ""} ${storyIndex === 0 ? "story-card-featured" : ""} ${storyIndex === orderedStories.length - 1 ? "story-card-closing" : ""}`.trim()}
                 key={story.title}
               >
@@ -337,6 +353,9 @@ export default function OliverPortfolio({
                         ratio={media.ratio}
                         playLabel={copy.controls.playVideo}
                         loadingLabel={copy.controls.loadingVideo}
+                        unavailableLabel={copy.controls.unavailableVideo}
+                        retryLabel={copy.controls.retryVideo}
+                        enableScriptLabel={copy.controls.enableVideoScript}
                         enableSoundLabel={copy.controls.enableVideoSound}
                         disableSoundLabel={copy.controls.disableVideoSound}
                         autoplayPriority={(storyIndex + 1) * 10}
@@ -356,7 +375,7 @@ export default function OliverPortfolio({
 
                 <div className="story-content">
                   <header className="story-header">
-                    <h3>{story.title}</h3>
+                    <h3 id={`story-${storyIndex + 1}-title`}>{story.title}</h3>
                     <p className="story-age">{story.age}</p>
                   </header>
 
@@ -516,7 +535,7 @@ export default function OliverPortfolio({
             <div className="button-row no-print">
               <a
                 className="button secondary-button"
-                href="#hero-title"
+                href="#top"
                 onClick={focusHero}
               >
                 <ArrowUpIcon />

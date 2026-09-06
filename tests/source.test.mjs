@@ -41,8 +41,17 @@ test("keeps every bilingual story's parent observation natural, present, and evi
     }
   }
 
-  assert.match(portfolioCopy.zh.stories.items[1].reflection, /看見昊熹自己推好椅子、準備吃飯/);
-  assert.match(portfolioCopy.en.stories.items[1].reflection, /happy to see Oliver bring his own chair/);
+  assert.match(portfolioCopy.zh.stories.items[1].reflection, /看見他自己推好椅子，為吃飯作準備/);
+  assert.match(portfolioCopy.en.stories.items[1].reflection, /proud to see him bring his own chair/);
+  assert.match(portfolioCopy.zh.hero.intro, /分享我的生活點滴/);
+  assert.match(portfolioCopy.en.hero.intro, /from my everyday life/);
+  assert.match(portfolioCopy.zh.stories.items[0].reflection, /肯定他的用心/);
+  assert.match(portfolioCopy.en.stories.items[0].reflection, /praise his efforts/);
+  assert.match(portfolioCopy.zh.stories.items[4].reflection, /閱讀是他最喜歡的活動/);
+  assert.match(portfolioCopy.en.stories.items[4].reflection, /Reading is his favourite activity/);
+  assert.match(portfolioCopy.zh.stories.items[6].reflection, /感受節奏、嘗試表達自己/);
+  assert.match(portfolioCopy.en.stories.items[6].reflection, /explore rhythm and express himself/);
+  assert.doesNotMatch(JSON.stringify(portfolioCopy), /右腦|right.brain/i);
   assert.match(portfolioCopy.zh.growth.milestones[2].moment, /站在爸爸媽媽中間/);
   assert.match(portfolioCopy.en.growth.milestones[2].moment, /stands between Mum and Dad/);
   assert.match(portfolioCopy.zh.stories.items[6].tags.join(), /主動參與/);
@@ -336,8 +345,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /昊熹的成長旅程/);
   assert.match(copy, /greeting: "Hello, I'm Oliver\."/);
   assert.match(copy, /greeting: "你好，我是昊熹。"/);
-  assert.match(copy, /I'd love to share little moments and small challenges from everyday life, and the time I spend exploring the world with my family\./);
-  assert.match(copy, /我想和你分享生活點滴和小挑戰，還有與家人一起探索世界的時光。/);
+  assert.match(copy, /I'd love to share little moments and small challenges from my everyday life, and the time I spend exploring the world with my family\./);
+  assert.match(copy, /我想和你分享我的生活點滴和小挑戰，還有與家人一起探索世界的時光。/);
   assert.doesNotMatch(copy, /[“”]Hello, I'm Oliver\.|「你好，我是昊熹。」/);
   assert.match(copy, /Reading together/);
   assert.match(copy, /親子共讀/);
@@ -552,7 +561,7 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(youtubeVideo, /entry\.suppressed = true/);
   assert.match(youtubeVideo, /notifyUserPaused\(videoId\)/);
   assert.match(youtubeVideo, /focusAfterLoadRef\.current = manual/);
-  assert.match(youtubeVideo, /if \(focusAfterLoadRef\.current\)[\s\S]*?iframeRef\.current\?\.focus\(\)/);
+  assert.match(youtubeVideo, /if \(active && focusAfterLoadRef\.current\)[\s\S]*?iframeRef\.current\?\.focus\(\{ preventScroll: true \}\)/);
   assert.doesNotMatch(youtubeVideo, /useLayoutEffect|onClick=\{\(\) => setActive\(true\)\}/);
   assert.match(youtubeVideo, /referrerPolicy="strict-origin-when-cross-origin"/);
   assert.match(youtubeVideo, /allowFullScreen/);
@@ -594,7 +603,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(welcomeIntro, /<div[\s\S]*?id="welcome-intro"/);
   assert.doesNotMatch(welcomeIntro, /setInterval|\bloop\b|\.jpe?g|10(?:0\d|1\d)|skipLabel|welcome-skip/i);
   assert.match(welcomeIntro, /const welcomeDurationMs = 3200/);
-  assert.match(welcomeIntro, /window\.setTimeout\(\(\) => \{[\s\S]*?completeWelcome\(false\)[\s\S]*?welcomeDurationMs/);
+  assert.match(welcomeIntro, /window\.setTimeout\(\(\) => \{[\s\S]*?completeWelcome\(false\)[\s\S]*?remainingMs/);
+  assert.match(welcomeIntro, /Number\(root\.dataset\.welcomeDeadline\) - Date\.now\(\)/);
   assert.match(welcomeIntro, /__oliverWelcomeFailOpenTimer/);
   assert.match(welcomeIntro, /window\.__oliverWelcomeShouldPlay = false/);
   assert.match(welcomeIntro, /welcomeWindow\.__oliverWelcomeShouldPlay === true &&[\s\S]*?root\?\.dataset\.welcomeState === "play"/);
@@ -762,9 +772,9 @@ test("keeps the greeting flash-free, accessible, one-time, motion-safe, and curs
   ]);
 
   assert.match(greeting, /<span className="sr-only">\{greeting\}<\/span>/);
-  assert.match(greeting, /className="greeting-visual"[\s\S]*?aria-hidden="true"[\s\S]*?style=\{\{ visibility: "hidden" \}\}/);
-  assert.match(greeting, /const visual = heading\.querySelector\("\.greeting-visual"\)/);
-  assert.match(greeting, /visual\.style\.visibility = ""/);
+  assert.match(greeting, /className="greeting-visual"\s+aria-hidden="true"\s*>/);
+  assert.doesNotMatch(greeting, /visual\.style\.visibility/);
+  assert.match(greeting, /Inline scripts can still finish/);
   assert.match(greeting, /greeting-reserve/);
   assert.match(greeting, /data-greeting-state=\{preparingState\}/);
   assert.doesNotMatch(greeting, /data-greeting-state="static"/);
@@ -776,8 +786,8 @@ test("keeps the greeting flash-free, accessible, one-time, motion-safe, and curs
   assert.match(greeting, /addEventListener\("animationend", completeGreeting/);
   assert.match(greeting, /tabIndex=\{-1\}/);
   assert.doesNotMatch(greeting, /setInterval|autoPlay|\bloop\b/);
-  assert.match(css, /\.greeting-heading\s*\{[\s\S]*?white-space:\s*nowrap/);
-  assert.match(css, /\.greeting-reserve,[\s\S]*?\.greeting-visual\s*\{[\s\S]*?white-space:\s*nowrap/);
+  assert.match(css, /\.greeting-heading\s*\{[\s\S]*?white-space:\s*normal/);
+  assert.match(css, /\.greeting-reserve,[\s\S]*?\.greeting-visual\s*\{[\s\S]*?white-space:\s*normal/);
   assert.match(css, /data-greeting-state\$="-preparing"[\s\S]*?data-greeting-state\$="-waiting"[\s\S]*?visibility:\s*hidden/);
   assert.match(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*forwards/);
   assert.doesNotMatch(css, /greeting-cursor-rest[\s\S]*?animation:\s*greeting-cursor-last[^;]*both/);
@@ -922,7 +932,7 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(portfolio, /onClick=\{\(\) => \{[\s\S]*?markPendingSection\(item\.href\);[\s\S]*?focusSection\(item\.href\);/);
   assert.doesNotMatch(portfolio, /copy\.hero\.(?:storiesAction|aboutAction)|className="hero-text-link"/);
   assert.doesNotMatch(portfolio, /focusSection\("#privacy-notice"\)|href="#privacy-notice"/);
-  assert.match(portfolio, /href="#hero-title"[\s\S]*?onClick=\{focusHero\}/);
+  assert.match(portfolio, /href="#top"[\s\S]*?onClick=\{focusHero\}/);
   assert.doesNotMatch(portfolio, /className="section-count"/);
   assert.match(controls, /destinationRef/);
   assert.match(controls, /heading\?\.focus\(\{ preventScroll: true \}\)/);
@@ -941,6 +951,8 @@ test("keeps responsive navigation, photographs, focus movement, and motion polis
   assert.match(css, /@media \(min-width: 72rem\)[\s\S]*?\.story-card-multi-media \.story-media-count-2[\s\S]*?1\.05fr[\s\S]*?0\.95fr/);
   assert.doesNotMatch(css, /\.story-card-\d/);
   assert.match(css, /\.button:active|\.primary-button:active/);
+  assert.match(css, /\.about-field\s*\{\s*display:\s*grid;\s*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(css, /\.about-field-video\s*\{\s*width:\s*100%;\s*min-width:\s*0/);
   assert.match(css, /@media \(hover: hover\)/);
   assert.match(media, /className="preview-media-kind" aria-hidden="true"/);
   assert.match(responsivePhoto, /const widths = \[480, 800, 1200\] as const/);
