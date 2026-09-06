@@ -379,10 +379,10 @@ export default function OliverPortfolio({
                   </div>
 
                   {story.reflection && (
-                    <blockquote className="parent-reflection">
+                    <div className="parent-reflection">
                       <span>{copy.stories.reflection}</span>
                       <p>{story.reflection}</p>
-                    </blockquote>
+                    </div>
                   )}
 
                   {story.tags.length > 0 && (
@@ -419,7 +419,9 @@ export default function OliverPortfolio({
               aria-labelledby="milestones-title"
             >
               <h3 id="milestones-title">{copy.growth.milestonesTitle}</h3>
-              <p className="milestones-intro">{copy.growth.milestonesIntro}</p>
+              {copy.growth.milestonesIntro && (
+                <p className="milestones-intro">{copy.growth.milestonesIntro}</p>
+              )}
               <ol className="growth-milestone-list">
                 {copy.growth.milestones.map((item, index) => (
                   <li

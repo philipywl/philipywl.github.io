@@ -20,7 +20,7 @@ export default function GlobalNotFound() {
           <div className="not-found-card">
             <span className="route-seed-mark" aria-hidden="true" />
             <p className="eyebrow">404</p>
-            <h1>We couldn&apos;t find this little page.</h1>
+            <h1>We couldn&apos;t find this page.</h1>
             <p lang="zh-Hant-HK">暫時找不到這一頁。</p>
             <p className="not-found-copy">
               Please choose a language to return to Oliver&apos;s learning journey.<br />
