@@ -7,7 +7,7 @@ type YouTubeVideoProps = {
   poster: string;
   title: string;
   caption: string;
-  ratio: "video" | "portrait-video";
+  ratio: "video" | "portrait-video" | "square-video";
   playLabel: string;
   loadingLabel: string;
   enableSoundLabel: string;
@@ -443,11 +443,11 @@ export default function YouTubeVideo({
   const focusAfterLoadRef = useRef(false);
   const coordinatorPauseUntilRef = useRef(0);
   const autoplayFallbackUsedRef = useRef(false);
-  const landscape = ratio === "video";
+  const landscape = ratio !== "portrait-video";
   const posterSmall = landscape ? 320 : 240;
   const posterLarge = landscape ? 480 : 405;
   const posterWidth = landscape ? 480 : 405;
-  const posterHeight = landscape ? 270 : 720;
+  const posterHeight = ratio === "square-video" ? 480 : landscape ? 270 : 720;
 
   const sendCommand = useCallback((func: string, args: unknown[] = []) => {
     iframeRef.current?.contentWindow?.postMessage(
@@ -665,8 +665,10 @@ export default function YouTubeVideo({
               src={`/media/video/${poster}-${posterLarge}.webp`}
               srcSet={`/media/video/${poster}-${posterSmall}.webp ${posterSmall}w, /media/video/${poster}-${posterLarge}.webp ${posterLarge}w`}
               sizes={
-                landscape
-                  ? "(min-width: 48rem) 320px, calc(100vw - 84px)"
+                ratio === "square-video"
+                  ? "(min-width: 36rem) 480px, calc(100vw - 84px)"
+                  : landscape
+                  ? "(min-width: 48rem) 540px, calc(100vw - 84px)"
                   : "(min-width: 48rem) 340px, calc(100vw - 84px)"
               }
               width={posterWidth}

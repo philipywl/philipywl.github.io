@@ -23,9 +23,10 @@ import {
 const mediaTones = ["sky", "honey", "peach", "teal"] as const;
 const sectionIds = ["about", "stories", "growth", "family"] as const;
 const storyVideoOrder = [
-  "1Fxx4dzHCFo",
+  "gfiAoI900Vc",
+  "IYiabpo7nuI",
   "kgPKylmVI7s",
-  "BxMkQkxApBg",
+  "vWXWUHqovGc",
   "2RE83LVmTVk",
   "rcpBdZzHJAk",
   "FW24LCUNS_w",
@@ -321,7 +322,7 @@ export default function OliverPortfolio({
           <div className="page-grid stories-grid">
             {orderedStories.map((story, storyIndex) => (
               <article
-                className={`story-card story-card-${storyIndex + 1} ${storyIndex === 0 ? "story-card-featured" : ""} ${storyIndex === orderedStories.length - 1 ? "story-card-closing" : ""}`.trim()}
+                className={`story-card story-card-${storyIndex + 1} ${story.media.length > 1 ? "story-card-multi-media" : ""} ${storyIndex === 0 ? "story-card-featured" : ""} ${storyIndex === orderedStories.length - 1 ? "story-card-closing" : ""}`.trim()}
                 key={story.title}
               >
                 <div className={`story-media-grid story-media-count-${story.media.length}`}>

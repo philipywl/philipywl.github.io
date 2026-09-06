@@ -29,10 +29,11 @@ type PlaceholderCopy = {
 
 type VideoPosterName =
   | "problem-solving"
-  | "following-directions"
+  | "helping-laundry"
+  | "ready-for-lunch"
   | "body-and-family"
   | "reading-pages"
-  | "water-step"
+  | "swimming-september"
   | "piano-keys"
   | "feeding-rabbits";
 
@@ -42,7 +43,7 @@ type VideoCopy = {
   poster: VideoPosterName;
   title: string;
   caption: string;
-  ratio: "video" | "portrait-video";
+  ratio: "video" | "portrait-video" | "square-video";
   autoplayPriority: number;
 };
 
@@ -258,7 +259,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "Everyday Stories",
       title: "Little experiences, each revealing more of Oliver",
       intro:
-        "Six everyday stories reveal different sides of Oliver: listening closely and following a request, turning page after page, stepping bravely into the water, returning to music, approaching animals with a gentle hand, and recognising familiar people and body parts. Each is a real experience, quietly showing more of the child he is becoming.",
+        "From helping with the laundry and bringing his chair to the table to books, swimming, animals and music, these everyday moments show how Oliver listens, tries and takes part in the world around him. Familiar words and faces bring little moments of connection along the way.",
       whatHappened: "What happened",
       noticed: "What we noticed",
       support: "How we stay alongside him",
@@ -266,26 +267,48 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       learningClues: "Learning clues",
       items: [
         {
-          title: "Listening closely and following a request",
-          age: "17 months",
+          title: "Listening and lending a hand",
+          age: "21 months",
           observation:
-            "Oliver listened to a simple spoken request, found the named object and brought it to the family member who had been mentioned.",
+            "As the family's domestic helper hangs the laundry, Oliver responds to her request by handing her clothes hangers, taking a small part in an everyday task.",
           support:
             "His family continues weaving short, natural phrases into everyday routines, then leaves a gentle pause for Oliver to respond in his own way.",
           reflection:
-            "Mum and Dad notice how Oliver often pauses, takes in the words, then responds through action.",
-          tags: ["Listening & Responding", "Everyday Participation"],
+            "A clothes hanger and a little helping hand make an ordinary household task a moment of doing something together.",
+          tags: ["Listening & Responding", "Taking Part Together"],
           media: [
             {
               kind: "video",
-              videoId: "1Fxx4dzHCFo",
-              poster: "following-directions",
+              videoId: "gfiAoI900Vc",
+              poster: "helping-laundry",
               title:
-                "Oliver listens to a request and brings a named item to a family member",
+                "Oliver hands clothes hangers to the family's domestic helper",
                caption:
-                 "Oliver finds a named item and brings it to a family member.",
-               ratio: "portrait-video",
+                 "Oliver hands clothes hangers to the family's domestic helper as she hangs the laundry.",
+               ratio: "square-video",
                autoplayPriority: 10,
+            },
+          ],
+        },
+        {
+          title: "Bringing his chair to the table",
+          age: "20 months",
+          observation:
+            "It is nearly lunchtime. Oliver pushes his own little chair to the table, taking part in getting ready for the meal.",
+          support:
+            "In everyday moments, Mum and Dad give Oliver room to try things for himself, with safety and encouragement close by.",
+          reflection:
+            "Bringing his little chair to the table is another small way Oliver takes part in everyday life.",
+          tags: ["Everyday Participation", "Coordinated Movement"],
+          media: [
+            {
+              kind: "video",
+              videoId: "IYiabpo7nuI",
+              poster: "ready-for-lunch",
+              title: "Oliver pushes his own chair to the table, ready for lunch",
+              caption: "Oliver pushes his own little chair to the table, ready for lunch.",
+              ratio: "portrait-video",
+              autoplayPriority: 20,
             },
           ],
         },
@@ -309,7 +332,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
                caption:
                  "Oliver listens to simple prompts and points to familiar body parts as well as Mum and Dad.",
                ratio: "portrait-video",
-               autoplayPriority: 20,
+               autoplayPriority: 70,
             },
           ],
         },
@@ -340,7 +363,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
                caption:
                  "Oliver offers food to a rabbit during a family outing.",
                ratio: "portrait-video",
-               autoplayPriority: 30,
+               autoplayPriority: 60,
             },
           ],
         },
@@ -364,15 +387,15 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               caption:
                 "Oliver looks through a book and turns to the next page by himself.",
               ratio: "portrait-video",
-              autoplayPriority: 40,
+              autoplayPriority: 30,
             },
           ],
         },
         {
           title: "A brave step into the water",
-          age: "19 months",
+          age: "19–21 months",
           observation:
-            "During a swimming lesson with his family and coach close by, Oliver happily kicked in the water, tried to climb onto the pool edge and took part in a short underwater experience.",
+            "With an adult close beside him, Oliver spends more time exploring the water. This September swimming moment joins an earlier photograph of his smile in the pool.",
           support:
             "His family and coach continue to follow Oliver's cues, adjusting the pace and offering positive encouragement within close, safe supervision so he can explore comfortably.",
           reflection:
@@ -384,19 +407,19 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               name: "story-swimming",
               alt: "Oliver smiles while standing in a swimming pool, with an adult's hand close by.",
               caption:
-                "Oliver stands smiling in the water with an adult close by.",
+                "An earlier swimming moment in July: Oliver smiles in the water with an adult close by.",
               ratio: "landscape",
             },
             {
               kind: "video",
-              videoId: "BxMkQkxApBg",
-              poster: "water-step",
+              videoId: "vWXWUHqovGc",
+              poster: "swimming-september",
               title:
-                "Oliver takes part in a closely supervised underwater swimming moment",
+                "Oliver explores the swimming pool with an adult close beside him",
               caption:
-                "Oliver takes part in a short underwater swimming moment with an adult close by.",
-              ratio: "portrait-video",
-              autoplayPriority: 50,
+                "A new swimming moment in September, with an adult close beside Oliver.",
+              ratio: "video",
+              autoplayPriority: 40,
             },
           ],
         },
@@ -419,7 +442,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
                caption:
                  "Oliver returns to the piano and explores the keys in his own way.",
                ratio: "portrait-video",
-               autoplayPriority: 60,
+               autoplayPriority: 50,
             },
           ],
         },
@@ -529,7 +552,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           name: "family-origin",
           alt: "Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.",
           caption:
-            "At six months, Oliver returned with Mum and Dad to the place where their story began, adding a new family memory to a familiar view.",
+            "Mum and Dad took six-month-old Oliver to the place where their story began, adding a new family memory to a familiar view.",
         },
         {
           name: "family-care",
@@ -558,7 +581,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         "This portfolio has been lovingly gathered by Oliver's parents. Please help us care for these memories by not copying, downloading or redistributing its photographs or videos.",
     },
     footer: {
-      updated: "Last updated: July 2026",
+      updated: "Last updated: September 2026",
       top: "Back to top",
     },
   },
@@ -659,7 +682,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "生活點滴",
       title: "一點點的體驗，看見獨一無二的你",
       intro:
-        "六個日常小片段，讓我們看見昊熹不同的面向：細心聆聽並跟從指示、自己翻過一頁頁書、勇敢走進水中、一次次走近音樂、輕輕親近小動物，也認出熟悉的身體部位和家人。每一段都是真實的經歷，也讓獨一無二的他慢慢被看見。",
+        "從幫忙掛衣服、把小椅子推到餐桌旁，到翻書、游泳、親近小動物和探索音樂，一段段日常，讓我們看見昊熹怎樣聆聽、嘗試，也慢慢參與身邊的生活。熟悉的話語和面孔，又為這些小片段添上一份親近。",
       whatHappened: "當時的小故事",
       noticed: "這一刻，我們看見……",
       support: "我們如何陪伴",
@@ -667,24 +690,46 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       learningClues: "學習線索",
       items: [
         {
-          title: "細心聆聽，跟着做",
-          age: "17個月大",
+          title: "聽懂指令，幫忙做家務",
+          age: "21個月大",
           observation:
-            "昊熹聽到家人的簡單指示後，找到指定物件，再拿給指定的家人。",
+            "姐姐掛衣服時，昊熹聽懂指示，把衣架遞給她，也為家務出一點小小的力。",
           support:
             "家人在日常相處中，用簡短自然的話與昊熹溝通，也輕輕停一停，給他時間用自己的方式回應。",
           reflection:
-            "爸爸媽媽留意到，昊熹聽完會先停一停、想一想，再用行動回應。",
-          tags: ["聆聽回應", "日常參與"],
+            "一個衣架，一次小小的幫忙，讓平常的家務多了一份一起完成的溫暖。",
+          tags: ["聆聽回應", "合作參與"],
           media: [
             {
               kind: "video",
-              videoId: "1Fxx4dzHCFo",
-              poster: "following-directions",
-              title: "昊熹聽到說話後，把指定物件拿給家人",
-              caption: "昊熹找到指定物件，再拿給家人。",
-              ratio: "portrait-video",
+              videoId: "gfiAoI900Vc",
+              poster: "helping-laundry",
+              title: "昊熹把衣架遞給姐姐，一起幫忙掛衣服",
+              caption: "昊熹把衣架遞給姐姐，一起幫忙掛衣服。",
+              ratio: "square-video",
               autoplayPriority: 10,
+            },
+          ],
+        },
+        {
+          title: "推好椅子，準備開飯",
+          age: "20個月大",
+          observation:
+            "快到午餐時間了，昊熹把自己的小椅子推到餐桌旁，也參與吃飯前的小準備。",
+          support:
+            "在生活小事裏，爸爸媽媽給昊熹空間自己嘗試，以安全為界，以鼓勵作陪。",
+          reflection:
+            "小椅子慢慢靠近餐桌，也是昊熹參與日常的一小步。",
+          tags: ["生活參與", "動作協調"],
+          media: [
+            {
+              kind: "video",
+              videoId: "IYiabpo7nuI",
+              poster: "ready-for-lunch",
+              title: "昊熹把自己的小椅子推到餐桌旁，準備吃午餐",
+              caption: "昊熹把自己的小椅子推到餐桌旁，準備吃午餐。",
+              ratio: "portrait-video",
+              autoplayPriority: 20,
             },
           ],
         },
@@ -706,7 +751,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title: "昊熹按照簡單指示，指出熟悉的家人和身體部位",
               caption: "昊熹按照簡單指示，指出熟悉的身體部位，以及爸爸和媽媽。",
               ratio: "portrait-video",
-              autoplayPriority: 20,
+              autoplayPriority: 70,
             },
           ],
         },
@@ -735,7 +780,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title: "昊熹把食物遞給小兔",
               caption: "家庭外出時，昊熹把食物遞給小兔。",
               ratio: "portrait-video",
-              autoplayPriority: 30,
+              autoplayPriority: 60,
             },
           ],
         },
@@ -757,15 +802,15 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title: "昊熹自己看書，並自行翻到下一頁",
               caption: "昊熹自己看書，並自行翻到下一頁。",
               ratio: "portrait-video",
-              autoplayPriority: 40,
+              autoplayPriority: 30,
             },
           ],
         },
         {
           title: "勇敢走進水中",
-          age: "19個月大",
+          age: "19至21個月大",
           observation:
-            "在家人和教練陪伴的游泳課裏，昊熹開心地踢水，也試着自己爬上池邊，並完成一次短短的潛水體驗。",
+            "在大人近身陪伴下，昊熹繼續探索水中的感覺。這段九月的游泳紀錄，和較早前在泳池裏微笑的相片，一起留住他的水中時光。",
           support:
             "家人和教練按他的反應調整步伐，在安全照顧中給予正面鼓勵，讓他自在嘗試。",
           reflection:
@@ -776,17 +821,17 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               kind: "photo",
               name: "story-swimming",
               alt: "昊熹在泳池裏站着微笑，身旁有大人的手陪伴。",
-              caption: "在大人陪伴下，昊熹笑着站在水中。",
+              caption: "七月的游泳時光：昊熹笑着站在水中，身旁有大人陪伴。",
               ratio: "landscape",
             },
             {
               kind: "video",
-              videoId: "BxMkQkxApBg",
-              poster: "water-step",
-              title: "昊熹在大人陪伴下潛進水裏",
-              caption: "昊熹在大人陪伴下，參與一次短短的潛水體驗。",
-              ratio: "portrait-video",
-              autoplayPriority: 50,
+              videoId: "vWXWUHqovGc",
+              poster: "swimming-september",
+              title: "昊熹在大人近身陪伴下探索泳池",
+              caption: "九月的新片段：昊熹在大人近身陪伴下，繼續探索水中世界。",
+              ratio: "video",
+              autoplayPriority: 40,
             },
           ],
         },
@@ -808,7 +853,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
               title: "昊熹在幼兒遊戲班探索鋼琴",
               caption: "昊熹再次走到鋼琴旁，按自己的方式探索琴鍵。",
               ratio: "portrait-video",
-              autoplayPriority: 60,
+              autoplayPriority: 50,
             },
           ],
         },
@@ -904,7 +949,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           name: "family-origin",
           alt: "6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。",
-          caption: "6個月大，昊熹跟爸爸媽媽回到二人相識的地方，為熟悉的風景添上一段新的家庭回憶。",
+          caption: "6個月大，爸爸媽媽帶昊熹到二人相識的地方，為熟悉的風景添上一段新的家庭回憶。",
         },
         {
           name: "family-care",
@@ -928,7 +973,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       body: "本作品集由昊熹的爸爸媽媽用心整理。為了好好守護這些珍貴片段，請勿複製、下載或轉載網站內的相片及影片。",
     },
     footer: {
-      updated: "最後更新：2026年7月",
+      updated: "最後更新：2026年9月",
       top: "返回頁首",
     },
   },
