@@ -236,7 +236,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           title: "Working things out",
           body:
-            "Oliver looks closely at the problem-solving toy, then tries moving its parts with both hands. If one way does not work, he tries another. When he opens the latch, we are just as happy as he is.",
+            "Oliver looks closely at the problem-solving toy, then tries moving its parts with both hands. If one way does not work, he tries another. When the latch opens, his delight and satisfaction are easy to see.",
           media: {
             kind: "video",
             videoId: "9QrYnWYsVUQ",
@@ -279,7 +279,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "As the family's domestic helper hangs the laundry, Oliver responds to her request by handing her clothes hangers.",
           support:
             "His family uses short, clear phrases and gives Oliver time to understand and respond.",
-          reflection: "We are pleased to see Oliver watch what the adults do and join in to help. We praise his efforts and encourage him to keep trying.",
+          reflection: "It is lovely to see Oliver watching what the adults do and learning to help. We notice the care he puts into each attempt and encourage him as he tries.",
           tags: ["Listening & Responding", "Taking Part Together"],
           media: [
             {
@@ -302,7 +302,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "It is nearly lunchtime. Oliver pushes his own chair to the table, ready for lunch.",
           support:
             "Mum and Dad give Oliver time to try things for himself, making sure he is safe, offering encouragement and helping when needed.",
-          reflection: "When it is safe, we give Oliver time and space to try things for himself instead of rushing to do them for him. We are proud to see him bring his own chair to the table, ready for lunch.",
+          reflection: "When it is safe, we are happy to wait and give Oliver time to try, without rushing to do things for him. Watching him bring his little chair to the table, ready for lunch, makes us proud.",
           tags: ["Everyday Participation", "Coordinated Movement"],
           media: [
             {
@@ -379,7 +379,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "Picture books, Chinese and English books, and books used with a reading pen are kept on low shelves within Oliver's reach. Mum and Dad read with him every day and also give him time to choose books and look through them on his own.",
           reflection:
-            "We enjoy seeing Oliver concentrate as he looks through a book. Reading is his favourite activity, and we give him quiet time to enjoy it.",
+            "We treasure the way Oliver chooses a book and looks through it with care. Reading is his favourite activity, and we make room for quiet, unhurried moments so he can enjoy his books at his own pace.",
           tags: ["Independent Book Exploration", "Focused Book Time"],
           media: [
             {
@@ -403,7 +403,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "The adults follow Oliver's cues, keeping him safe and encouraging him to try without rushing him.",
           reflection:
-            "We hope that, with reassuring support, he will become more comfortable in the water and enjoy swimming.",
+            "We are glad to see Oliver trying, and treasure being beside him as he becomes familiar with the water. We hope that reassuring company will help him explore at his own pace and enjoy swimming.",
           tags: ["Movement in Water", "Willingness to Try"],
           media: [
             {
@@ -435,7 +435,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "Mum and Dad will keep sharing musical games with Oliver, listening to sounds and exploring rhythm together.",
           reflection:
-            "Seeing Oliver enjoy exploring piano keys and sounds makes us want to share more music with him, giving him time to explore rhythm and express himself. We hope these relaxed experiences help him discover more of his interests and strengths.",
+            "Each time Oliver returns to the piano, we see his curiosity about sound. We enjoy listening and trying things together, giving him time to explore rhythm and express himself. We hope these relaxed moments help him discover more of his interests and strengths.",
           tags: ["Exploring Sounds", "Choosing to Take Part"],
           media: [
             {
@@ -555,7 +555,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           name: "family-origin",
           alt: "Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.",
           caption:
-            "Mum and Dad brought six-month-old Oliver to the place where they first met.",
+            "Mum and Dad brought six-month-old Oliver to the place where they first met, making a new family memory in familiar surroundings.",
         },
         {
           name: "family-care",
@@ -567,7 +567,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           name: "family-playful",
           alt: "One-year-old Oliver smiles outdoors while Mum and Dad hold him between them.",
           caption:
-            "Oliver's happy smile is one of the everyday sights Mum and Dad treasure most.",
+            "Nothing makes Mum and Dad happier than seeing Oliver smile.",
         },
       ],
     },
@@ -575,9 +575,9 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
       eyebrow: "From Oliver's parents",
       title: "Growing alongside him",
       reflection:
-        "We treasure the time we spend reading and playing with Oliver each day, and we enjoy heading outdoors together. We give him time to try things safely for himself and help when needed. We listen as he expresses himself, offer encouragement and try to show him, through our own actions, how to care for and respect others.",
+        "We believe a child's growth begins with steady, loving companionship at home. Each day, we read together. We also play and spend time outdoors, giving Oliver room to try for himself when it is safe. We listen with care, encourage his efforts and show him, through our own actions, how to care for and respect others.",
       hope:
-        "We hope Oliver grows up healthy and happy, stays curious, and learns to value himself and care for others. We hope he becomes kind, confident and empathetic, and we will keep learning and growing alongside him.",
+        "We hope Oliver will grow up healthy and happy, surrounded by love and trust. May he stay curious, learn to value himself and care for others, and gradually become kind, confident and empathetic. Through every step, Mum and Dad will be beside him, learning and growing with him too.",
     },
     privacy: {
       body:
@@ -661,7 +661,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           title: "專注解難",
           body:
-            "玩解難玩具時，昊熹會先仔細看看，再用雙手試試。遇到打不開的地方，他會換個方法再試；成功解開扣鎖時，我們也和他一樣開心。",
+            "玩解難玩具時，昊熹會先仔細看看，再用雙手試試。遇到打不開的地方，他會換個方法再試；成功解開扣鎖的一刻，那份滿足和開心自然流露。",
           media: {
             kind: "video",
             videoId: "9QrYnWYsVUQ",
@@ -702,7 +702,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "姐姐掛衣服時，昊熹聽懂她的指示，把衣架遞給她，幫忙做家務。",
           support:
             "家人用簡短、清楚的話和昊熹溝通，說完後等一等，給他時間理解和回應。",
-          reflection: "看見昊熹留意大人怎樣做，也跟着幫忙，我們很欣慰。我們會肯定他的用心，鼓勵他繼續嘗試。",
+          reflection: "看見昊熹留意大人的動作，學着一起幫忙，我們感到欣慰。他的每一次用心嘗試，爸爸媽媽都看在眼裏，也會給他鼓勵。",
           tags: ["聆聽回應", "合作參與"],
           media: [
             {
@@ -723,7 +723,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
             "快到午餐時間了，昊熹把自己的小椅子推到餐桌旁，準備吃飯。",
           support:
             "只要安全，爸爸媽媽便給昊熹時間自己試試，在旁鼓勵，並在需要時幫忙。",
-          reflection: "在安全的環境裏，我們給昊熹時間和空間自己試試，不急着代他完成。看見他自己推好椅子，為吃飯作準備，我們很為他驕傲。",
+          reflection: "在安全的環境裏，我們願意等一等，讓昊熹自己試試，不急着代他完成。看着他推好小椅子，為午餐作準備，我們也為他感到驕傲。",
           tags: ["生活參與", "動作協調"],
           media: [
             {
@@ -796,7 +796,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "家中低矮的書架放着繪本、中英文圖書和點讀書，讓昊熹隨時拿到。爸爸媽媽每天陪他閱讀，也給他時間自己選書、慢慢翻看。",
           reflection:
-            "看見昊熹專心翻書，我們很開心。閱讀是他最喜歡的活動，我們會留給他安靜的時間，讓他好好享受。",
+            "我們很珍惜昊熹主動拿起書本、專心翻看的模樣。閱讀是他最喜歡的活動，我們會留一點安靜的時間，讓他按自己的步伐，享受書中的樂趣。",
           tags: ["自主翻閱", "專注閱讀"],
           media: [
             {
@@ -818,7 +818,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "大人會留意昊熹的反應，在安全照顧下鼓勵他嘗試，不急着催促他。",
           reflection:
-            "我們希望他在安心的陪伴下，逐漸適應水中的感覺，享受游泳。",
+            "我們為昊熹的嘗試感到高興，也珍惜陪他慢慢適應水中感覺的過程。希望他在安心的陪伴下，按自己的步伐探索，享受游泳的樂趣。",
           tags: ["水中探索", "願意嘗試"],
           media: [
             {
@@ -847,7 +847,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
           support:
             "爸爸媽媽會繼續陪昊熹玩音樂遊戲，一起聽聽聲音、感受節奏。",
           reflection:
-            "看到昊熹喜歡探索琴鍵和聲音，我們也想多陪他接觸音樂，感受節奏、嘗試表達自己。希望這些輕鬆的體驗，能讓他發現更多興趣和長處。",
+            "昊熹一次次走近琴鍵，讓我們看見他對聲音的好奇。我們願意陪他多聽聽、多試試，在輕鬆的音樂時光裏感受節奏、表達自己，慢慢發現更多興趣和長處。",
           tags: ["音樂探索", "主動參與"],
           media: [
             {
@@ -952,7 +952,7 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           name: "family-origin",
           alt: "6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。",
-          caption: "爸爸媽媽帶6個月大的昊熹，來到當年相識的地方。",
+          caption: "爸爸媽媽帶6個月大的昊熹，來到當年相識的地方，在熟悉的風景裏留下一段新的家庭回憶。",
         },
         {
           name: "family-care",
@@ -962,15 +962,15 @@ export const portfolioCopy: Record<PortfolioLocale, PortfolioCopy> = {
         {
           name: "family-playful",
           alt: "1歲的昊熹在戶外由爸爸媽媽抱在中間，一家人一起笑。",
-          caption: "昊熹開心的笑容，是爸爸媽媽最珍惜的日常風景。",
+          caption: "看見昊熹開心地笑，就是爸爸媽媽最欣慰的事。",
         },
       ],
     },
     closing: {
       eyebrow: "爸爸媽媽的話",
       title: "陪着他，一起長大",
-      reflection: "我們珍惜每天陪昊熹讀書、玩耍的時間，也喜歡一起到戶外走走。在安全的情況下，我們給他時間自己嘗試，並在需要時幫忙。我們會認真聽他表達，多給鼓勵，也以身作則，陪他學習關心和尊重別人。",
-      hope: "我們盼望昊熹健康快樂地長大，保持好奇心，學會欣賞自己，也關心別人，慢慢成為善良、自信、有同理心的人。爸爸媽媽會陪着他，一起學習，一起成長。",
+      reflection: "我們相信，孩子的成長始於家庭裏安穩而真誠的陪伴。每天一起讀書，也會一起玩耍、走到戶外看看；在安全的情況下，給昊熹時間自己嘗試。我們認真聽他表達，用鼓勵回應他的努力，並以身作則，陪他學着關心和尊重別人。",
+      hope: "我們盼望昊熹在愛與信任中健康快樂地長大，保持好奇心，學會欣賞自己，也關心別人，慢慢成為善良、自信、有同理心的人。每一步，爸爸媽媽都願意陪着他，一起學習、一起成長。",
     },
     privacy: {
       body: "本作品集由昊熹的爸爸媽媽用心整理。為了好好守護這些珍貴片段，請勿複製、下載或轉載網站內的相片及影片。",

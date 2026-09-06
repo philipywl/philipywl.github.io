@@ -41,15 +41,15 @@ test("keeps every bilingual story's parent observation natural, present, and evi
     }
   }
 
-  assert.match(portfolioCopy.zh.stories.items[1].reflection, /看見他自己推好椅子，為吃飯作準備/);
-  assert.match(portfolioCopy.en.stories.items[1].reflection, /proud to see him bring his own chair/);
+  assert.match(portfolioCopy.zh.stories.items[1].reflection, /看着他推好小椅子，為午餐作準備/);
+  assert.match(portfolioCopy.en.stories.items[1].reflection, /Watching him bring his little chair to the table, ready for lunch, makes us proud/);
   assert.match(portfolioCopy.zh.hero.intro, /分享我的生活點滴/);
   assert.match(portfolioCopy.en.hero.intro, /from my everyday life/);
-  assert.match(portfolioCopy.zh.stories.items[0].reflection, /肯定他的用心/);
-  assert.match(portfolioCopy.en.stories.items[0].reflection, /praise his efforts/);
+  assert.match(portfolioCopy.zh.stories.items[0].reflection, /每一次用心嘗試/);
+  assert.match(portfolioCopy.en.stories.items[0].reflection, /care he puts into each attempt/);
   assert.match(portfolioCopy.zh.stories.items[4].reflection, /閱讀是他最喜歡的活動/);
   assert.match(portfolioCopy.en.stories.items[4].reflection, /Reading is his favourite activity/);
-  assert.match(portfolioCopy.zh.stories.items[6].reflection, /感受節奏、嘗試表達自己/);
+  assert.match(portfolioCopy.zh.stories.items[6].reflection, /感受節奏、表達自己/);
   assert.match(portfolioCopy.en.stories.items[6].reflection, /explore rhythm and express himself/);
   assert.doesNotMatch(JSON.stringify(portfolioCopy), /右腦|right.brain/i);
   assert.match(portfolioCopy.zh.growth.milestones[2].moment, /站在爸爸媽媽中間/);
@@ -380,8 +380,8 @@ test("uses supplied factual content, restrained placeholders, and privacy-enhanc
   assert.match(copy, /我們如何陪伴/);
   assert.match(copy, /Growing alongside him/);
   assert.match(copy, /陪着他，一起長大/);
-  assert.match(copy, /We treasure the time we spend reading and playing with Oliver each day/);
-  assert.match(copy, /我們珍惜每天陪昊熹讀書、玩耍的時間/);
+  assert.match(copy, /We believe a child's growth begins with steady, loving companionship at home/);
+  assert.match(copy, /我們相信，孩子的成長始於家庭裏安穩而真誠的陪伴/);
   assert.match(copy, /Ten everyday moments/);
   assert.match(copy, /十個日常小片段/);
   assert.match(copy, /At the fire station, Oliver spots a rescue motorcycle and holds up his toy motorcycle/);

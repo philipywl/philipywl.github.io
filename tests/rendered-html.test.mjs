@@ -261,7 +261,7 @@ test("renders the refined English public homepage", async () => {
   assert.match(text, /Oliver at 13 months/);
   assert.match(text, /How we support him/);
   assert.match(text, /Growing alongside him/);
-  assert.match(text, /We treasure the time we spend reading and playing with Oliver each day/);
+  assert.match(text, /We believe a child's growth begins with steady, loving companionship at home/);
   for (const title of [
     "Listening and lending a hand",
     "Bringing his chair to the table",
@@ -351,7 +351,7 @@ test("renders the refined Hong Kong Traditional Chinese homepage", async () => {
   assert.match(text, /昊熹13個月大時的照片/);
   assert.match(text, /我們如何陪伴/);
   assert.match(text, /陪着他，一起長大/);
-  assert.match(text, /我們珍惜每天陪昊熹讀書、玩耍的時間/);
+  assert.match(text, /我們相信，孩子的成長始於家庭裏安穩而真誠的陪伴/);
   for (const title of [
     "聽懂指令，幫忙做家務",
     "推好椅子，準備開飯",
