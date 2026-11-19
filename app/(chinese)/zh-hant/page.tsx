@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import OliverPortfolio from "../../OliverPortfolio";
+import OliverPortfolio from "../../../album/Album";
 import { getCurrentPortfolioAge } from "../../../lib/current-age.server";
 import {
   CHINESE_DESCRIPTION,

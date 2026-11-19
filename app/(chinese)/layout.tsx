@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "../globals.css";
+import "../../album/album.css";
 import {
   CHINESE_DESCRIPTION,
   CHINESE_TITLE,

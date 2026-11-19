@@ -1,3 +1,4 @@
+import htmlParser from "next/dist/compiled/node-html-parser/index.js";
 import { lstat, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
@@ -145,7 +146,7 @@ const forbiddenPublicCopy = [
   ["K1 wording", /\bK\s*1\b/i],
   ["application wording", /\b(?:application|applicant|admissions?)\b/i],
   ["kindergarten wording", /kindergarten/i],
-  ["Chinese institutional wording", /(?:入學|申請|招生|學生)/u],
+  ["Chinese institutional wording", /(?:入學|申請|招生|學生(?!相))/u],
   ["Traditional-Chinese display label", /繁體中文/u],
   ["private-review wording", /(?:private portfolio|private review|unpublished review)/i],
   ["old editorial placeholder", /(?:Content needed|Photo needed|Parent-provided|Alternative text will be added)/i],
@@ -303,13 +304,13 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   const pictures = html.match(/<picture\b[^>]*>/gi) ?? [];
   const sources = html.match(/<source\b[^>]*>/gi) ?? [];
   const images = html.match(/<img\b[^>]*>/gi) ?? [];
-  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 22) {
-    fail(`${route} must contain fourteen responsive photographs and eight local video posters`);
+  if (pictures.length !== 14 || sources.length !== 14 || images.length !== 29) {
+    fail(`${route} must contain fourteen responsive photographs, eight video posters and seven story thumbnails`);
   }
   if (/<a\b[^>]*(?:download\b|href="\/media\/oliver\/)/i.test(html)) {
     fail(`${route} exposes a photograph download link`);
   }
-  if (/10(?:0\d|1\d)|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b/i.test(photoSurface)) {
+  if (images.some(tag => /(?:\/10(?:0\d|1\d)|\.jpe?g|\b20\d{2}-\d{2}-\d{2}\b)/i.test(getAttribute(tag,"src"))) || /\b20\d{2}-\d{2}-\d{2}\b/.test(visibleText(photoSurface))) {
     fail(`${route} exposes an original filename, capture date, or JPEG photograph`);
   }
 
@@ -359,8 +360,8 @@ function requireApprovedPhotos(html, route, expectedPhotos) {
   if (images.filter((tag) => getAttribute(tag, "loading") === "eager").length !== 1) {
     fail(`${route} must eagerly load only the hero portrait`);
   }
-  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 21) {
-    fail(`${route} must lazy-load thirteen below-fold photographs and eight video posters`);
+  if (images.filter((tag) => getAttribute(tag, "loading") === "lazy").length !== 28) {
+    fail(`${route} must lazy-load all below-fold photographs, video posters and thumbnails`);
   }
 }
 
@@ -390,9 +391,6 @@ if (JSON.stringify(artifactVideoPosters) !== JSON.stringify(requiredVideoPosterF
 
 const privateBirthDate = process.env.OLIVER_BIRTH_DATE?.trim();
 let hasPrivacyEnhancedVideoEmbed = false;
-let hasMutedScrollAutoplayContract = false;
-let hasSessionSoundPreference = false;
-let hasAutoplayBlockedFallback = false;
 const foundApprovedVideoIds = new Set();
 for (const relativePath of files) {
   if (privateBirthDate && relativePath.includes(privateBirthDate)) {
@@ -450,11 +448,6 @@ for (const relativePath of files) {
   if (!textExtensions.has(path.extname(relativePath).toLowerCase())) continue;
   const contents = await readFile(absolutePath, "utf8");
   if (contents.includes("youtube-nocookie.com/embed")) hasPrivacyEnhancedVideoEmbed = true;
-  if (/autoplay=1&mute=1&enablejsapi=1&playsinline=1/.test(contents)) {
-    hasMutedScrollAutoplayContract = true;
-  }
-  if (contents.includes("oliver-video-sound-v1")) hasSessionSoundPreference = true;
-  if (contents.includes("onAutoplayBlocked")) hasAutoplayBlockedFallback = true;
   for (const videoId of approvedVideoIds) {
     if (contents.includes(videoId)) foundApprovedVideoIds.add(videoId);
   }
@@ -504,271 +497,61 @@ requireMetadata(
 
 if (!/<html[^>]+lang="en-HK"/i.test(routeHtml.english)) fail("English page language is not en-HK");
 if (!/<html[^>]+lang="zh-Hant-HK"/i.test(routeHtml.chinese)) fail("Chinese page language is not zh-Hant-HK");
-const englishText = visibleText(routeHtml.english);
-const chineseText = visibleText(routeHtml.chinese);
-for (const expected of [
-  "Oliver's learning journey",
-  "Hello, I'm Oliver.",
-  "I'd love to share little moments and small challenges from my everyday life, and the time I spend exploring the world with my family.",
-  "Oliver at 19 months.",
-  "Oliver's everyday world",
-  "Reading together",
-  "Cars and dogs",
-  "Working things out",
-  "Noticing and remembering",
-  "often chooses a book from the shelf",
-  "vroom vroom",
-  "glasses make him think of Dad, a bald head of Grandpa",
-  "Welcome to Oliver's little world.",
-  "Everyday Stories",
-  "Growth Milestones",
-  "Step by step, growing a little each day",
-  "Ten everyday moments",
-  "Family & Care",
-  "Secure in love, free to explore",
-  "Reading, playing and heading outdoors are familiar parts of Oliver's family life",
-  "Oliver at 13 months",
-  "How we support him",
-  "Growing alongside him",
-  "We believe a child's growth begins with steady, loving companionship at home",
-  "Listening and lending a hand",
-  "Bringing his chair to the table",
-  "Recognising his body and family",
-  "A gentle hello to the animals",
-  "Little hands turning page after page",
-  "A brave step into the water",
-  "Returning to music",
-  "Matching shapes",
-  "Pouring between cups",
-  "Joining tidy-up time",
-  "Waving Bye bye",
-  "Matching the rescue motorcycle",
-  "At the fire station, Oliver spots a rescue motorcycle and holds up his toy motorcycle",
-  "Oliver holds up his toy motorcycle, with a full-sized rescue motorcycle behind him",
-  "Clean up",
-  "Bye bye",
-  "This portfolio has been lovingly gathered by Oliver's parents. Please help us care for these memories",
-  "中文 | English",
-]) {
-  if (!englishText.includes(expected)) fail(`English page lacks approved copy: ${expected}`);
+if (!hasPrivacyEnhancedVideoEmbed || foundApprovedVideoIds.size !== approvedVideoIds.length) {
+  fail("the eight approved videos must load through the privacy-enhanced host on request");
 }
-for (const expected of [
-  "昊熹的成長旅程",
-  "我想和你分享我的生活點滴和小挑戰，還有與家人一起探索世界的時光。",
-  "昊熹19個月大時的照片。",
-  "昊熹的日常小世界",
-  "親子共讀",
-  "車和小狗",
-  "專注解難",
-  "細心觀察",
-  "主動從書架拿書",
-  "看到車，昊熹會開心地說「嗚嗚」",
-  "戴眼鏡的像爸爸，光頭的像公公",
-  "歡迎走進昊熹的小世界。",
-  "生活點滴",
-  "成長里程",
-  "一步步向前，一點點長大",
-  "十個日常小片段",
-  "家庭與陪伴",
-  "在愛裏安心，在陪伴中自在探索",
-  "一起看書、玩耍、到戶外走走，是昊熹和家人熟悉的日常",
-  "昊熹13個月大時的照片",
-  "我們如何陪伴",
-  "陪着他，一起長大",
-  "我們相信，孩子的成長始於家庭裏安穩而真誠的陪伴",
-  "聽懂指令，幫忙做家務",
-  "推好椅子，準備開飯",
-  "認識身體和家人",
-  "輕輕走近小動物",
-  "小手翻過一頁頁書",
-  "勇敢走進水中",
-  "再次走近音樂",
-  "尋找躲起的物件",
-  "把形狀放對位置",
-  "倒進另一隻杯",
-  "配對救護電單車",
-  "參觀消防局時，昊熹看見救護電單車，便舉起手中的玩具電單車",
-  "昊熹舉起玩具電單車，身後停着一輛救護電單車",
-  "一起 Clean up",
-  "揮手說 Bye bye",
-  "Clean up",
-  "Bye bye",
-  "本作品集由昊熹的爸爸媽媽用心整理。為了好好守護這些珍貴片段",
-  "中文 | English",
-]) {
-  if (!chineseText.includes(expected)) fail(`Chinese page lacks approved copy: ${expected}`);
-}
-for (const removedCopy of [
-  "A problem-solving moment to be added",
-  "A noticing moment to be added",
-  "解難小片段稍後加入",
-  "觀察小片段稍後加入",
-  "Listening closely and following a request",
-  "細心聆聽，跟着做",
-  "tried to climb onto the pool edge",
-  "也試着自己爬上池邊",
-  "小椅子慢慢靠近餐桌",
-  "參與日常的一小步",
-  "以安全為界",
-  "兩雙熟悉的手",
-  "一歲生日時",
-  "On his first birthday",
-  "journey he can open for himself",
-]) {
-  if ((englishText + chineseText).includes(removedCopy)) fail(`removed copy remains: ${removedCopy}`);
-}
-for (const [text, orderedTitles, route] of [
-  [routeHtml.english, ["Listening and lending a hand", "Bringing his chair to the table", "Little hands turning page after page", "A brave step into the water", "Returning to music", "A gentle hello to the animals", "Recognising his body and family"], "English"],
-  [routeHtml.chinese, ["聽懂指令，幫忙做家務", "推好椅子，準備開飯", "小手翻過一頁頁書", "勇敢走進水中", "再次走近音樂", "輕輕走近小動物", "認識身體和家人"], "Chinese"],
-]) {
-  let previousIndex = -1;
-  for (const title of orderedTitles) {
-    const currentIndex = text.search(new RegExp(`<h3\\b[^>]*>${title}</h3>`));
-    if (currentIndex <= previousIndex) fail(`${route} learning stories are out of order at: ${title}`);
-    previousIndex = currentIndex;
+for (const [language, html] of [["en",routeHtml.english],["zh",routeHtml.chinese]]) {
+  const doc=htmlParser.parse(html);
+  const album=doc.querySelector("#album");
+  if (!album) fail(language+" lacks the album");
+  const zh=language==="zh";
+  const counts=[["h1",1],[".interest-card",4],[".story",7],[".station",11],[".moment",11],[".family-photos figure",4],[".play",8],[".pick",7]];
+  for (const [selector,n] of counts) {
+    if (album.querySelectorAll(selector).length!==n) fail(language+" has an incorrect count for "+selector);
   }
-}
-for (const videoId of approvedVideoIds) {
-  if (!foundApprovedVideoIds.has(videoId)) fail(`approved deferred YouTube video is missing: ${videoId}`);
-}
-for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
-  if ((html.match(/class="parent-reflection"/g) ?? []).length !== 7) {
-    fail(`${route} must retain parents' observations in all seven stories`);
-  }
-  if (/class="milestones-intro"/.test(html)) fail(`${route} retains the duplicate milestone introduction`);
-  const figures = html.match(/<figure\b[^>]*>/gi) ?? [];
-  const videoIds = figures.map((tag) => getAttribute(tag, "data-video-id")).filter(Boolean);
-  if (JSON.stringify([...videoIds].sort()) !== JSON.stringify([...approvedVideoIds].sort())) {
-    fail(`${route} does not contain exactly the approved videos`);
-  }
-  for (const [videoId, ratio, priority] of [
-    ["gfiAoI900Vc", "square-video", "10"],
-    ["IYiabpo7nuI", "portrait-video", "20"],
-    ["vWXWUHqovGc", "video", "40"],
-  ]) {
-    const figure = figures.find((tag) => getAttribute(tag, "data-video-id") === videoId);
-    if (getAttribute(figure ?? "", "class") !== `youtube-video youtube-video-${ratio}` ||
-        getAttribute(figure ?? "", "data-autoplay-priority") !== priority) {
-      fail(`${route} has an incorrect video aspect ratio or playback order: ${videoId}`);
-    }
-  }
-}
-for (const [html, title, age] of [
-  [routeHtml.english, "Listening and lending a hand", "21 months"],
-  [routeHtml.english, "Bringing his chair to the table", "20 months"],
-  [routeHtml.english, "A brave step into the water", "19–21 months"],
-  [routeHtml.chinese, "聽懂指令，幫忙做家務", "21個月大"],
-  [routeHtml.chinese, "推好椅子，準備開飯", "20個月大"],
-  [routeHtml.chinese, "勇敢走進水中", "19至21個月大"],
-]) {
-  if (!new RegExp(`<h3\\b[^>]*>${title}</h3>\\s*<p class="story-age">${age}</p>`).test(html)) {
-    fail(`historical story age is incorrect: ${title}`);
-  }
-}
-if ((routeHtml.english.match(/<h1\b/gi) ?? []).length !== 1) fail("English page must contain one H1");
-if ((routeHtml.chinese.match(/<h1\b/gi) ?? []).length !== 1) fail("Chinese page must contain one H1");
-if (!/<span class="sr-only">Hello, I(?:&#x27;|')m Oliver\.<\/span>/.test(routeHtml.english)) {
-  fail("English page lacks the approved accessible greeting");
-}
-if (!/<span class="sr-only">你好，我是昊熹。<\/span>/.test(routeHtml.chinese)) {
-  fail("Chinese page lacks the approved accessible greeting");
-}
-if (!/id="hero-title"[^>]*data-greeting-state="en-preparing"/.test(routeHtml.english)) {
-  fail("English greeting is not protected from a completed-text first-paint flash");
-}
-if (!/id="hero-title"[^>]*data-greeting-state="zh-preparing"/.test(routeHtml.chinese)) {
-  fail("Chinese greeting is not protected from a completed-text first-paint flash");
-}
-if (/“Hello, I(?:&#x27;|')m Oliver\.”|「你好，我是昊熹。」/.test(routeHtml.english + routeHtml.chinese)) {
-  fail("hero greeting retains removed quotation marks");
-}
-if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.english)) fail("English visual greeting is not aria-hidden");
-if (!/class="greeting-visual" aria-hidden="true"/.test(routeHtml.chinese)) fail("Chinese visual greeting is not aria-hidden");
-if (/href="\/(?:en|zh-hant)\/summary\//i.test(routeHtml.english + routeHtml.chinese)) {
-  fail("a removed one-page summary link remains on a locale page");
-}
-if (/href="#privacy-notice"|id="privacy-notice"|id="privacy-title"/i.test(routeHtml.english + routeHtml.chinese)) {
-  fail("a separate privacy destination remains on a locale page");
-}
-for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
-  if (!/class="footer-privacy"/.test(html)) fail(`${route} page lacks the inline footer privacy note`);
-}
-for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
-  if ((html.match(/class="story-card/g) ?? []).length !== 7) {
-    fail(`${route} page does not contain the seven approved everyday stories`);
-  }
-  if ((html.match(/class="growth-milestone(?: |")/g) ?? []).length !== 10) {
-    fail(`${route} page does not contain one ten-item growth path`);
-  }
-  if ((html.match(/class="youtube-video-trigger"/g) ?? []).length !== 8) {
-    fail(`${route} page does not contain eight deferred poster controls`);
-  }
-  if (/<iframe\b|youtube-nocookie\.com\/embed/i.test(html)) {
-    fail(`${route} page loads a YouTube player before visitor interaction`);
-  }
-  if (/youtube\.com\/watch\?v=|在 YouTube 開啟這段影片|Open this video on YouTube/i.test(html)) {
-    fail(`${route} page exposes a removed YouTube outbound link`);
-  }
-  if (/Videos never play automatically|影片不會自動播放/i.test(visibleText(html))) {
-    fail(`${route} page exposes the removed video helper note`);
-  }
-}
-for (const clue of [
-  "聆聽回應", "合作參與", "生活參與", "動作協調", "認識身體", "認出家人", "自主翻閱",
-  "專注閱讀", "水中探索", "願意嘗試", "音樂探索", "主動參與",
-  "細心觀察", "溫柔接觸",
-]) {
-  if (!chineseText.includes(clue)) fail(`Chinese page lacks approved four-character learning clue: ${clue}`);
-}
-if (!hasPrivacyEnhancedVideoEmbed) {
-  fail("the deferred player does not use YouTube's privacy-enhanced embed host");
-}
-for (const priority of [5, 10, 20, 30, 40, 50, 60, 70]) {
-  for (const [route, html] of Object.entries({ english: routeHtml.english, chinese: routeHtml.chinese })) {
-    if ((html.match(new RegExp(`data-autoplay-priority="${priority}"`, "g")) ?? []).length !== 1) {
-      fail(`${route} page lacks the unique video autoplay priority ${priority}`);
-    }
-  }
-}
-if (!hasMutedScrollAutoplayContract) {
-  fail("the deferred player lacks muted, inline, JavaScript-controlled autoplay");
-}
-if (!hasSessionSoundPreference || !hasAutoplayBlockedFallback) {
-  fail("the deferred player lacks its session sound choice or blocked-autoplay fallback");
-}
-if (/\[[^\]]+\]/.test(englishText + chineseText)) {
-  fail("bracketed editorial tokens remain in visitor-visible text");
+  const title=zh?"歡迎走進昊熹的小世界。":"Welcome to Oliver's little world.";
+  if (album.querySelector("#welcome-title")?.textContent!==title || album.querySelector(".welcome-sheet button")) fail(language+" has an incorrect welcome");
+  if (!album.querySelector(".about-main figcaption").textContent.includes(zh?"沖天遙控車":"RC Car")) fail(language+" lacks the RC Car caption");
+  if (album.querySelector("#interest-2 h3").textContent!==(zh?"小小司機":"Behind the wheel")) fail(language+" has an incorrect car story");
+  if (!album.querySelector("#moment-4 img") || !album.querySelector("#moment-4 h3").textContent.includes(zh?"學生相":"school photo")) fail(language+" lacks the first school photo");
+  if (album.querySelector("iframe,form,[data-return-stop],[data-replay],.meadow-decor-dog")) fail(language+" contains an unexpected control or embed");
+  const languages=album.querySelectorAll(".languages a").map(a=>a.getAttribute("href"));
+  if (languages.join(",")!=="/zh-hant/,/en/") fail(language+" lacks stable locale links");
+  const videoIds=album.querySelectorAll(".play").map(a=>a.getAttribute("data-video")).sort();
+  if (videoIds.join(",")!==[...approvedVideoIds].sort().join(",")) fail(language+" has an unapproved video");
+  if (process.env.REQUIRE_OLIVER_AGE==="true" && !album.querySelector(".identity-age")?.textContent.trim()) fail(language+" lacks the current age");
+  if (!album.querySelector("footer p")?.textContent.trim()) fail(language+" lacks the privacy notice");
 }
 requireApprovedPhotos(routeHtml.english, "English page", [
   ["Nineteen-month-old Oliver sits facing the camera in a studio portrait, wearing a white shirt and tan trousers.", "hero-portrait", "1600"],
-  ["Nineteen-month-old Oliver inside a large green play car, looking towards the camera with one hand resting on its side.", "about-world", "1500"],
+  ["Oliver stands inside the RC Car with one hand resting on its side.", "about-world", "1500"],
   ["Twelve-month-old Oliver sits close to Dad as they look at a board book together and Dad points to the page.", "about-reading", "1200"],
   ["Seventeen-month-old Oliver smiles from the driver's seat of a child-sized black play car.", "about-car", "1200"],
-  ["Eighteen-month-old Oliver stands in front of a group of colourful cartoon figures, raising one arm to point towards them.", "about-observing", "900"],
-  ["Oliver smiles while standing in the pool, with an adult's hand visible nearby.", "story-swimming", "800"],
-  ["Oliver is held between Mum and Dad beside an owl perched on a glove.", "story-animals", "800"],
+  ["Wearing dungarees, Oliver points up at the cartoon figures behind him. Snoopy stands beside him wearing a yellow crown.", "about-observing", "900"],
+  ["Oliver laughs in the pool, wearing a swim top with pale blue sleeves.", "story-swimming", "800"],
+  ["Dad holds Oliver, who is wearing a sun hat. Mum leans in beside them, with a white-faced owl in the foreground.", "story-animals", "800"],
   ["A front-facing portrait of 13-month-old Oliver wearing a blue collared shirt against a white background.", "portrait", "1600"],
   ["One-year-old Oliver stands between Mum and Dad while each parent holds one of his hands.", "growth-supported", "1500"],
   ["Nineteen-month-old Oliver holds a green-and-black toy motorcycle, with a full-sized yellow rescue motorcycle and part of an ambulance behind him.", "growth-rescue-motorcycle", "1500"],
   ["Fifteen-month-old Oliver is held close between Mum and Dad beneath flowering trees during a family outing.", "family-main", "800"],
   ["Six-month-old Oliver is held between Mum and Dad in front of a large red outdoor sculpture.", "family-origin", "1500"],
-  ["Four-month-old Oliver sits in a cushioned baby seat, with adults' hands visible supporting him.", "family-care", "1500"],
+  ["Oliver rests against a grey cushion. Adult hands hold his little hands and cradle his bare feet.", "family-care", "1500"],
   ["One-year-old Oliver smiles outdoors while Mum and Dad hold him between them.", "family-playful", "1500"],
 ]);
 requireApprovedPhotos(routeHtml.chinese, "Chinese page", [
   ["19個月大的昊熹穿着白色襯衣和淺棕色長褲，坐在柔和的紫灰色背景前，正面望向鏡頭。", "hero-portrait", "1600"],
-  ["19個月大的昊熹在大型綠色玩具車裏，一隻手扶着車身，望向鏡頭。", "about-world", "1500"],
+  ["昊熹站在沖天遙控車裏，一隻手扶着車邊。", "about-world", "1500"],
   ["12個月大的昊熹依偎在爸爸身旁一起看圖書，爸爸正指着書頁。", "about-reading", "1200"],
   ["17個月大的昊熹坐在黑色兒童玩具車的駕駛座上，望向鏡頭微笑。", "about-car", "1200"],
-  ["18個月大的昊熹站在一組色彩繽紛的卡通人物佈景前，舉起一隻手指向人物。", "about-observing", "900"],
-  ["昊熹在泳池裏站着微笑，身旁可見大人的手。", "story-swimming", "800"],
-  ["昊熹由爸爸媽媽抱在中間，身旁有一隻貓頭鷹停在手套上。", "story-animals", "800"],
+  ["昊熹穿着吊帶褲，舉手指向身後的卡通人物。史諾比戴着黃色皇冠，站在他身旁。", "about-observing", "900"],
+  ["昊熹穿着淺藍色衣袖的泳衣，在池水裏張口大笑。", "story-swimming", "800"],
+  ["爸爸抱着戴帽子的昊熹，媽媽靠在他身旁，一隻白色臉的貓頭鷹就在三人面前。", "story-animals", "800"],
   ["13個月大的昊熹穿着藍色有領上衣，在白色背景前正面望向鏡頭。", "portrait", "1600"],
   ["1歲的昊熹站在爸爸媽媽中間，爸爸媽媽各牽着他一隻手。", "growth-supported", "1500"],
   ["19個月大的昊熹手拿綠黑色玩具電單車，身後停着一輛真實的黃色救護電單車，旁邊可見部分救護車。", "growth-rescue-motorcycle", "1500"],
   ["15個月大的昊熹在花樹下依偎在爸爸媽媽中間，一家三口望向鏡頭。", "family-main", "800"],
   ["6個月大的昊熹由爸爸媽媽抱在中間，三人在大型紅色戶外雕塑前合照。", "family-origin", "1500"],
-  ["4個月大的昊熹坐在軟墊嬰兒座椅上，身旁有大人伸手扶着他。", "family-care", "1500"],
+  ["昊熹靠在灰色軟墊上，大人牽着他的小手，托着他的一雙小腳。", "family-care", "1500"],
   ["1歲的昊熹在戶外由爸爸媽媽抱在中間，一家人一起笑。", "family-playful", "1500"],
 ]);
 requireMetadata(
@@ -805,31 +588,12 @@ if (!/^User-agent:\s*\*$/im.test(robotsText) || !/^Disallow:\s*\/$/im.test(robot
 const cssFiles = files.filter((file) => path.extname(file).toLowerCase() === ".css");
 const css = (await Promise.all(cssFiles.map((file) => readFile(path.join(outputRoot, file), "utf8")))).join("\n");
 if (!css.includes("Noto Sans TC")) fail("the single Noto Sans TC typography system is missing");
-for (const paletteToken of ["#FFF9E6", "#29404A", "#C4DDEA", "#5C8B7F", "#3F6D65", "#E0AD3F", "#EEA283"]) {
-  if (!css.includes(paletteToken)) fail(`Sunlit Meadow palette token is missing: ${paletteToken}`);
+if (/fonts\.(?:googleapis|gstatic)\.com/i.test(css)) fail("fonts must be served locally");
+for (const weight of [400,600,700]) {
+  const font="album/noto-sans-tc-"+weight+".woff";
+  if (!files.includes(font) || !css.includes("/"+font)) fail("missing local Noto Sans TC "+weight);
 }
-if (/Noto Serif|Georgia|--serif|@font-face|fonts\.(?:googleapis|gstatic)\.com/i.test(css)) {
-  fail("an unapproved serif or external font remains in the artifact");
-}
-if (/(?<!sans-)\bserif\b/i.test(css)) fail("a separate serif font family remains in the artifact");
-if (/summary-(?:card|main|link|hero|footer)|video-preview-grid|preview-play/i.test(css)) {
-  fail("removed summary or fake-video-control styling remains in the artifact");
-}
-if (!/greeting-cursor-rest[^}]*animation:[^;]*forwards/i.test(css)) {
-  fail("the delayed greeting cursor is not hidden correctly before its reveal");
-}
-if (/animation:[^;}]*\bboth\b/i.test(css)) {
-  fail("completed entrance animations must not retain their compositor fill effects");
-}
-if (
-  !/hero-portrait-hello\s+(?:820ms|\.82s)/.test(css) ||
-  /hero-portrait-hello[^;}]*\binfinite\b/i.test(css)
-) {
-  fail("the hero portrait lacks its restrained one-time hello animation");
-}
-if (!/\.youtube-video-sound[^}]*min-height:\s*44px/i.test(css)) {
-  fail("the video sound control lacks its accessible target size");
-}
+if (!files.includes("album/OFL.txt") || !files.includes("album/interactions.js")) fail("album assets are incomplete");
 
 console.log(`GitHub Pages artifact verified: ${files.length} files in ${outputRoot}`);
 console.log(`Required static files: ${requiredFiles.join(", ")}`);
