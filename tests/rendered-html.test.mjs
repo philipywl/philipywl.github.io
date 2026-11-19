@@ -211,7 +211,9 @@ test("does not retain the removed one-page summary routes", async () => {
 });
 
 test("keeps the bilingual custom 404 safe", async () => {
-  const html = await readFile(new URL("../dist/client/404.html", import.meta.url), "utf8");
+  const response = await render("/missing-page/");
+  assert.equal(response.status, 404);
+  const html = await response.text();
   if (html.trim() === "Not Found") return;
 
   const text = textContent(html);
